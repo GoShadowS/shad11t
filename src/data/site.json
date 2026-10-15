@@ -1,0 +1,17 @@
+{
+  "name": "SHADVOID",
+  "author": "Shad11t",
+  "tagline": "теневая лаборатория",
+  "description": "SHADVOID — личное портфолио Shad11t: моды для Minecraft, десктопные и мобильные приложения, плагины, скрипты и YouTube-контент. Код, крафт и тень.",
+  "status": "online",
+  "socials": {
+    "youtube": "https://www.youtube.com/@shad11t_the_shadow",
+    "telegram": "https://t.me/SHAD11T",
+    "boosty": "https://boosty.to/shad11ttheshadow",
+    "github": "https://github.com/GoShadowS"
+  },
+  "now": {
+    "title": "Сейчас в работе",
+    "text": "Пилим измерение теней для ShadowCraft и новый сезон летсплеев на канале."
+  }
+}

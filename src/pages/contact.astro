@@ -1,0 +1,212 @@
+---
+/**
+ * SHADVOID — /contact: порталы связи, копирование, форма «передачи», FAQ.
+ */
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import site from '../data/site.json';
+import { pg } from '../lib/paths';
+
+const socials = [
+  {
+    name: 'YouTube',
+    handle: '@shad11t_the_shadow',
+    desc: 'Видео, стримы и закулисье проектов. Главный портал.',
+    href: site.socials.youtube,
+    icon: 'brand:youtube',
+    copy: 'https://www.youtube.com/@shad11t_the_shadow',
+    accent: true,
+  },
+  {
+    name: 'Telegram',
+    handle: 't.me/SHAD11T',
+    desc: 'Новости, мемы и самый быстрый способ до меня докричаться.',
+    href: site.socials.telegram,
+    icon: 'brand:telegram',
+    copy: 'https://t.me/SHAD11T',
+    accent: true,
+  },
+  {
+    name: 'Boosty',
+    handle: 'shad11ttheshadow',
+    desc: 'Эксклюзивы, ранний доступ и поддержка тени рублём.',
+    href: site.socials.boosty,
+    icon: 'brand:boosty',
+    copy: 'https://boosty.to/shad11ttheshadow',
+    accent: false,
+  },
+  {
+    name: 'GitHub',
+    handle: 'GoShadowS',
+    desc: 'Исходники проектов, ишьюсы и звёздочки (ставь, не стесняйся).',
+    href: site.socials.github,
+    icon: 'brand:github',
+    copy: 'https://github.com/GoShadowS',
+    accent: false,
+  },
+];
+
+const faqs = [
+  {
+    q: 'Как быстро ты отвечаешь?',
+    a: 'В Telegram — обычно в течение дня. На YouTube-комментарии — под свежими видео. Тень спит днём, но уведомления читает.',
+  },
+  {
+    q: 'Можно предложить идею для мода / видео?',
+    a: 'Нужно! Лучшие идеи зрителей уже дважды становились видео. Пиши в Telegram — с пометкой «идея».',
+  },
+  {
+    q: 'Берёшь заказы на плагины и ботов?',
+    a: 'Иногда беру небольшие задачи для серверов и сообществ. Опиши задачу через форму ниже — отвечу честно, смогу или нет.',
+  },
+  {
+    q: 'Где исходники проектов с витрины?',
+    a: 'Открытые проекты живут на GitHub (ссылка — в карточке проекта). Что-то пока приватно: допиливаю перед релизом.',
+  },
+];
+---
+
+<Base
+  title="Контакты"
+  description="Как связаться с Shad11t: YouTube, Telegram, Boosty, GitHub. Форма быстрой передачи сообщения."
+  path={pg('contact')}
+>
+  <section class="relative overflow-hidden pt-[130px] pb-14" data-parallax-wrap>
+    <div class="bg-blueprint-fade pointer-events-none absolute inset-0"></div>
+    <div class="pointer-events-none absolute top-1/3 left-1/2 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-phos/[0.06] blur-[120px]"></div>
+
+    <div class="relative mx-auto max-w-[1400px] px-5 text-center md:px-8">
+      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// частота 11.11 // приём открыт</p>
+      <h1 data-reveal="chars" class="font-display mx-auto max-w-4xl text-5xl leading-[1.02] font-black text-bone md:text-7xl">
+        Докричись до тени<span class="text-phos">.</span>
+      </h1>
+      <p data-reveal="up" class="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-sage">
+        Четыре портала на выбор. Тень отвечает всем — просто некоторым чуть дольше (она тоже человек. наверное).
+      </p>
+    </div>
+  </section>
+
+  {/* ================= ПОРТАЛЫ ================= */}
+  <section class="mx-auto max-w-[1400px] px-5 pb-20 md:px-8">
+    <div class="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
+      {socials.map((s, i) => (
+        <div
+          data-reveal="up"
+          data-delay={(i * 0.07).toFixed(2)}
+          data-tilt
+          class:list={[
+            'p-card group flex flex-col p-6',
+            s.accent ? '!border-phos/30' : '',
+          ]}
+        >
+          <div class="p-glow"></div>
+          <div class="flex items-start justify-between">
+            <span class:list={[
+              'clip-corners-sm flex h-14 w-14 items-center justify-center transition-all duration-300 group-hover:scale-110',
+              s.accent ? 'bg-phos text-void' : 'bg-phos/10 text-phos group-hover:bg-phos group-hover:text-void',
+            ]}>
+              <Icon name={s.icon} class="h-7 w-7" />
+            </span>
+            <span class="font-display text-ghost text-4xl font-black">0{i + 1}</span>
+          </div>
+          <h2 class="font-display mt-5 text-xl font-bold text-bone">{s.name}</h2>
+          <p class="font-mono mt-1 text-[12px] text-phos">{s.handle}</p>
+          <p class="mt-3 flex-1 text-[13px] leading-relaxed text-sage">{s.desc}</p>
+          <div class="mt-5 flex gap-2">
+            <a
+              href={s.href}
+              target="_blank"
+              rel="noopener"
+              data-cursor="hover"
+              class="btn-void flex-1 justify-center border border-white/15 px-4 py-2.5 text-[11px]"
+              aria-label={`Открыть ${s.name} Shad11t`}
+            >
+              Открыть ↗
+            </a>
+            <button
+              type="button"
+              data-copy={s.copy}
+              data-cursor="hover"
+              class="btn-void magnetic border border-white/15 px-3.5 py-2.5 text-[11px]"
+              aria-label={`Скопировать ссылку на ${s.name}`}
+              title="Скопировать ссылку"
+            >
+              <Icon name="Copy" class="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ================= ФОРМА ПЕРЕДАЧИ ================= */}
+  <section class="border-y border-white/10 bg-abyss">
+    <div class="mx-auto grid max-w-[1400px] items-start gap-10 px-5 py-20 md:px-8 md:py-28 lg:grid-cols-[1fr_1.2fr]">
+      <div>
+        <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// передача</p>
+        <h2 data-reveal="chars" class="font-display text-4xl leading-[1.05] font-black text-bone md:text-5xl">
+          Отправь сигнал в темноту
+        </h2>
+        <p data-reveal="up" class="mt-5 max-w-md text-[15px] leading-relaxed text-sage">
+          Без бэкенда и слежки: сообщение зашифруется (ну почти), скопируется в буфер — и ты вставишь его мне в Telegram одним тапом.
+        </p>
+        <ul data-reveal="up" class="font-mono mt-6 space-y-3 text-[13px] text-bone/80">
+          <li class="flex items-center gap-3"><span class="flex h-7 w-7 items-center justify-center border border-phos/40 text-phos">1</span> напиши сообщение →</li>
+          <li class="flex items-center gap-3"><span class="flex h-7 w-7 items-center justify-center border border-phos/40 text-phos">2</span> жми «передать» →</li>
+          <li class="flex items-center gap-3"><span class="flex h-7 w-7 items-center justify-center border border-phos/40 text-phos">3</span> вставь в Telegram. готово →</li>
+        </ul>
+      </div>
+
+      <form data-reveal="right" id="contact-form" class="term-window scanlines clip-corners p-6 md:p-8" autocomplete="off">
+        <div class="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label class="lbl" for="cf-name">Твой позывной</label>
+            <input id="cf-name" type="text" maxlength="40" class="field" placeholder="xX_tenelub_Xx" />
+          </div>
+          <div>
+            <label class="lbl" for="cf-topic">Тема сигнала</label>
+            <select id="cf-topic" class="field" data-cursor="hover">
+              <option>Просто привет</option>
+              <option>Идея для видео</option>
+              <option>Идея для мода</option>
+              <option>Коллаборация</option>
+              <option>Заказ (плагин / бот)</option>
+              <option>Нашёл баг на сайте</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt-5">
+          <div class="flex items-center justify-between">
+            <label class="lbl" for="cf-message">Сообщение</label>
+            <span id="cf-counter" class="font-mono mb-[0.45rem] text-[11px] text-sage/60">0 / 500</span>
+          </div>
+          <textarea id="cf-message" rows="5" maxlength="500" class="field resize-y" placeholder="Привет, тень! У меня идея…"></textarea>
+        </div>
+        <button type="submit" id="cf-send" data-cursor="hover" class="btn-void btn-solid magnetic clip-corners-sm mt-6 w-full justify-center px-6 py-4 text-[13px] disabled:opacity-60">
+          <Icon name="Send" class="h-4 w-4" />
+          <span data-label>Передать в Telegram ↗</span>
+        </button>
+        <p class="font-mono mt-3 text-center text-[11px] text-sage/60">нажимая кнопку, ты соглашаешься стать чуть темнее</p>
+      </form>
+    </div>
+  </section>
+
+  {/* ================= FAQ ================= */}
+  <section class="mx-auto max-w-[900px] px-5 py-20 md:px-8 md:py-28">
+    <p data-reveal="up" class="font-mono mb-5 text-center text-[12px] tracking-[0.3em] text-ember uppercase">// частые вопросы</p>
+    <h2 data-reveal="chars" class="font-display text-center text-4xl font-black text-bone md:text-5xl">
+      Тень отвечает
+    </h2>
+    <div class="mt-10 space-y-3">
+      {faqs.map((f, i) => (
+        <details data-reveal="up" data-delay={(i * 0.05).toFixed(2)} class="group border border-white/10 bg-abyss transition-colors open:border-phos/40">
+          <summary data-cursor="hover" class="flex cursor-pointer list-none items-center justify-between gap-4 p-5 md:p-6 [&::-webkit-details-marker]:hidden">
+            <span class="font-display text-[16px] font-bold text-bone md:text-lg">{f.q}</span>
+            <span class="font-mono flex h-8 w-8 shrink-0 items-center justify-center border border-white/15 text-phos transition-transform duration-300 group-open:rotate-45">+</span>
+          </summary>
+          <p class="px-5 pb-6 text-[14px] leading-relaxed text-sage md:px-6">{f.a}</p>
+        </details>
+      ))}
+    </div>
+  </section>
+</Base>

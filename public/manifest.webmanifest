@@ -1,0 +1,18 @@
+{
+  "name": "SHADVOID — теневая лаборатория Shad11t",
+  "short_name": "SHADVOID",
+  "description": "Портфолио Shad11t: моды для Minecraft, приложения, плагины и YouTube-контент.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#060807",
+  "theme_color": "#060807",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

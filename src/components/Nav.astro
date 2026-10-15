@@ -1,0 +1,123 @@
+---
+/**
+ * SHADVOID — шапка: логотип, навигация, статус, звук, бургер.
+ * Активная ссылка подсвечивается скриптом (data-nav).
+ */
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import site from '../data/site.json';
+import { pg } from '../lib/paths';
+
+const links = [
+  { href: pg(''), label: 'Главная', id: 'home' },
+  { href: pg('projects'), label: 'Проекты', id: 'projects' },
+  { href: pg('about'), label: 'Обо мне', id: 'about' },
+  { href: pg('content'), label: 'Контент', id: 'content' },
+  { href: pg('contact'), label: 'Контакты', id: 'contact' },
+];
+---
+
+<header id="site-header" class="fixed inset-x-0 top-0 z-[120] transition-all duration-300">
+  {/* прогресс чтения страницы */}
+  <div class="absolute inset-x-0 top-0 h-[2px] bg-transparent">
+    <div id="scroll-progress" class="h-full w-0 bg-phos shadow-[0_0_12px_rgba(198,255,61,0.8)]"></div>
+  </div>
+
+  <div id="header-inner" class="transition-all duration-300">
+    <nav class="mx-auto flex h-[72px] max-w-[1400px] items-center justify-between gap-4 px-5 md:px-8" aria-label="Основная навигация">
+      <Logo />
+
+      {/* десктоп-меню */}
+      <ul class="hidden items-center gap-7 lg:flex">
+        {links.map((l, i) => (
+          <li>
+            <a
+              href={l.href}
+              data-nav={l.id}
+              data-cursor="hover"
+              class="link-line font-mono group text-[13px] font-medium tracking-[0.14em] text-bone/80 uppercase transition-colors hover:text-bone"
+            >
+              <span class="mr-1 text-[10px] text-phos/70">0{i + 1}</span>{l.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <div class="flex items-center gap-3 md:gap-4">
+        {/* статус */}
+        <span class="font-mono hidden items-center gap-2 rounded-full border border-white/10 px-3 py-1.5 text-[11px] tracking-[0.16em] text-sage uppercase md:inline-flex" title="Shad11t сейчас на связи">
+          <span class="pulse-dot inline-block h-2 w-2 rounded-full bg-phos"></span>
+          {site.status}
+        </span>
+
+        {/* звук */}
+        <button
+          id="sound-toggle"
+          type="button"
+          class="magnetic hidden h-10 w-10 items-center justify-center rounded-full border border-white/10 text-sage transition-colors hover:border-phos/60 hover:text-phos md:inline-flex"
+          aria-label="Переключить звуковые эффекты"
+          aria-pressed="true"
+          data-cursor="hover"
+        >
+          <span id="sound-icon-on"><Icon name="Volume2" class="h-[18px] w-[18px]" /></span>
+          <span id="sound-icon-off" class="hidden"><Icon name="VolumeX" class="h-[18px] w-[18px]" /></span>
+        </button>
+
+        {/* CTA */}
+        <a
+          href={site.socials.youtube}
+          target="_blank"
+          rel="noopener"
+          data-cursor="hover"
+          class="btn-void btn-ghost magnetic clip-corners-sm hidden px-4 py-2 text-[12px] sm:inline-flex"
+        >
+          <Icon name="brand:youtube" class="h-4 w-4" />
+          <span>YouTube</span>
+        </a>
+
+        {/* бургер */}
+        <button
+          id="burger"
+          type="button"
+          class="relative flex h-10 w-10 flex-col items-center justify-center gap-[7px] lg:hidden"
+          aria-label="Открыть меню"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+        >
+          <span class="burger-l block h-[2px] w-7 bg-bone transition-all duration-300"></span>
+          <span class="burger-l block h-[2px] w-7 bg-phos transition-all duration-300"></span>
+          <span class="burger-l block h-[2px] w-7 bg-bone transition-all duration-300"></span>
+        </button>
+      </div>
+    </nav>
+  </div>
+
+  {/* мобильное меню */}
+  <div id="mobile-menu" class="bg-void/95 fixed inset-0 top-0 -z-10 backdrop-blur-xl lg:hidden" aria-hidden="true">
+    <div class="bg-blueprint-fade flex h-full flex-col justify-center gap-2 px-8 pt-[72px]">
+      {links.map((l, i) => (
+        <a
+          href={l.href}
+          data-nav={l.id}
+          class="m-link group flex items-baseline gap-4 border-b border-white/8 py-4"
+        >
+          <span class="font-mono text-[12px] text-phos">0{i + 1}</span>
+          <span class="font-display text-3xl font-extrabold text-bone transition-all duration-300 group-hover:translate-x-2 group-hover:text-phos">
+            {l.label}
+          </span>
+        </a>
+      ))}
+      <div class="mt-8 flex items-center gap-3">
+        <a href={site.socials.youtube} target="_blank" rel="noopener" class="btn-void btn-solid clip-corners-sm px-5 py-3 text-[12px]">
+          <Icon name="brand:youtube" class="h-4 w-4" /> YouTube
+        </a>
+        <a href={site.socials.telegram} target="_blank" rel="noopener" class="btn-void btn-ghost clip-corners-sm px-5 py-3 text-[12px]">
+          <Icon name="brand:telegram" class="h-4 w-4" /> TG
+        </a>
+      </div>
+      <p class="font-mono mt-6 text-[11px] tracking-[0.25em] text-sage/60 uppercase">
+        // выбери, куда провалиться
+      </p>
+    </div>
+  </div>
+</header>

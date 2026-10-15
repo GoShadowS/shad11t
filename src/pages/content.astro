@@ -1,0 +1,203 @@
+---
+/**
+ * SHADVOID — /content: видео с канала, рубрики, подписка.
+ */
+import Base from '../layouts/Base.astro';
+import VideoCard from '../components/VideoCard.astro';
+import Icon from '../components/Icon.astro';
+import site from '../data/site.json';
+import videosData from '../data/videos.json';
+import { pg } from '../lib/paths';
+
+const videos = videosData.filter((v) => v && (v as { id?: string }).id) as {
+  id: string; title: string; description?: string; date?: string; duration?: string; featured?: boolean;
+}[];
+const featured = videos.find((v) => v.featured) || videos[0];
+const rest = videos.filter((v) => v !== featured);
+const isRealId = featured && /^[a-zA-Z0-9_-]{11}$/.test(featured.id);
+
+const formats = [
+  {
+    icon: 'Gamepad2',
+    title: 'Летсплеи',
+    text: 'Выживание, хардкор и челленджи. Много криков, ещё больше криперов.',
+    tag: 'каждую неделю',
+  },
+  {
+    icon: 'Code2',
+    title: 'Девлоги',
+    text: 'Пишу моды и приложения в прямом эфире: с багами, гуглом и честными фейлами.',
+    tag: 'по настроению тени',
+  },
+  {
+    icon: 'GraduationCap',
+    title: 'Туториалы',
+    text: 'Разбираю Forge, плагины и автоматизацию так, чтобы понял даже крипер.',
+    tag: 'по запросам',
+  },
+];
+---
+
+<Base
+  title="Контент"
+  description="Видео Shad11t: летсплеи по Minecraft, девлоги модов и приложений, туториалы по программированию."
+  path={pg('content')}
+>
+  <section class="relative overflow-hidden pt-[130px] pb-12" data-parallax-wrap>
+    <div class="bg-blueprint-fade pointer-events-none absolute inset-0"></div>
+    <div class="pointer-events-none absolute top-10 -right-10 hidden select-none lg:block" aria-hidden="true">
+      <span data-parallax="0.2" class="font-display text-ghost block text-[12rem] leading-none font-black">▶</span>
+    </div>
+
+    <div class="relative mx-auto max-w-[1400px] px-5 md:px-8">
+      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// эфир // rec ●</p>
+      <h1 data-reveal="chars" class="font-display max-w-4xl text-5xl leading-[1.02] font-black text-bone md:text-7xl">
+        Смотри, как рождается тень<span class="text-phos">.</span>
+      </h1>
+      <p data-reveal="up" class="mt-5 max-w-xl text-[15px] leading-relaxed text-sage">
+        Канал — это закулисье всех проектов с витрины: летсплеи, девлоги и туториалы без воды и занудства.
+      </p>
+    </div>
+  </section>
+
+  {/* ================= FEATURED ================= */}
+  {featured && (
+    <section class="mx-auto max-w-[1400px] px-5 pb-16 md:px-8">
+      {isRealId ? (
+        <div data-reveal="scale" class="clip-corners scanlines relative aspect-video overflow-hidden border border-phos/30 bg-black" data-yt-facade={featured.id}>
+          <img
+            src={`https://i.ytimg.com/vi/${featured.id}/maxresdefault.jpg`}
+            alt={`Превью видео: ${featured.title}`}
+            class="absolute inset-0 h-full w-full object-cover opacity-80"
+            loading="eager"
+            onerror={`this.onerror=null;this.src='https://i.ytimg.com/vi/${featured.id}/hqdefault.jpg'`}
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+          <button
+            type="button"
+            data-yt-play
+            data-cursor="Смотреть"
+            class="group absolute inset-0 flex flex-col items-center justify-center gap-5"
+            aria-label={`Смотреть видео: ${featured.title}`}
+          >
+            <span class="flex h-20 w-20 items-center justify-center rounded-full bg-phos text-void shadow-[0_0_60px_-5px_rgba(198,255,61,0.9)] transition-transform duration-300 group-hover:scale-110 md:h-24 md:w-24">
+              <Icon name="Play" class="ml-1.5 h-8 w-8 fill-current md:h-10 md:w-10" />
+            </span>
+            <span class="font-mono text-[11px] tracking-[0.3em] text-bone/80 uppercase">нажми — будет видео</span>
+          </button>
+          <div class="absolute right-0 bottom-0 left-0 flex flex-wrap items-end justify-between gap-3 p-5 md:p-8">
+            <div>
+              <span class="chip clip-tag mb-3 !border-ember/60 !bg-ember/15 !text-ember">свежий выпуск</span>
+              <p class="font-display max-w-2xl text-xl font-black text-white drop-shadow md:text-3xl">{featured.title}</p>
+            </div>
+            {featured.duration && (
+              <span class="font-mono bg-black/80 px-3 py-1.5 text-[12px] font-bold text-bone">{featured.duration}</span>
+            )}
+          </div>
+        </div>
+      ) : (
+        <a
+          data-reveal="scale"
+          href={site.socials.youtube}
+          target="_blank"
+          rel="noopener"
+          data-cursor="На канал"
+          class="clip-corners group relative flex aspect-[21/9] flex-col items-start justify-end overflow-hidden border border-phos/30 p-6 md:p-10"
+        >
+          <img
+            data-cover={`video-${featured.title}`}
+            data-cover-title={featured.title}
+            data-cover-cat="video"
+            alt=""
+            aria-hidden="true"
+            class="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-void via-void/40 to-transparent"></div>
+          <span class="chip clip-tag relative mb-3 !border-ember/60 !bg-ember/15 !text-ember">свежий выпуск</span>
+          <span class="font-display relative max-w-2xl text-2xl font-black text-bone md:text-4xl">{featured.title}</span>
+          <span class="font-mono relative mt-3 inline-flex items-center gap-2 text-[12px] tracking-[0.2em] text-phos uppercase">
+            <Icon name="brand:youtube" class="h-4 w-4" /> смотреть на канале
+          </span>
+        </a>
+      )}
+      <script is:inline>
+        (() => {
+          const facade = document.querySelector('[data-yt-facade]');
+          const btn = document.querySelector('[data-yt-play]');
+          if (!facade || !btn || facade.dataset.bound) return;
+          facade.dataset.bound = '1';
+          btn.addEventListener('click', () => {
+            const id = facade.dataset.ytFacade;
+            const frame = document.createElement('iframe');
+            frame.src = `https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`;
+            frame.title = 'Видео с канала Shad11t';
+            frame.className = 'absolute inset-0 h-full w-full';
+            frame.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+            frame.allowFullscreen = true;
+            facade.innerHTML = '';
+            facade.appendChild(frame);
+          });
+        })();
+      </script>
+    </section>
+  )}
+
+  {/* ================= СЕТКА ================= */}
+  <section class="mx-auto max-w-[1400px] px-5 pb-20 md:px-8">
+    <div class="mb-8 flex items-center justify-between">
+      <h2 data-reveal="up" class="font-display text-2xl font-black text-bone md:text-3xl">Архив выпусков</h2>
+      <span data-reveal="up" class="font-mono text-[12px] text-sage">{videos.length} видео</span>
+    </div>
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {videos.map((v) => <VideoCard video={v} />)}
+    </div>
+    {rest.length === 0 && videos.length <= 3 && (
+      <p class="font-mono mt-6 text-center text-[12px] text-sage/60">…а остальные сотни — прямо на канале ↓</p>
+    )}
+  </section>
+
+  {/* ================= РУБРИКИ ================= */}
+  <section class="border-y border-white/10 bg-abyss">
+    <div class="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
+      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// рубрики</p>
+      <h2 data-reveal="chars" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
+        Три портала в контент
+      </h2>
+      <div class="mt-10 grid gap-6 md:grid-cols-3">
+        {formats.map((f, i) => (
+          <div
+            data-reveal="up"
+            data-delay={(i * 0.08).toFixed(2)}
+            data-tilt
+            class="p-card group flex flex-col p-7"
+          >
+            <div class="p-glow"></div>
+            <span class="clip-corners-sm flex h-14 w-14 items-center justify-center bg-phos/10 text-phos transition-all duration-300 group-hover:bg-phos group-hover:text-void">
+              <Icon name={f.icon} class="h-7 w-7" />
+            </span>
+            <h3 class="font-display mt-5 text-xl font-bold text-bone">{f.title}</h3>
+            <p class="mt-2 flex-1 text-[14px] leading-relaxed text-sage">{f.text}</p>
+            <p class="font-mono mt-4 text-[11px] tracking-[0.2em] text-ember uppercase">{f.tag}</p>
+          </div>
+        ))}
+      </div>
+
+      <div data-reveal="up" class="mt-12 flex flex-col items-center gap-5 border border-phos/25 bg-phos/[0.04] p-8 text-center md:p-12">
+        <p class="font-display max-w-2xl text-2xl leading-tight font-black text-bone md:text-4xl">
+          Подпишись — и тень будет приходить к тебе сама<span class="text-phos">.</span>
+        </p>
+        <a
+          href={site.socials.youtube}
+          target="_blank"
+          rel="noopener"
+          class="btn-void btn-solid magnetic clip-corners px-9 py-4 text-[13px]"
+          data-cursor="hover"
+        >
+          <Icon name="brand:youtube" class="h-5 w-5" />
+          Подписаться
+        </a>
+        <p class="font-mono text-[11px] tracking-[0.2em] text-sage/70 uppercase">это бесплатно. честно.</p>
+      </div>
+    </div>
+  </section>
+</Base>

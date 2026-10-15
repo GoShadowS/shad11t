@@ -1,0 +1,77 @@
+# SHADVOID — автоматический деплой на GitHub Pages.
+#
+# Как это работает:
+#   1. Ты пушишь в ветку main (git push origin main).
+#   2. Этот workflow собирает сайт (npm run build) и публикует ./dist на GitHub Pages.
+#   3. Через ~1-2 минуты сайт обновляется. Отдельных веток и PR не нужно.
+#
+# Поддерживаются ОБА типа репозиториев (base-путь определяется автоматически):
+#   - <username>.github.io        → сайт на https://<username>.github.io/
+#   - обычный репозиторий <repo>  → сайт на https://<username>.github.io/<repo>/
+#
+# Первичная настройка (один раз): Settings → Pages → Source: "GitHub Actions".
+
+name: Deploy SHADVOID to GitHub Pages
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Determine base path and site URL
+        run: |
+          OWNER="${{ github.repository_owner }}"
+          REPO="${{ github.event.repository.name }}"
+          if [ "$REPO" = "$OWNER.github.io" ]; then
+            echo "BASE_PATH=/" >> "$GITHUB_ENV"
+            echo "SITE_URL=https://$OWNER.github.io" >> "$GITHUB_ENV"
+            echo "→ user site: https://$OWNER.github.io"
+          else
+            echo "BASE_PATH=/$REPO/" >> "$GITHUB_ENV"
+            echo "SITE_URL=https://$OWNER.github.io/$REPO" >> "$GITHUB_ENV"
+            echo "→ project site: https://$OWNER.github.io/$REPO"
+          fi
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build static site
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2

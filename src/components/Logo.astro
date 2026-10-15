@@ -1,0 +1,76 @@
+---
+/**
+ * SHADVOID — фирменный знак «теневое лицо» (оригинальный пиксель-арт)
+ * + словесный знак. Клик ×5 по логотипу — сюрприз :)
+ */
+import site from '../data/site.json';
+import { pg } from '../lib/paths';
+
+interface Props {
+  compact?: boolean;
+  link?: boolean;
+}
+
+const { compact = false, link = true } = Astro.props;
+const faceCls = compact ? 'h-8 w-8' : 'h-9 w-9';
+---
+
+{link ? (
+  <a
+    href={pg('')}
+    id="site-logo"
+    class="group flex items-center gap-3"
+    aria-label={`${site.name} — на главную`}
+    data-cursor="hover"
+  >
+    <span class="transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-105">
+      <svg viewBox="0 0 12 12" class={faceCls} aria-hidden="true" shape-rendering="crispEdges">
+        <rect x="0" y="0" width="12" height="12" fill="#0a0d0b" />
+        <rect x="0" y="0" width="12" height="1" fill="#c6ff3d" opacity="0.9" />
+        <rect x="0" y="11" width="12" height="1" fill="#c6ff3d" opacity="0.25" />
+        <rect x="0" y="0" width="1" height="12" fill="#c6ff3d" opacity="0.9" />
+        <rect x="11" y="0" width="1" height="12" fill="#c6ff3d" opacity="0.25" />
+        <rect x="2.5" y="4" width="2" height="2.5" fill="#c6ff3d" />
+        <rect x="7.5" y="4" width="2" height="2.5" fill="#c6ff3d" />
+        <rect x="3.5" y="8" width="5" height="1" fill="#ff5a1f" />
+        <rect x="5.5" y="8" width="1" height="2" fill="#ff5a1f" />
+        <rect x="7.5" y="7" width="1" height="1" fill="#ff5a1f" opacity="0.7" />
+      </svg>
+    </span>
+    <span class="leading-none">
+      <span class="font-display block text-[15px] font-extrabold tracking-[0.08em] text-bone">
+        {site.name}<span class="text-phos">_</span>
+      </span>
+      {!compact && (
+        <span class="font-mono mt-1 block text-[9px] uppercase tracking-[0.32em] text-sage">
+          {site.tagline}
+        </span>
+      )}
+    </span>
+  </a>
+) : (
+  <span class="flex items-center gap-3" aria-label={site.name}>
+    <svg viewBox="0 0 12 12" class={faceCls} aria-hidden="true" shape-rendering="crispEdges">
+      <rect x="0" y="0" width="12" height="12" fill="#0a0d0b" />
+      <rect x="0" y="0" width="12" height="1" fill="#c6ff3d" opacity="0.9" />
+      <rect x="0" y="11" width="12" height="1" fill="#c6ff3d" opacity="0.25" />
+      <rect x="0" y="0" width="1" height="12" fill="#c6ff3d" opacity="0.9" />
+      <rect x="11" y="0" width="1" height="12" fill="#c6ff3d" opacity="0.25" />
+      <rect x="2.5" y="4" width="2" height="2.5" fill="#c6ff3d" />
+      <rect x="7.5" y="4" width="2" height="2.5" fill="#c6ff3d" />
+      <rect x="3.5" y="8" width="5" height="1" fill="#ff5a1f" />
+      <rect x="5.5" y="8" width="1" height="2" fill="#ff5a1f" />
+      <rect x="7.5" y="7" width="1" height="1" fill="#ff5a1f" opacity="0.7" />
+    </svg>
+    <span class="leading-none">
+      <span class="font-display block text-[15px] font-extrabold tracking-[0.08em] text-bone">
+        {site.name}<span class="text-phos">_</span>
+      </span>
+      {!compact && (
+        <span class="font-mono mt-1 block text-[9px] uppercase tracking-[0.32em] text-sage">
+          {site.tagline}
+        </span>
+      )}
+    </span>
+  </span>
+)}

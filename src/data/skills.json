@@ -1,0 +1,14 @@
+[
+  { "name": "Java", "level": 86, "cat": "lang", "desc": "Моды, плагины, всё для Minecraft" },
+  { "name": "JavaScript", "level": 80, "cat": "lang", "desc": "Веб, скрипты, мини-игры" },
+  { "name": "Python", "level": 78, "cat": "lang", "desc": "Боты, автоматизация, скрипты" },
+  { "name": "C#", "level": 62, "cat": "lang", "desc": "Unity-эксперименты и тулы" },
+  { "name": "Forge / Fabric", "level": 88, "cat": "mc", "desc": "Моддинг Minecraft — дом родной" },
+  { "name": "Spigot API", "level": 84, "cat": "mc", "desc": "Плагины для серверов" },
+  { "name": "Tauri / Desktop", "level": 70, "cat": "app", "desc": "Лёгкие десктоп-приложения" },
+  { "name": "Flutter", "level": 66, "cat": "app", "desc": "Мобилки для Android" },
+  { "name": "Astro / Web", "level": 82, "cat": "app", "desc": "Этот сайт — живое доказательство" },
+  { "name": "Git / Linux", "level": 76, "cat": "tools", "desc": "Терминал — второй дом" },
+  { "name": "Montage", "level": 74, "cat": "media", "desc": "Монтаж видео для канала" },
+  { "name": "Pixel Art", "level": 68, "cat": "media", "desc": "Спрайты и текстуры для модов" }
+]

@@ -1,0 +1,104 @@
+---
+/**
+ * SHADVOID — подвал: гигантская подпись, колонки ссылок, системная строка.
+ */
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import site from '../data/site.json';
+import { pg, u } from '../lib/paths';
+
+const year = new Date().getFullYear();
+const nav = [
+  { href: pg(''), label: 'Главная' },
+  { href: pg('projects'), label: 'Проекты' },
+  { href: pg('about'), label: 'Обо мне' },
+  { href: pg('content'), label: 'Контент' },
+  { href: pg('contact'), label: 'Контакты' },
+];
+const socials = [
+  { href: site.socials.youtube, label: 'YouTube', icon: 'brand:youtube' },
+  { href: site.socials.telegram, label: 'Telegram', icon: 'brand:telegram' },
+  { href: site.socials.boosty, label: 'Boosty', icon: 'brand:boosty' },
+  { href: site.socials.github, label: 'GitHub', icon: 'brand:github' },
+];
+---
+
+<footer class="relative overflow-hidden border-t border-white/10 bg-abyss">
+  <div class="mx-auto max-w-[1400px] px-5 pt-14 pb-8 md:px-8">
+    <div class="grid gap-10 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
+      <div>
+        <Logo />
+        <p class="mt-5 max-w-[280px] text-[14px] leading-relaxed text-sage">
+          {site.description}
+        </p>
+        <div class="mt-5 flex gap-2">
+          {socials.map((s) => (
+            <a
+              href={s.href}
+              target="_blank"
+              rel="noopener"
+              aria-label={s.label}
+              title={s.label}
+              data-cursor="hover"
+              class="magnetic flex h-10 w-10 items-center justify-center border border-white/10 text-sage transition-all duration-200 hover:-translate-y-1 hover:border-phos hover:text-phos hover:shadow-[0_8px_24px_-8px_rgba(198,255,61,0.6)]"
+            >
+              <Icon name={s.icon} class="h-[18px] w-[18px]" />
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <nav aria-label="Навигация в подвале">
+        <p class="lbl">Навигация</p>
+        <ul class="space-y-2.5">
+          {nav.map((n) => (
+            <li>
+              <a href={n.href} data-cursor="hover" class="link-line font-mono text-[13px] text-bone/75 hover:text-phos">
+                <span class="text-phos/50">~/</span>{n.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div>
+        <p class="lbl">Система</p>
+        <ul class="font-mono space-y-2.5 text-[13px] text-bone/75">
+          <li><a href={u('sitemap.xml')} data-cursor="hover" class="link-line hover:text-phos">sitemap.xml</a></li>
+          <li><a href={u('rss.xml')} data-cursor="hover" class="link-line hover:text-phos">rss-лента</a></li>
+          <li><a href={u('robots.txt')} data-cursor="hover" class="link-line hover:text-phos">robots.txt</a></li>
+          <li class="text-sage/70">v1.1 «toxic»</li>
+        </ul>
+      </div>
+
+      <div>
+        <p class="lbl">Статус тени</p>
+        <div class="term-window scanlines p-4">
+          <p class="font-mono text-[12px] leading-relaxed">
+            <span class="t-dim">$</span> <span class="t-bone">whoami</span><br />
+            <span class="t-phos">shad11t_the_shadow</span><br />
+            <span class="t-dim">$</span> <span class="t-bone">uptime</span><br />
+            <span class="t-phos">с тех пор, как погас свет<span class="caret"></span></span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-6 md:flex-row md:items-center">
+      <p class="font-mono text-[12px] text-sage">
+        © {year} <span class="text-bone">{site.author}</span> · все тени защищены
+      </p>
+      <p class="font-mono text-[12px] text-sage/70">
+        собрано в темноте · <a href={pg('admin')} data-cursor="hover" class="link-line opacity-60 hover:opacity-100 hover:text-ember" title="только для тени">/admin</a> · <span title="↑ ↑ ↓ ↓ ← → ← → B A" class="cursor-help opacity-60 hover:text-phos hover:opacity-100">???</span>
+      </p>
+    </div>
+  </div>
+
+  {/* гигантская подпись, уходящая за край */}
+  <div class="pointer-events-none relative select-none" aria-hidden="true">
+    <p class="font-display text-ghost -mb-[0.23em] text-center text-[18.5vw] leading-none font-black tracking-tight whitespace-nowrap">
+      {site.name}
+    </p>
+    <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-abyss to-transparent"></div>
+  </div>
+</footer>

@@ -1,0 +1,89 @@
+---
+/**
+ * SHADVOID — карточка видео. Превью: i.ytimg.com при валидном ID, иначе процедурная обложка.
+ */
+import Icon from './Icon.astro';
+import site from '../data/site.json';
+import { formatDateRu } from '../lib/format';
+
+interface Props {
+  video: {
+    id: string;
+    title: string;
+    description?: string;
+    date?: string;
+    duration?: string;
+    featured?: boolean;
+  };
+}
+
+const { video: v } = Astro.props;
+const isRealId = /^[a-zA-Z0-9_-]{11}$/.test(v.id);
+const href = isRealId ? `https://www.youtube.com/watch?v=${v.id}` : site.socials.youtube;
+const thumb = isRealId ? `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg` : null;
+---
+
+<article class="p-card group flex flex-col" data-tilt>
+  <div class="p-glow"></div>
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener"
+    class="absolute inset-0 z-10"
+    aria-label={`Смотреть видео: ${v.title}`}
+    data-cursor="Смотреть"
+  >
+    <span class="sr-only">{v.title}</span>
+  </a>
+
+  <div class="relative aspect-video overflow-hidden">
+    {thumb ? (
+      <img src={thumb} alt={`Превью: ${v.title}`} loading="lazy" class="p-cover absolute inset-0 h-full w-full object-cover" />
+    ) : (
+      <img
+        data-cover={`video-${v.title}`}
+        data-cover-title={v.title}
+        data-cover-cat="video"
+        alt={`Превью: ${v.title}`}
+        loading="lazy"
+        class="p-cover absolute inset-0 h-full w-full object-cover"
+      />
+    )}
+    <div class="p-veil"></div>
+
+    {/* кнопка play */}
+    <span class="absolute inset-0 flex items-center justify-center">
+      <span class="flex h-16 w-16 items-center justify-center rounded-full bg-phos text-void shadow-[0_0_40px_-5px_rgba(198,255,61,0.8)] transition-transform duration-300 group-hover:scale-110">
+        <Icon name="Play" class="ml-1 h-6 w-6 fill-current" />
+      </span>
+    </span>
+
+    {v.duration && (
+      <span class="font-mono absolute right-3 bottom-3 bg-black/85 px-2 py-1 text-[11px] font-bold text-bone">
+        {v.duration}
+      </span>
+    )}
+    {v.featured && (
+      <span class="chip clip-tag absolute top-3 left-3 !border-ember/60 !bg-ember/15 !text-ember">
+        <Icon name="Flame" class="h-3 w-3" /> свежее
+      </span>
+    )}
+  </div>
+
+  <div class="relative flex flex-1 flex-col p-5">
+    {v.date && (
+      <span class="font-mono mb-2 text-[11px] tracking-[0.14em] text-sage/80 uppercase">
+        {formatDateRu(v.date)}
+      </span>
+    )}
+    <h3 class="font-display text-[17px] leading-snug font-bold text-bone transition-colors duration-300 group-hover:text-phos">
+      {v.title}
+    </h3>
+    {v.description && <p class="p-desc mt-2 text-[13px] leading-relaxed text-sage">{v.description}</p>}
+    <div class="mt-auto pt-4">
+      <span class="p-cta font-mono inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.18em] text-phos uppercase">
+        <Icon name="brand:youtube" class="h-4 w-4" /> Смотреть на YouTube
+      </span>
+    </div>
+  </div>
+</article>

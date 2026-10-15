@@ -1,0 +1,35 @@
+---
+/**
+ * SHADVOID — прелоадер в виде загрузки теневой ОС.
+ * Показывается только при первой (полной) загрузке, при переходах скрыт (persist).
+ */
+import Logo from './Logo.astro';
+---
+
+<div id="preloader" transition:persist aria-hidden="true">
+  <div class="w-[min(92vw,480px)] px-2">
+    <div class="mb-6 flex items-center justify-center">
+      <Logo link={false} />
+    </div>
+
+    <div class="term-window scanlines p-5">
+      <div class="mb-3 flex items-center gap-2 border-b border-white/10 pb-3">
+        <span class="term-dot bg-blood/80"></span>
+        <span class="term-dot bg-gold/80"></span>
+        <span class="term-dot bg-phos/80"></span>
+        <span class="font-mono ml-2 text-[11px] tracking-[0.2em] text-sage uppercase">SHADVOID_OS — boot</span>
+      </div>
+      <div id="boot-log" class="term-body t-dim min-h-[96px] text-[12px]"></div>
+      <div class="mt-4 flex items-center justify-between gap-4">
+        <div class="boot-bar" id="boot-bar" aria-hidden="true">
+          {Array.from({ length: 14 }).map(() => <span></span>)}
+        </div>
+        <span id="boot-pct" class="font-mono text-[12px] font-bold text-phos">0%</span>
+      </div>
+    </div>
+
+    <p class="font-mono mt-4 text-center text-[10px] uppercase tracking-[0.3em] text-sage/60">
+      пробуждение теней…
+    </p>
+  </div>
+</div>
