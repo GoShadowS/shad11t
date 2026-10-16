@@ -3,11 +3,11 @@
  * Shad11t — /projects: витрина с фильтрами, поиском и сортировкой.
  * Сетка рендерится клиентом из объединённых данных (base + оверлей админки).
  */
-import Base from '../layouts/Base.astro';
-import Icon from '../components/Icon.astro';
-import projectsData from '../data/projects.json';
-import { pg } from '../lib/paths';
-import { CATEGORIES } from '../lib/format';
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import projectsData from '../../data/projects.json';
+import { pg } from '../../lib/paths';
+import { CATEGORIES } from '../../lib/format';
 
 const projects = projectsData.filter((p) => p && (p as { id?: string }).id);
 const counts: Record<string, number> = { all: projects.length };

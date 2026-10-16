@@ -41,6 +41,10 @@ function nodeToSvg(node: IconNode): string {
 export function lucideSvg(name: string, cls = ''): string {
   const node = (lucide as unknown as Record<string, IconNode>)[name];
   if (!node || !Array.isArray(node)) {
+    // Если имя совпадает с брендом без префикса (напр. "Github"), отдаём бренд
+    if (BRANDS[name.toLowerCase()]) {
+      return brandSvg(name.toLowerCase(), cls);
+    }
     // заглушка, чтобы верстка не ломалась при опечатке
     return `<svg class="${escapeAttr(cls)}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9l6 6M15 9l-6 6"/></svg>`;
   }
@@ -57,5 +61,6 @@ export function brandSvg(name: string, cls = ''): string {
 /** Универсальный рендер: "Terminal" или "brand:youtube". */
 export function icon(name: string, cls = ''): string {
   if (name.startsWith('brand:')) return brandSvg(name.slice(6), cls);
+  if (BRANDS[name.toLowerCase()]) return brandSvg(name.toLowerCase(), cls);
   return lucideSvg(name, cls);
 }

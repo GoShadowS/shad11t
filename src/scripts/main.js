@@ -3,7 +3,7 @@
  * boot() выполняется при первой загрузке и при каждом переходе (astro:page-load).
  */
 
-import { $, $$, scrollToTarget, toast } from './utils.js';
+import { $, $$, scrollToTarget, toast, isReducedMotion } from './utils.js';
 import { hydrateCovers } from './covers.js';
 import { initAudio, sfx } from './audio.js';
 import { initPreloader } from './preloader.js';
