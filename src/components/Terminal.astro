@@ -1,6 +1,6 @@
 ---
 /**
- * SHADVOID — интерактивный терминал. Оживляет src/scripts/terminal.js.
+ * Shad11t — интерактивный терминал. Оживляет src/scripts/terminal.js.
  * Поддерживает несколько экземпляров на странице (data-terminal).
  */
 import Icon from './Icon.astro';
@@ -10,7 +10,7 @@ interface Props {
   id?: string;
 }
 
-const { title = 'shad11t@shadvoid: ~', id = 'term-main' } = Astro.props;
+const { title = 'shad11t@aquarium: ~', id = 'term-main' } = Astro.props;
 ---
 
 <div class="term-window scanlines scanbeam clip-corners overflow-hidden" data-terminal={id}>

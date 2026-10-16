@@ -1,5 +1,5 @@
 /**
- * SHADVOID — админ-панель (/admin).
+ * Shad11t — админ-панель (/admin).
  * Вход для единственного администратора, CRUD проектов в localStorage-оверлей,
  * публикация в репозиторий через GitHub API, смена пароля.
  */
@@ -155,7 +155,7 @@ export function initAdmin() {
     const list = $('#admin-list');
     if (!list) return;
     if (!data.projects.length) {
-      list.innerHTML = '<p class="font-mono border border-dashed border-white/15 p-8 text-center text-[13px] text-sage">проектов нет. создай первый — тени ждут.</p>';
+      list.innerHTML = '<p class="font-mono border border-dashed border-white/15 p-8 text-center text-[13px] text-sage">проектов нет. создай первый — аквариум ждёт.</p>';
       return;
     }
     list.innerHTML = data.projects.map((p) => {
@@ -390,6 +390,7 @@ export function initAdmin() {
   function fillGh() {
     try {
       const saved = JSON.parse(localStorage.getItem(GH_KEY) || '{}');
+      if (saved.repo === 'shad11t_the_shadow') saved.repo = 'shad11t'; // репозиторий переименован
       if ($('#gh-owner') && saved.owner) $('#gh-owner').value = saved.owner;
       if ($('#gh-repo') && saved.repo) $('#gh-repo').value = saved.repo;
       if ($('#gh-branch') && saved.branch) $('#gh-branch').value = saved.branch;

@@ -1,5 +1,5 @@
 /**
- * SHADVOID — Konami Code: ↑↑↓↓←→←→BA.
+ * Shad11t — Konami Code: ↑↑↓↓←→←→BA.
  * Награда: аксолотль + тост «Achievement Get!» в духе Minecraft.
  */
 
@@ -37,12 +37,12 @@ export function initKonami() {
           <div class="shrink-0 border-2 border-black bg-[#1a1a1a] p-1">${AXOLOTL.replace('h-40 w-40 md:h-52 md:w-52', 'h-12 w-12')}</div>
           <div>
             <p class="font-mono text-[13px] font-bold text-[#ffff54]">Achievement Get!</p>
-            <p class="font-mono text-[15px] text-white">Свой среди теней</p>
+            <p class="font-mono text-[15px] text-white">Свой среди своих</p>
           </div>
         </div>
         <div class="float-slow border-4 border-black shadow-[0_0_80px_-10px_rgba(198,255,61,0.5)]">${AXOLOTL}</div>
         <p class="font-mono max-w-md text-center text-[13px] leading-relaxed text-bone/80">
-          Ты нашёл аксолотля в тени.<br>Он одобряет твои скиллы. <span class="text-phos">Бульк.</span>
+          Ты нашёл аксолотля.<br>Он одобряет твои скиллы. <span class="text-phos">Бульк.</span>
         </p>
         <button type="button" data-konami-close class="btn-void btn-solid clip-corners-sm px-6 py-3 text-[12px]">бульк… закрыть</button>
       </div>`;

@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 
 /**
- * SHADVOID — astro config
+ * Shad11t — astro config
  *
  * BASE_PATH / SITE_URL подставляются автоматически в GitHub Actions (.github/workflows/deploy.yml):
  *  - для репозитория <username>.github.io  →  BASE_PATH=/  SITE_URL=https://<username>.github.io
@@ -15,7 +15,7 @@ const SITE_URL = process.env.SITE_URL || undefined;
 
 if (!SITE_URL) {
   console.warn(
-    '\x1b[33m[shadvoid]\x1b[0m SITE_URL не задан — sitemap.xml и canonical-ссылки будут использовать https://example.com. На GitHub Pages это значение подставляется автоматически.',
+    '\x1b[33m[shad11t]\x1b[0m SITE_URL не задан — sitemap.xml и canonical-ссылки будут использовать https://example.com. На GitHub Pages это значение подставляется автоматически.',
   );
 }
 

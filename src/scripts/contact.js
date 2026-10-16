@@ -1,5 +1,5 @@
 /**
- * SHADVOID — страница контактов: копирование, «передача» сообщения в Telegram.
+ * Shad11t — страница контактов: копирование, «передача» сообщения в Telegram.
  */
 
 import { $, $$, toast, copyText, isReducedMotion } from './utils.js';
@@ -46,7 +46,7 @@ export function initContact() {
 
     const onSubmit = async (e) => {
       e.preventDefault();
-      const name = $('#cf-name')?.value.trim() || 'Анонимная тень';
+      const name = $('#cf-name')?.value.trim() || 'Анонимный лотл';
       const topic = $('#cf-topic')?.value || 'Просто привет';
       const text = msg?.value.trim() || '';
       if (!text) {

@@ -1,7 +1,7 @@
 {
-  "name": "shadvoid",
+  "name": "shad11t",
   "version": "1.0.0",
-  "description": "SHADVOID — портфолио Shad11t: моды, приложения, контент",
+  "description": "Shad11t — портфолио: моды, приложения, контент",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

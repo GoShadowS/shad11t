@@ -1,5 +1,5 @@
 /**
- * SHADVOID — GSAP-слой: hero-интро, scroll-reveal'ы, счётчики,
+ * Shad11t — GSAP-слой: hero-интро, scroll-reveal'ы, счётчики,
  * параллакс, горизонтальная секция, xp-бары.
  */
 

@@ -1,6 +1,6 @@
 ---
 /**
- * SHADVOID — детальная страница проекта (статическая, генерируется из projects.json).
+ * Shad11t — детальная страница проекта (статическая, генерируется из projects.json).
  * Локальные правки админки подхватываются клиентом (data-static-project).
  */
 import Base from '../../layouts/Base.astro';
@@ -141,7 +141,7 @@ const jsonld = {
 
     {related.length > 0 && (
       <section class="mt-16">
-        <h2 class="font-display text-2xl font-black text-bone md:text-3xl">Похожая темнота</h2>
+        <h2 class="font-display text-2xl font-black text-bone md:text-3xl">Похожие проекты</h2>
         <div class="mt-6 grid gap-6 md:grid-cols-2">
           {related.map((p, i) => <ProjectCard project={p} index={i} />)}
         </div>

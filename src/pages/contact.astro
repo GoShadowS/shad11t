@@ -1,6 +1,6 @@
 ---
 /**
- * SHADVOID — /contact: порталы связи, копирование, форма «передачи», FAQ.
+ * Shad11t — /contact: порталы связи, копирование, форма «передачи», FAQ.
  */
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
@@ -10,11 +10,11 @@ import { pg } from '../lib/paths';
 const socials = [
   {
     name: 'YouTube',
-    handle: '@shad11t_the_shadow',
-    desc: 'Видео, стримы и закулисье проектов. Главный портал.',
+    handle: '@shadd11t',
+    desc: 'Видео и закулисье проектов. Главный портал.',
     href: site.socials.youtube,
     icon: 'brand:youtube',
-    copy: 'https://www.youtube.com/@shad11t_the_shadow',
+    copy: 'https://www.youtube.com/@shadd11t',
     accent: true,
   },
   {
@@ -29,7 +29,7 @@ const socials = [
   {
     name: 'Boosty',
     handle: 'shad11ttheshadow',
-    desc: 'Эксклюзивы, ранний доступ и поддержка тени рублём.',
+    desc: 'Эксклюзивы, ранний доступ и поддержка аксолотля рублём.',
     href: site.socials.boosty,
     icon: 'brand:boosty',
     copy: 'https://boosty.to/shad11ttheshadow',
@@ -49,11 +49,11 @@ const socials = [
 const faqs = [
   {
     q: 'Как быстро ты отвечаешь?',
-    a: 'В Telegram — обычно в течение дня. На YouTube-комментарии — под свежими видео. Тень спит днём, но уведомления читает.',
+    a: 'В Telegram — обычно в течение дня. На YouTube-комментарии — под свежими видео. Аксолотль медленный, но уведомления читает.',
   },
   {
     q: 'Можно предложить идею для мода / видео?',
-    a: 'Нужно! Лучшие идеи зрителей уже дважды становились видео. Пиши в Telegram — с пометкой «идея».',
+    a: 'Нужно! Лучшие идеи зрителей становятся видео. Пиши в Telegram — с пометкой «идея».',
   },
   {
     q: 'Берёшь заказы на плагины и ботов?',
@@ -78,10 +78,10 @@ const faqs = [
     <div class="relative mx-auto max-w-[1400px] px-5 text-center md:px-8">
       <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// частота 11.11 // приём открыт</p>
       <h1 data-reveal="chars" class="font-display mx-auto max-w-4xl text-5xl leading-[1.02] font-black text-bone md:text-7xl">
-        Докричись до тени<span class="text-phos">.</span>
+        Докричись до аксолотля<span class="text-phos">.</span>
       </h1>
       <p data-reveal="up" class="mx-auto mt-5 max-w-xl text-[15px] leading-relaxed text-sage">
-        Четыре портала на выбор. Тень отвечает всем — просто некоторым чуть дольше (она тоже человек. наверное).
+        Четыре портала на выбор. Отвечаю всем — просто кому-то чуть дольше (я тоже человек. наверное).
       </p>
     </div>
   </section>
@@ -145,7 +145,7 @@ const faqs = [
       <div>
         <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// передача</p>
         <h2 data-reveal="chars" class="font-display text-4xl leading-[1.05] font-black text-bone md:text-5xl">
-          Отправь сигнал в темноту
+          Отправь сигнал в аквариум
         </h2>
         <p data-reveal="up" class="mt-5 max-w-md text-[15px] leading-relaxed text-sage">
           Без бэкенда и слежки: сообщение зашифруется (ну почти), скопируется в буфер — и ты вставишь его мне в Telegram одним тапом.
@@ -161,7 +161,7 @@ const faqs = [
         <div class="grid gap-5 sm:grid-cols-2">
           <div>
             <label class="lbl" for="cf-name">Твой позывной</label>
-            <input id="cf-name" type="text" maxlength="40" class="field" placeholder="xX_tenelub_Xx" />
+            <input id="cf-name" type="text" maxlength="40" class="field" placeholder="xX_axolotl_fan_Xx" />
           </div>
           <div>
             <label class="lbl" for="cf-topic">Тема сигнала</label>
@@ -180,13 +180,13 @@ const faqs = [
             <label class="lbl" for="cf-message">Сообщение</label>
             <span id="cf-counter" class="font-mono mb-[0.45rem] text-[11px] text-sage/60">0 / 500</span>
           </div>
-          <textarea id="cf-message" rows="5" maxlength="500" class="field resize-y" placeholder="Привет, тень! У меня идея…"></textarea>
+          <textarea id="cf-message" rows="5" maxlength="500" class="field resize-y" placeholder="Привет! У меня идея…"></textarea>
         </div>
         <button type="submit" id="cf-send" data-cursor="hover" class="btn-void btn-solid magnetic clip-corners-sm mt-6 w-full justify-center px-6 py-4 text-[13px] disabled:opacity-60">
           <Icon name="Send" class="h-4 w-4" />
           <span data-label>Передать в Telegram ↗</span>
         </button>
-        <p class="font-mono mt-3 text-center text-[11px] text-sage/60">нажимая кнопку, ты соглашаешься стать чуть темнее</p>
+        <p class="font-mono mt-3 text-center text-[11px] text-sage/60">нажимая кнопку, ты соглашаешься немного намокнуть</p>
       </form>
     </div>
   </section>
@@ -195,7 +195,7 @@ const faqs = [
   <section class="mx-auto max-w-[900px] px-5 py-20 md:px-8 md:py-28">
     <p data-reveal="up" class="font-mono mb-5 text-center text-[12px] tracking-[0.3em] text-ember uppercase">// частые вопросы</p>
     <h2 data-reveal="chars" class="font-display text-center text-4xl font-black text-bone md:text-5xl">
-      Тень отвечает
+      Отвечаю
     </h2>
     <div class="mt-10 space-y-3">
       {faqs.map((f, i) => (

@@ -1,5 +1,5 @@
 /**
- * SHADVOID — GET /robots.txt: закрываем админку и черновики от поисковиков.
+ * Shad11t — GET /robots.txt: закрываем админку и черновики от поисковиков.
  */
 export function GET({ site: astroSite }: { site?: URL }) {
   const base = (astroSite?.toString() ?? 'https://example.com/').replace(/\/$/, '');

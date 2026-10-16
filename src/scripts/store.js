@@ -1,5 +1,5 @@
 /**
- * SHADVOID — слой данных проектов.
+ * Shad11t — слой данных проектов.
  *
  * Источник истины: /projects.json (генерируется при сборке из src/data/projects.json).
  * Локальные правки админки: localStorage-оверлей { added, edited, deleted, order }.

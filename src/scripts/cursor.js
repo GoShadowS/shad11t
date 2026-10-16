@@ -1,5 +1,5 @@
 /**
- * SHADVOID — кастомный курсор: точка + кольцо + текстовая лупа.
+ * Shad11t — кастомный курсор: точка + кольцо + текстовая лупа.
  * [data-cursor="hover"] — кольцо растёт; [data-cursor="Текст"] — показывает лупу с текстом.
  * Только для точных указателей (мышь/тачпад).
  */
@@ -10,6 +10,11 @@ export function initCursor() {
   const dot = $('#cursor-dot');
   const ring = $('#cursor-ring');
   const label = $('#cursor-label');
+  // persist-элементы переживают навигацию — сбрасываем залипшее состояние
+  label.classList.remove('show');
+  dot.classList.add('hidden-cursor');
+  ring.classList.add('hidden-cursor');
+  ring.classList.remove('is-hover');
   if (!dot || !ring || !label || !isFinePointer() || isReducedMotion()) return () => {};
 
   document.documentElement.classList.add('has-cursor');
@@ -83,6 +88,10 @@ export function initCursor() {
 
   return () => {
     cancelAnimationFrame(raf);
+    label.classList.remove('show');
+    dot.classList.add('hidden-cursor');
+    ring.classList.add('hidden-cursor');
+    ring.classList.remove('is-hover');
     document.removeEventListener('mousemove', onMove);
     document.removeEventListener('mouseover', onOver);
     document.removeEventListener('mousedown', onDown);

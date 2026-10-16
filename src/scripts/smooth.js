@@ -1,5 +1,5 @@
 /**
- * SHADVOID — Lenis smooth scroll + связка с GSAP ScrollTrigger.
+ * Shad11t — Lenis smooth scroll + связка с GSAP ScrollTrigger.
  * Хранит инстанс в window.__lenis для scrollTo из других модулей.
  */
 

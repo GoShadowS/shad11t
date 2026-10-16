@@ -1,6 +1,6 @@
 ---
 /**
- * SHADVOID — 404 в духе Minecraft: чанк не загружен.
+ * Shad11t — 404 в духе Minecraft: чанк не загружен.
  * Плюс умный редирект /projects/<id>/ → /project/?id=<id> для локальных черновиков.
  */
 import Base from '../layouts/Base.astro';
@@ -10,7 +10,7 @@ import { pg } from '../lib/paths';
 
 <Base
   title="Чанк не загружен"
-  description="Ошибка 404: эта страница утонула в темноте."
+  description="Ошибка 404: такого чанка не существует."
   path={pg('404')}
   noindex
 >
@@ -26,7 +26,7 @@ import { pg } from '../lib/paths';
         try { raw = decodeURIComponent(raw); } catch (e2) { /* оставляем как есть */ }
         location.replace(base + 'project/?id=' + encodeURIComponent(raw));
       }
-    } catch (e) { /* тень молчит */ }
+    } catch (e) { /* молчим */ }
   </script>
 
   <section class="bg-dirt relative flex min-h-svh flex-col items-center justify-center overflow-hidden px-5 pt-[72px] text-center">
@@ -61,7 +61,7 @@ import { pg } from '../lib/paths';
         </svg>
         <div>
           <p class="font-mono text-[12px] font-bold text-[#ffff54]">Достижение провалено!</p>
-          <p class="font-mono text-[13px] text-white">Турист темноты: страница не найдена</p>
+          <p class="font-mono text-[13px] text-white">Заблудившийся лотл: страница не найдена</p>
         </div>
       </div>
     </div>

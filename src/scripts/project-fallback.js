@@ -1,5 +1,5 @@
 /**
- * SHADVOID — страница /project?id=… : рендер проекта, добавленного через админку
+ * Shad11t — страница /project?id=… : рендер проекта, добавленного через админку
  * (у него нет статической страницы, т.к. он живёт только в localStorage-оверлее).
  */
 
@@ -52,7 +52,7 @@ export function initStaticProject() {
             .join('');
         }
         if (date) date.textContent = p.date ? formatDateRu(p.date) : '—';
-        document.title = `${p.title} — SHADVOID`;
+        document.title = `${p.title} — Shad11t`;
       }
     })
     .catch(() => {});
@@ -66,8 +66,8 @@ function notFoundHTML(id) {
   return `
   <div class="mx-auto max-w-2xl py-24 text-center">
     <p class="font-mono text-[12px] tracking-[0.3em] text-ember uppercase">чанк не загружен</p>
-    <h1 class="font-display mt-4 text-4xl font-black text-bone md:text-6xl">404<span class="text-phos">.</span>тень</h1>
-    <p class="mt-4 text-sage">Проект «${esc(id || '???')}» не найден. Возможно, его поглотила тень (или его удалили).</p>
+    <h1 class="font-display mt-4 text-4xl font-black text-bone md:text-6xl">404<span class="text-phos">.</span>уплыло</h1>
+    <p class="mt-4 text-sage">Проект «${esc(id || '???')}» не найден. Возможно, он уплыл (или его удалили).</p>
     <div class="mt-8 flex flex-wrap justify-center gap-3">
       <a href="${pg('projects')}" class="btn-void btn-solid clip-corners-sm px-6 py-3 text-[12px]" data-cursor="hover">← все проекты</a>
       <a href="${pg('')}" class="btn-void btn-ghost clip-corners-sm px-6 py-3 text-[12px]" data-cursor="hover">на главную</a>
@@ -76,7 +76,7 @@ function notFoundHTML(id) {
 }
 
 function projectHTML(p) {
-  const paras = String(p.description || 'Описания пока нет — тень хранит молчание.')
+  const paras = String(p.description || 'Описания пока нет — аксолотль хранит молчание.')
     .split(/\n{2,}|\n/)
     .map((s) => s.trim())
     .filter(Boolean)
@@ -138,7 +138,7 @@ export function initProjectFallback() {
         if (!alive) return;
         const p = projects.find((x) => String(x.id) === id);
         root.innerHTML = p ? projectHTML(p) : notFoundHTML(id);
-        if (p) document.title = `${p.title} — SHADVOID`;
+        if (p) document.title = `${p.title} — Shad11t`;
         hydrateCovers(root);
         refreshTriggers();
       })

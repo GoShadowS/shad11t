@@ -1,5 +1,5 @@
 /**
- * SHADVOID — GET /rss.xml: лента проектов.
+ * Shad11t — GET /rss.xml: лента проектов.
  */
 import site from '../data/site.json';
 import projectsData from '../data/projects.json';

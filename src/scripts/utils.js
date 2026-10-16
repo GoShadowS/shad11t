@@ -1,5 +1,5 @@
 /**
- * SHADVOID — базовые утилиты клиентских скриптов.
+ * Shad11t — базовые утилиты клиентских скриптов.
  */
 
 export const $ = (sel, root = document) => root.querySelector(sel);
@@ -25,7 +25,7 @@ export const isReducedMotion = () =>
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** Имя файла данных в Gist-хранилище (читает сайт, пишет админка). */
-export const GIST_FILE = 'shadvoid-projects.json';
+export const GIST_FILE = 'shad11t-projects.json';
 
 /** Безопасный URL для href: разрешаем только http(s), остальное отбрасываем. */
 export function safeUrl(href) {
