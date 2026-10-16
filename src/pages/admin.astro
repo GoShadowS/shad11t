@@ -1,14 +1,15 @@
 ---
 /**
- * Shad11t — /admin: панель управления проектами.
- * noindex, безопасный локальный вход без хранения хешей в GitHub.
+ * Shad11t — /admin: панель управления проектами и сайтом.
+ * Безопасный локальный вход без хранения хешей в GitHub.
  */
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import admin from '../data/admin.json';
+import site from '../data/site.json';
 import { pg } from '../lib/paths';
 
-const adminConfig = { adminUser: admin.adminUser || 'shad11t' };
+const adminConfig = { adminUser: admin.adminUser || 'shad11t', avatar: site.avatar || '/avatar.png' };
 ---
 
 <Base
@@ -22,10 +23,10 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t' };
 
     {/* ================= ВХОД / НАСТРОЙКА ================= */}
     <div id="admin-login" class="mx-auto max-w-md">
-      <div class="border border-white/10 bg-abyss p-6 md:p-8">
+      <div class="border border-white/15 bg-abyss p-6 md:p-8">
         <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
           <span class="font-mono text-[12px] font-bold text-bone uppercase tracking-wider">ADMIN PANEL</span>
-          <span class="font-mono text-[11px] text-phos">v2.0</span>
+          <span class="font-mono text-[11px] text-phos">v2.1</span>
         </div>
 
         <h1 id="login-title" class="font-display text-2xl font-bold text-bone">Вход в панель</h1>
@@ -88,6 +89,7 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t' };
         <button type="button" data-tab="editor" data-cursor="hover" class="tab-btn" role="tab"><Icon name="Pencil" class="h-4 w-4" /> Редактор</button>
         <button type="button" data-tab="order" data-cursor="hover" class="tab-btn" role="tab"><Icon name="ListOrdered" class="h-4 w-4" /> Порядок</button>
         <button type="button" data-tab="publish" data-cursor="hover" class="tab-btn" role="tab"><Icon name="Rocket" class="h-4 w-4" /> Публикация</button>
+        <button type="button" data-tab="profile" data-cursor="hover" class="tab-btn" role="tab"><Icon name="User" class="h-4 w-4" /> Профиль & Аватар</button>
         <button type="button" data-tab="security" data-cursor="hover" class="tab-btn" role="tab"><Icon name="ShieldCheck" class="h-4 w-4" /> Безопасность</button>
       </div>
 
@@ -95,7 +97,7 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t' };
       <section data-panel="projects" class="mt-6" role="tabpanel">
         <div id="ov-summary" class="mb-4 flex flex-wrap gap-2"></div>
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <p class="font-mono text-[12px] text-sage">Черновики и правки сохраняются в браузере до публикации</p>
+          <p class="font-mono text-[12px] text-sage">Черновики и правки сохраняются в браузере мгновенно</p>
           <button type="button" id="btn-new" data-cursor="hover" class="btn-void btn-solid px-5 py-2.5 text-[12px]">
             <Icon name="Plus" class="h-4 w-4" /> Новый проект
           </button>
@@ -185,11 +187,18 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t' };
 
       {/* ------- публикация ------- */}
       <section data-panel="publish" class="mt-6 hidden" role="tabpanel">
-        <div class="border border-white/10 bg-abyss p-5 md:p-7">
-          <h2 class="font-display text-xl font-bold text-bone">Подключение к GitHub</h2>
-          <p class="font-mono mt-1 text-[12px] text-sage">
-            Персональный токен GitHub (PAT classic) с правами repo и gist для публикации обновлений
-          </p>
+        {/* Блок настроек репозитория */}
+        <div class="border border-white/15 bg-abyss p-5 md:p-7">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <div>
+              <h2 class="font-display text-xl font-bold text-bone">Публикация в GitHub</h2>
+              <p class="font-mono mt-0.5 text-[12px] text-sage">
+                Сохранение изменений прямо в репозиторий GoShadowS/shad11t
+              </p>
+            </div>
+            <span class="chip chip-bone font-mono text-[11px]">GitHub Contents API</span>
+          </div>
+
           <div class="mt-5 grid gap-4 sm:grid-cols-2">
             <div>
               <label class="lbl" for="gh-owner">Владелец репозитория</label>
@@ -201,75 +210,63 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t' };
             </div>
             <div>
               <label class="lbl" for="gh-branch">Ветка</label>
-              <input id="gh-branch" type="text" class="field" placeholder="main" autocomplete="off" />
+              <input id="gh-branch" type="text" class="field" value="main" placeholder="main" autocomplete="off" />
             </div>
             <div>
-              <label class="lbl" for="gh-path">Путь к файлу</label>
-              <input id="gh-path" type="text" class="field" placeholder="src/data/projects.json" autocomplete="off" />
+              <label class="lbl" for="gh-path">Путь к файлу данных</label>
+              <input id="gh-path" type="text" class="field" value="src/data/projects.json" placeholder="src/data/projects.json" autocomplete="off" />
             </div>
             <div class="sm:col-span-2">
-              <label class="lbl" for="gh-token">GitHub Token (PAT)</label>
-              <input id="gh-token" type="password" class="field" placeholder="ghp_…" autocomplete="off" />
+              <label class="lbl" for="gh-token">GitHub Personal Access Token (PAT)</label>
+              <input id="gh-token" type="password" class="field" placeholder="ghp_… или github_pat_…" autocomplete="off" />
+              <p class="font-mono mt-1.5 text-[11px] text-sage/80 leading-relaxed">
+                Токен создается на <a href="https://github.com/settings/tokens" target="_blank" rel="noopener" class="underline text-phos">github.com/settings/tokens</a>. Требуются права: <b class="text-bone">Contents (Read and write)</b> для Fine-grained токенов или <b class="text-bone">repo</b> для Classic токенов.
+              </p>
               <label class="check-row mt-3">
                 <input id="gh-remember" type="checkbox" />
                 <span class="check-box"><Icon name="Check" class="h-4 w-4" /></span>
-                <span class="font-mono text-[13px] text-bone">Сохранить токен локально в этом браузере</span>
+                <span class="font-mono text-[13px] text-bone">Запомнить токен в этом браузере</span>
               </label>
             </div>
             <div class="sm:col-span-2">
               <label class="lbl" for="gh-message">Текст коммита</label>
-              <input id="gh-message" type="text" class="field" placeholder="content: update projects showcase" autocomplete="off" />
+              <input id="gh-message" type="text" class="field" value="content: update projects showcase" placeholder="content: update projects showcase" autocomplete="off" />
             </div>
           </div>
-        </div>
 
-        <div class="border border-white/10 bg-abyss mt-6 p-5 md:p-7">
-          <h2 class="font-display text-xl font-bold text-bone">Публикация в репозиторий</h2>
-          <p class="font-mono mt-1 text-[12px] text-sage">
-            Запушит projects.json прямо в main ветку репозитория. GitHub Actions автоматически пересоберёт сайт и обновит страницы.
-          </p>
-          <button type="button" id="btn-publish" data-cursor="hover" class="btn-void btn-solid mt-4 px-6 py-3 text-[12px] disabled:opacity-60">
-            <Icon name="Rocket" class="h-4 w-4" /> Опубликовать в репозиторий
-          </button>
-          <div id="publish-status" class="font-mono mt-3 min-h-[20px] text-[12px]"></div>
-        </div>
-
-        <div class="border border-white/10 bg-abyss mt-6 p-5 md:p-7">
-          <h2 class="font-display text-xl font-bold text-bone">Мгновенная публикация через Gist</h2>
-          <p class="font-mono mt-1 text-[12px] text-sage">
-            Обновляет проекты в Gist-хранилище — изменения сразу видны на сайте без пересборки.
-          </p>
-          <div id="gist-status" class="font-mono mt-3 min-h-[20px] text-[12px]"></div>
-          <div class="mt-4 flex flex-wrap gap-3">
-            <button type="button" id="btn-gist-publish" data-cursor="hover" class="btn-void btn-solid px-6 py-2.5 text-[12px] disabled:opacity-60">
-              <Icon name="Zap" class="h-4 w-4" /> Опубликовать в Gist
+          <div class="mt-6 flex flex-wrap items-center gap-3 border-t border-white/10 pt-5">
+            <button type="button" id="btn-publish" data-cursor="hover" class="btn-void btn-solid px-6 py-3 text-[12px] disabled:opacity-60">
+              <Icon name="Rocket" class="h-4 w-4" /> Опубликовать в репозиторий
             </button>
-            <button type="button" id="btn-gist-create" data-cursor="hover" class="btn-void btn-ghost px-5 py-2.5 text-[12px] disabled:opacity-60">
-              <Icon name="Plus" class="h-4 w-4" /> Создать Gist
+            <button type="button" id="btn-test-token" data-cursor="hover" class="btn-void btn-ghost px-5 py-3 text-[12px]">
+              <Icon name="CheckCircle2" class="h-4 w-4" /> Проверить токен
             </button>
           </div>
+
+          <div id="publish-status" class="font-mono mt-4 min-h-[22px] text-[12px]"></div>
         </div>
 
+        {/* Экспорт и импорт */}
         <div class="mt-6 grid gap-6 lg:grid-cols-2">
           <div class="border border-white/10 bg-abyss p-5">
-            <h3 class="font-display text-lg font-bold text-bone">Экспорт данных</h3>
-            <p class="font-mono mt-1 text-[12px] text-sage">Скачать или скопировать JSON файл проектов</p>
+            <h3 class="font-display text-lg font-bold text-bone">Скачать / Скопировать JSON</h3>
+            <p class="font-mono mt-1 text-[12px] text-sage">Получить актуальный файл projects.json в один клик</p>
             <div class="mt-4 flex flex-wrap gap-3">
               <button type="button" id="btn-download" data-cursor="hover" class="btn-void btn-ghost px-4 py-2.5 text-[12px]">
-                <Icon name="Download" class="h-4 w-4" /> Скачать JSON
+                <Icon name="Download" class="h-4 w-4" /> Скачать projects.json
               </button>
               <button type="button" id="btn-copy-json" data-cursor="hover" class="btn-void btn-ghost px-4 py-2.5 text-[12px]">
-                <Icon name="Copy" class="h-4 w-4" /> Копировать
+                <Icon name="Copy" class="h-4 w-4" /> Копировать JSON
               </button>
             </div>
           </div>
           <div class="border border-white/10 bg-abyss p-5">
-            <h3 class="font-display text-lg font-bold text-bone">Импорт данных</h3>
-            <p class="font-mono mt-1 text-[12px] text-sage">Загрузить JSON проектов</p>
-            <textarea id="import-text" rows="2" class="field mt-3" placeholder='[{"id": "...", ...}]'></textarea>
+            <h3 class="font-display text-lg font-bold text-bone">Импорт проектов</h3>
+            <p class="font-mono mt-1 text-[12px] text-sage">Загрузить существующий JSON</p>
+            <textarea id="import-text" rows="2" class="field mt-3" placeholder='[{"id": "...", "title": "..."}]'></textarea>
             <div class="mt-3 flex flex-wrap items-center gap-3">
               <label class="btn-void btn-ghost cursor-pointer px-4 py-2 text-[12px]" data-cursor="hover">
-                <Icon name="Upload" class="h-4 w-4" /> Выбрать файл
+                <Icon name="Upload" class="h-4 w-4" /> Загрузить файл
                 <input id="file-import" type="file" accept="application/json,.json" class="hidden" />
               </label>
               <button type="button" id="btn-import" data-cursor="hover" class="btn-void btn-solid px-4 py-2 text-[12px]">
@@ -281,10 +278,39 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t' };
 
         <div class="mt-6 border border-blood/30 bg-blood/5 p-5">
           <h3 class="font-display text-lg font-bold text-blood">Сброс локальных правок</h3>
-          <p class="font-mono mt-1 text-[12px] text-sage">Удалить черновики из браузера и вернуться к данным репозитория</p>
+          <p class="font-mono mt-1 text-[12px] text-sage">Очистить черновики браузера и вернуться к данным репозитория</p>
           <button type="button" id="btn-overlay-reset" data-cursor="hover" class="btn-void btn-danger mt-3 px-5 py-2.5 text-[12px]">
             <Icon name="Trash2" class="h-4 w-4" /> Сбросить локальные правки
           </button>
+        </div>
+      </section>
+
+      {/* ------- профиль & аватар ------- */}
+      <section data-panel="profile" class="mt-6 hidden" role="tabpanel">
+        <div class="border border-white/10 bg-abyss max-w-2xl p-5 md:p-7">
+          <h2 class="font-display text-xl font-bold text-bone">Настройки профиля и аватар</h2>
+          <p class="font-mono mt-1 text-[12px] text-sage">
+            Управление аватаром и публичной информацией
+          </p>
+
+          <div class="mt-6 flex items-center gap-6">
+            <div class="pixel-frame shrink-0 bg-panel p-1 flex items-center justify-center h-24 w-24 overflow-hidden rounded">
+              <img id="avatar-preview" src={site.avatar || '/avatar.png'} alt="Превью аватара" class="h-full w-full object-cover" onerror="this.onerror=null;this.src='/favicon.svg';" />
+            </div>
+            <div class="space-y-2 flex-1">
+              <label class="lbl" for="avatar-url-input">Путь к аватару или URL</label>
+              <input id="avatar-url-input" type="text" class="field" value={site.avatar || '/avatar.png'} placeholder="/avatar.png или https://…" />
+              <p class="font-mono text-[11px] text-sage">
+                Можно положить файл <code class="text-phos">avatar.png</code> в папку <code class="text-phos">public/</code> репозитория или указать прямую ссылку на картинку.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-6 flex gap-3">
+            <button type="button" id="btn-save-avatar" data-cursor="hover" class="btn-void btn-solid px-6 py-2.5 text-[12px]">
+              <Icon name="Save" class="h-4 w-4" /> Сохранить настройки
+            </button>
+          </div>
         </div>
       </section>
 

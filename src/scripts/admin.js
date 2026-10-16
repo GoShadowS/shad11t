@@ -1,14 +1,14 @@
 /**
  * Shad11t — админ-панель (/admin).
  * Безопасная аутентификация без хранения паролей в GitHub.
- * Управление проектами (CRUD), публикация в репозиторий через GitHub API / Gist.
+ * Управление проектами (CRUD), публикация в репозиторий через GitHub API.
  */
 
 import { $, $$, esc, toast, copyText } from './utils.js';
-import { loadProjects, getOverlay, saveOverlay, clearOverlay, mergedForPublish, gistURL } from './store.js';
+import { loadProjects, getOverlay, saveOverlay, clearOverlay, mergedForPublish } from './store.js';
 import { coverURL } from './covers.js';
 import { hashPassword, safeEqual, randomSalt } from './hash-client.js';
-import { publishToGitHub, createGist, updateGist, readRepoFile, writeRepoFile } from './github.js';
+import { publishToGitHub, testGitHubAuth } from './github.js';
 import site from '../data/site.json';
 import { sfx } from './audio.js';
 
@@ -17,7 +17,7 @@ const MASTER_AUTH_KEY = 'shad11t_admin_master_v2';
 const GH_KEY = 'shad11t_gh_cfg';
 const GH_TOKEN_KEY = 'shad11t_gh_token';
 const GH_TOKEN_LOCAL = 'shad11t_gh_token_local';
-const GIST_PENDING_KEY = 'shad11t_gist_pending';
+const AVATAR_KEY = 'shad11t_avatar_custom';
 const SESSION_TTL = 12 * 3600 * 1000;
 
 function slugify(s) {
@@ -120,7 +120,6 @@ export function initAdmin() {
     const err = $('#login-error');
 
     if (!currentAuth) {
-      // Режим первой настройки
       const p1 = $('#setup-pass')?.value || '';
       const p2 = $('#setup-pass-confirm')?.value || '';
       if (p1.length < 6) {
@@ -140,21 +139,18 @@ export function initAdmin() {
       return;
     }
 
-    // Режим входа
     const pass = $('#login-pass')?.value || '';
     let ok = false;
 
-    // 1. Проверка по локальному мастер-паролю
     try {
       ok = (user === currentAuth.user || user === 'shad11t') && safeEqual(hashPassword(pass, currentAuth.salt, currentAuth.iterations), currentAuth.hash);
     } catch {
       ok = false;
     }
 
-    // 2. Альтернативный вход по GitHub PAT
-    if (!ok && pass.startsWith('ghp_') || pass.startsWith('github_pat_')) {
+    if (!ok && (pass.startsWith('ghp_') || pass.startsWith('github_pat_'))) {
       ok = true;
-      sessionStorage.setItem(GH_TOKEN_KEY, pass);
+      sessionStorage.setItem(GH_TOKEN_KEY, pass.trim());
     }
 
     if (ok) {
@@ -233,7 +229,7 @@ export function initAdmin() {
           <p class="truncate text-[15px] font-bold text-bone">${esc(p.title)}${overlayMark(String(p.id))}</p>
           <p class="font-mono mt-0.5 truncate text-[11px] text-sage">${esc(p.id)} · ${esc(p.category)} · ${esc(p.date || '—')}</p>
         </div>
-        <button type="button" data-act="feat" title="В топ / убрать" class="flex h-9 w-9 shrink-0 items-center justify-center border transition-colors ${p.featured ? 'border-gold/60 text-gold' : 'border-white/15 text-sage hover:text-gold'}">★</button>
+        <button type="button" data-act="feat" title="В избранное" class="flex h-9 w-9 shrink-0 items-center justify-center border transition-colors ${p.featured ? 'border-gold/60 text-gold bg-gold/10' : 'border-white/15 text-sage hover:text-gold'}">★</button>
         <button type="button" data-act="edit" class="font-mono hidden shrink-0 border border-white/15 px-3 py-2 text-[11px] tracking-widest uppercase hover:border-phos hover:text-phos sm:block">Редактировать</button>
         <button type="button" data-act="del" title="Удалить" class="flex h-9 w-9 shrink-0 items-center justify-center border border-white/15 text-sage transition-colors hover:border-blood hover:text-blood">✕</button>
       </div>`;
@@ -256,7 +252,7 @@ export function initAdmin() {
     const p = data.projects.find((x) => String(x.id) === id);
     if (!p) return;
     applySave({ ...p, featured: !p.featured }, true);
-    toast(p.featured ? 'Убран из топа' : 'Добавлен в топ', 'info');
+    toast(p.featured ? 'Убран из избранного' : 'Добавлен в избранное', 'info');
   }
 
   function removeProject(id) {
@@ -276,123 +272,129 @@ export function initAdmin() {
     toast('Проект удалён');
   }
 
-  /* ---------- editor ---------- */
+  /* ---------- tabs ---------- */
+  const tabs = $$('[data-tab]');
+  const panels = $$('[data-panel]');
   function switchTab(name) {
-    $$('[data-tab]').forEach((b) => b.classList.toggle('on', b.dataset.tab === name));
-    $$('[data-panel]').forEach((p) => p.classList.toggle('hidden', p.dataset.panel !== name));
+    tabs.forEach((t) => t.classList.toggle('on', t.dataset.tab === name));
+    panels.forEach((p) => p.classList.toggle('hidden', p.dataset.panel !== name));
   }
-  on(root, 'click', (e) => {
-    const b = e.target.closest('[data-tab]');
-    if (b) switchTab(b.dataset.tab);
-  });
+  tabs.forEach((t) => on(t, 'click', () => switchTab(t.dataset.tab)));
 
-  function fillForm(p) {
-    $('#f-title').value = p?.title || '';
-    $('#f-id').value = p?.id || '';
-    $('#f-category').value = p?.category || 'other';
-    $('#f-date').value = p?.date || todayISO();
-    $('#f-featured').checked = Boolean(p?.featured);
-    $('#f-image').value = p?.image || '';
-    $('#f-link').value = p?.link || '';
-    $('#f-tags').value = (p?.tags || []).join(', ');
-    $('#f-description').value = p?.description || '';
-    updatePreview();
-  }
-
+  /* ---------- project editor ---------- */
   function startEdit(id) {
     const p = data.projects.find((x) => String(x.id) === id);
     if (!p) return;
     editingId = id;
     $('#editor-title').textContent = `Редактирование: ${p.title}`;
-    $('#f-id').readOnly = true;
-    fillForm(p);
+    $('#f-title').value = p.title || '';
+    $('#f-id').value = p.id || '';
+    $('#f-id').disabled = data.baseIds.has(id);
+    $('#f-category').value = p.category || 'other';
+    $('#f-date').value = p.date || '';
+    $('#f-description').value = p.description || '';
+    $('#f-image').value = p.image || '';
+    $('#f-link').value = p.link || '';
+    $('#f-tags').value = (p.tags || []).join(', ');
+    $('#f-featured').checked = Boolean(p.featured);
+    updateCoverPreview();
     switchTab('editor');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   function startNew() {
     editingId = null;
     $('#editor-title').textContent = 'Новый проект';
-    $('#f-id').readOnly = false;
-    fillForm(null);
+    $('#project-form').reset();
+    $('#f-id').disabled = false;
+    $('#f-date').value = todayISO();
+    updateCoverPreview();
     switchTab('editor');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    $('#f-title')?.focus();
   }
 
   on($('#btn-new'), 'click', startNew);
   on($('#btn-cancel'), 'click', () => switchTab('projects'));
 
-  function updatePreview() {
+  function updateCoverPreview() {
     const box = $('#cover-preview-box');
     if (!box) return;
-    const img = $('#f-image')?.value.trim();
-    const title = $('#f-title')?.value.trim() || 'Без названия';
+    const title = $('#f-title')?.value.trim() || 'Новый проект';
     const cat = $('#f-category')?.value || 'other';
-    const id = $('#f-id')?.value.trim() || slugify(title);
-    const src = img || coverURL(id, title, cat);
-    box.innerHTML = `<img src="${esc(src)}" alt="" class="h-32 w-full object-cover">`;
+    const img = $('#f-image')?.value.trim();
+    if (img) {
+      box.innerHTML = `<img src="${esc(img)}" alt="" class="h-40 w-full object-cover">`;
+    } else {
+      const url = coverURL(editingId || 'preview', title, cat);
+      box.innerHTML = `<img src="${url}" alt="" class="h-40 w-full object-cover">`;
+    }
   }
 
-  ['#f-title', '#f-category', '#f-image', '#f-id'].forEach((sel) => {
-    on($(sel), 'input', updatePreview);
-    on($(sel), 'change', updatePreview);
+  on($('#f-title'), 'input', () => {
+    if (!editingId && !$('#f-id')?.disabled) {
+      $('#f-id').value = slugify($('#f-title').value);
+    }
+    updateCoverPreview();
+  });
+  on($('#f-category'), 'change', updateCoverPreview);
+  on($('#f-image'), 'input', updateCoverPreview);
+
+  on($('#project-form'), 'submit', (e) => {
+    e.preventDefault();
+    const title = $('#f-title').value.trim();
+    const id = slugify($('#f-id').value || title);
+    if (!title || !id) {
+      toast('Заполните название проекта', 'err');
+      return;
+    }
+
+    const payload = {
+      id,
+      title,
+      description: $('#f-description').value.trim(),
+      category: $('#f-category').value,
+      image: $('#f-image').value.trim(),
+      link: $('#f-link').value.trim(),
+      tags: $('#f-tags').value.split(',').map((s) => s.trim()).filter(Boolean),
+      date: $('#f-date').value || todayISO(),
+      featured: $('#f-featured').checked,
+    };
+
+    applySave(payload);
+    toast('Проект сохранён в черновиках');
+    try { sfx('success'); } catch { /* ignore */ }
+    switchTab('projects');
   });
 
   function applySave(project, silent = false) {
     const ov = getOverlay();
-    const isBase = data.baseIds.has(project.id);
-    if (isBase) {
-      ov.edited[project.id] = project;
-      ov.deleted = ov.deleted.filter((x) => String(x) !== project.id);
+    const id = String(project.id);
+    if (data.baseIds.has(id)) {
+      ov.edited[id] = project;
+      ov.deleted = ov.deleted.filter((x) => String(x) !== id);
     } else {
-      const idx = ov.added.findIndex((x) => String(x.id) === project.id);
+      const idx = ov.added.findIndex((x) => String(x.id) === id);
       if (idx >= 0) ov.added[idx] = project;
       else ov.added.push(project);
     }
-    if (!ov.order.includes(project.id)) ov.order.push(project.id);
+    if (!ov.order.includes(id)) {
+      ov.order.push(id);
+    }
     saveOverlay(ov);
     refresh();
-    if (!silent) toast('Сохранено локально');
   }
-
-  on($('#project-form'), 'submit', (e) => {
-    e.preventDefault();
-    const title = $('#f-title')?.value.trim();
-    if (!title) {
-      toast('Укажите название проекта', 'err');
-      return;
-    }
-    const id = editingId || $('#f-id')?.value.trim() || slugify(title);
-    const category = $('#f-category')?.value || 'other';
-    const date = $('#f-date')?.value || todayISO();
-    const featured = Boolean($('#f-featured')?.checked);
-    const image = $('#f-image')?.value.trim() || '';
-    const link = $('#f-link')?.value.trim() || '';
-    const tags = ($('#f-tags')?.value || '')
-      .split(',')
-      .map((t) => t.trim())
-      .filter(Boolean);
-    const description = $('#f-description')?.value.trim() || '';
-
-    const p = { id, title, category, date, featured, image, link, tags, description };
-    applySave(p);
-    switchTab('projects');
-  });
 
   /* ---------- order ---------- */
   function renderOrder() {
-    const box = $('#order-list');
-    if (!box) return;
-    box.innerHTML = data.projects
+    const list = $('#order-list');
+    if (!list) return;
+    list.innerHTML = data.projects
       .map(
-        (p, i) => `
-      <div class="flex items-center justify-between border border-white/10 bg-abyss p-3" data-idx="${i}">
-        <span class="font-mono text-[12px] text-sage w-6">${i + 1}</span>
-        <span class="flex-1 truncate font-bold text-bone text-[14px] mx-2">${esc(p.title)}</span>
-        <div class="flex gap-1">
-          <button type="button" data-dir="up" class="border border-white/15 px-2.5 py-1 text-[12px] hover:border-phos ${i === 0 ? 'opacity-30' : ''}" ${i === 0 ? 'disabled' : ''}>▲</button>
-          <button type="button" data-dir="down" class="border border-white/15 px-2.5 py-1 text-[12px] hover:border-phos ${i === data.projects.length - 1 ? 'opacity-30' : ''}" ${i === data.projects.length - 1 ? 'disabled' : ''}>▼</button>
+        (p, idx) => `
+      <div class="flex items-center justify-between border border-white/10 bg-abyss p-3" data-idx="${idx}">
+        <span class="font-mono text-[12px] text-phos mr-3">${String(idx + 1).padStart(2, '0')}</span>
+        <span class="flex-1 truncate font-bold text-bone">${esc(p.title)}</span>
+        <div class="flex gap-1 ml-3">
+          <button type="button" data-dir="up" class="btn-void btn-ghost px-2.5 py-1 text-[11px]" ${idx === 0 ? 'disabled' : ''}>▲</button>
+          <button type="button" data-dir="down" class="btn-void btn-ghost px-2.5 py-1 text-[11px]" ${idx === data.projects.length - 1 ? 'disabled' : ''}>▼</button>
         </div>
       </div>`,
       )
@@ -452,16 +454,25 @@ export function initAdmin() {
     if (token && $('#gh-token')) $('#gh-token').value = token;
     const rem = Boolean(localStorage.getItem(GH_TOKEN_LOCAL));
     if ($('#gh-remember')) $('#gh-remember').checked = rem;
+
+    // Загрузка кастомного аватара
+    const savedAv = localStorage.getItem(AVATAR_KEY);
+    if (savedAv && $('#avatar-url-input')) {
+      $('#avatar-url-input').value = savedAv;
+      const prev = $('#avatar-preview');
+      if (prev) prev.src = savedAv;
+    }
   }
 
   function getToken() {
-    return $('#gh-token')?.value.trim() || sessionStorage.getItem(GH_TOKEN_KEY) || localStorage.getItem(GH_TOKEN_LOCAL) || '';
+    return String($('#gh-token')?.value || sessionStorage.getItem(GH_TOKEN_KEY) || localStorage.getItem(GH_TOKEN_LOCAL) || '').trim();
   }
 
   function stashToken(token) {
     if (!token) return;
-    sessionStorage.setItem(GH_TOKEN_KEY, token);
-    if ($('#gh-remember')?.checked) localStorage.setItem(GH_TOKEN_LOCAL, token);
+    const t = String(token).trim();
+    sessionStorage.setItem(GH_TOKEN_KEY, t);
+    if ($('#gh-remember')?.checked) localStorage.setItem(GH_TOKEN_LOCAL, t);
   }
 
   function setPublishStatus(html) {
@@ -469,18 +480,52 @@ export function initAdmin() {
     if (el) el.innerHTML = html;
   }
 
-  function setGistStatus(html) {
-    const el = $('#gist-status');
-    if (el) el.innerHTML = html;
-  }
-
   function ghErr(err) {
     const s = String(err?.message || err || 'Неизвестная ошибка');
-    if (/bad credentials/i.test(s)) return 'Неверный токен GitHub (401 Bad Credentials).';
-    if (/not found/i.test(s)) return 'Репозиторий или ветка не найдены (404). Проверьте owner/repo.';
+    if (/bad credentials/i.test(s) || err?.status === 401) {
+      return 'Неверный токен GitHub (401 Bad Credentials). Проверьте токен или создайте новый.';
+    }
+    if (/not found/i.test(s) || err?.status === 404) {
+      return 'Репозиторий или ветка не найдены (404). Проверьте GoShadowS/shad11t.';
+    }
+    if (err?.status === 403) {
+      return 'Недостаточно прав (403). Убедитесь, что токен имеет права Contents: Read and write.';
+    }
     return s;
   }
 
+  // Проверка токена
+  on($('#btn-test-token'), 'click', async () => {
+    const btn = $('#btn-test-token');
+    const s = ghSettings();
+    const token = getToken();
+    if (!token) {
+      toast('Введите GitHub Token', 'err');
+      setPublishStatus('<span class="text-blood">✕ Введите GitHub Personal Access Token в поле выше.</span>');
+      return;
+    }
+    btn.disabled = true;
+    const old = btn.innerHTML;
+    btn.innerHTML = 'Проверка…';
+    setPublishStatus('<span class="text-sage">Подключение к GitHub API…</span>');
+    try {
+      const res = await testGitHubAuth({ owner: s.owner, repo: s.repo, token });
+      stashToken(token);
+      setPublishStatus(`<span class="text-phos font-bold">✓ Подключение успешно!</span> Репозиторий: <b class="text-bone">${res.repo}</b>. Права на запись: <b class="text-phos">${res.canPush ? 'Есть' : 'Только чтение'}</b>.`);
+      toast('Токен действителен!');
+      try { sfx('success'); } catch { /* ignore */ }
+    } catch (err) {
+      const msg = ghErr(err);
+      setPublishStatus(`<span class="text-blood font-bold">✕ Ошибка проверки:</span> <span class="text-sage">${esc(msg)}</span>`);
+      toast(`Ошибка: ${msg}`, 'err');
+      try { sfx('error'); } catch { /* ignore */ }
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = old;
+    }
+  });
+
+  // Публикация в репозиторий
   on($('#btn-publish'), 'click', async () => {
     const btn = $('#btn-publish');
     const s = ghSettings();
@@ -491,6 +536,7 @@ export function initAdmin() {
     }
     if (!token) {
       toast('Введите GitHub Token', 'err');
+      setPublishStatus('<span class="text-blood">✕ Введите GitHub Token перед публикацией.</span>');
       return;
     }
     localStorage.setItem(GH_KEY, JSON.stringify({ owner: s.owner, repo: s.repo, branch: s.branch, path: s.path }));
@@ -498,16 +544,16 @@ export function initAdmin() {
     btn.disabled = true;
     const old = btn.innerHTML;
     btn.innerHTML = 'Публикация…';
-    setPublishStatus('<span class="text-sage">Отправка коммита в GitHub…</span>');
+    setPublishStatus('<span class="text-sage">Создание коммита в GitHub…</span>');
     try {
       const res = await publishToGitHub({ ...s, token });
       const url = res?.commit?.html_url || res?.content?.html_url || '';
-      setPublishStatus(`<span class="text-phos font-bold">✓ Успешно опубликовано!</span> ${url ? `<a class="underline ml-2" href="${esc(url)}" target="_blank" rel="noopener">Открыть коммит ↗</a>` : ''}<br><span class="text-sage">GitHub Actions пересоберёт сайт за ~30 секунд.</span>`);
+      setPublishStatus(`<span class="text-phos font-bold">✓ Коммит создан успешно!</span> ${url ? `<a class="underline text-phos ml-2" href="${esc(url)}" target="_blank" rel="noopener">Открыть на GitHub ↗</a>` : ''}<br><span class="text-sage mt-1 block">GitHub Actions автоматически пересоберёт и развернёт сайт за ~30 секунд.</span>`);
       toast('Опубликовано в GitHub!');
       try { sfx('success'); } catch { /* ignore */ }
     } catch (err) {
       const msg = ghErr(err);
-      setPublishStatus(`<span class="text-blood">✕ ${esc(msg)}</span>`);
+      setPublishStatus(`<span class="text-blood font-bold">✕ Ошибка публикации:</span> <span class="text-sage">${esc(msg)}</span>`);
       toast(`Ошибка: ${msg}`, 'err');
       try { sfx('error'); } catch { /* ignore */ }
     } finally {
@@ -520,64 +566,21 @@ export function initAdmin() {
     if (!e.target.checked) localStorage.removeItem(GH_TOKEN_LOCAL);
   });
 
-  /* ---------- gist ---------- */
-  on($('#btn-gist-publish'), 'click', async () => {
-    const btn = $('#btn-gist-publish');
-    const gId = site?.runtimeData?.gistId;
-    const token = getToken();
-    if (!token) {
-      toast('Введите GitHub Token', 'err');
-      return;
-    }
-    if (!gId) {
-      toast('Gist не подключён. Нажмите «Создать Gist»', 'err');
-      return;
-    }
-    stashToken(token);
-    btn.disabled = true;
-    const old = btn.innerHTML;
-    btn.innerHTML = 'Публикация…';
-    try {
-      const n = await updateGist({ token, gistId: gId });
-      setGistStatus(`<span class="text-phos font-bold">✓ Gist обновлён (${n} проектов)</span>`);
-      toast('Сайт обновлён мгновенно!');
-      try { sfx('success'); } catch { /* ignore */ }
-    } catch (err) {
-      const msg = ghErr(err);
-      setGistStatus(`<span class="text-blood">✕ ${esc(msg)}</span>`);
-      toast(`Ошибка: ${msg}`, 'err');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = old;
-    }
+  /* ---------- profile & avatar ---------- */
+  on($('#avatar-url-input'), 'input', (e) => {
+    const val = e.target.value.trim();
+    const prev = $('#avatar-preview');
+    if (prev && val) prev.src = val;
   });
 
-  on($('#btn-gist-create'), 'click', async () => {
-    const btn = $('#btn-gist-create');
-    const token = getToken();
-    if (!token) {
-      toast('Введите GitHub Token', 'err');
-      return;
-    }
-    stashToken(token);
-    btn.disabled = true;
-    const old = btn.innerHTML;
-    btn.innerHTML = 'Создание…';
-    try {
-      const g = await createGist({ token });
-      if (!g.id || !g.user) throw new Error('GitHub не вернул gist.');
-      toast(`Gist создан: ${g.id}`);
-      setGistStatus(`<span class="text-phos">✓ Gist создан: ID ${g.id}</span>`);
-    } catch (err) {
-      const msg = ghErr(err);
-      setGistStatus(`<span class="text-blood">✕ ${esc(msg)}</span>`);
-      toast(`Ошибка: ${msg}`, 'err');
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = old;
-    }
+  on($('#btn-save-avatar'), 'click', () => {
+    const val = $('#avatar-url-input')?.value.trim() || '/avatar.png';
+    localStorage.setItem(AVATAR_KEY, val);
+    toast('Настройки профиля сохранены');
+    try { sfx('success'); } catch { /* ignore */ }
   });
 
+  /* ---------- download / copy / import ---------- */
   on($('#btn-download'), async () => {
     const arr = await mergedForPublish();
     const blob = new Blob([`${JSON.stringify(arr, null, 2)}\n`], { type: 'application/json' });

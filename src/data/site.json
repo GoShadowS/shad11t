@@ -1,6 +1,7 @@
 {
   "name": "Shad11t",
   "author": "Shad11t",
+  "avatar": "/avatar.png",
   "tagline": "аксолотль, который пишет код",
   "description": "Shad11t — программист в разных сферах: приложения, веб-сервисы, боты, моды и видео на YouTube. Портфолио, блог и проекты в одном аквариуме.",
   "status": "аксолотль",
@@ -11,7 +12,7 @@
     "github": "https://github.com/GoShadowS"
   },
   "runtimeData": {
-    "_note": "Мгновенная публикация: user/id публичного Gist с файлом shad11t-projects.json. Пусто = сайт читает только projects.json из сборки. Заполняется автоматически кнопкой «Завершить настройку» в админке.",
+    "_note": "Мгновенная публикация: user/id публичного Gist с файлом shad11t-projects.json. Пусто = сайт читает только projects.json из сборки.",
     "gistUser": "",
     "gistId": ""
   }

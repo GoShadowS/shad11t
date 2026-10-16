@@ -53,8 +53,13 @@ const jsonld = [
     <div class="pointer-events-none absolute -top-32 -right-32 h-[480px] w-[480px] rounded-full bg-phos/10 blur-[140px]"></div>
     <div class="pointer-events-none absolute bottom-0 -left-40 h-[420px] w-[420px] rounded-full bg-ember/10 blur-[140px]"></div>
 
+    {/* Фоновое декоративное число «11» */}
+    <div class="pointer-events-none absolute top-[8%] right-[2%] z-[1] select-none" aria-hidden="true">
+      <span data-parallax="0.25" class="font-display text-ghost block text-[34vw] leading-none font-black opacity-30 md:text-[24vw]">11</span>
+    </div>
+
     <div class="relative z-10 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center px-5 pt-[120px] pb-10 md:px-8">
-      <p data-hero-fade class="font-mono mb-5 inline-flex w-fit items-center gap-3 border border-phos/30 bg-void/60 px-4 py-2 text-[11px] tracking-[0.25em] text-phos uppercase backdrop-blur">
+      <p data-hero-fade class="font-mono mb-5 inline-flex w-fit items-center gap-3 border border-phos/40 bg-void/80 px-4 py-2 text-[11px] tracking-[0.25em] text-phos uppercase backdrop-blur">
         <span class="pulse-dot inline-block h-2 w-2 rounded-full bg-phos"></span>
         <span data-i18n="hero.badge">shad11t.exe — запущен</span>
       </p>
@@ -84,11 +89,11 @@ const jsonld = [
         </div>
       </div>
 
-      <div data-hero-fade class="font-mono mt-12 grid grid-cols-2 gap-px border border-white/10 bg-white/10 text-[11px] tracking-[0.14em] uppercase md:grid-cols-4">
-        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage" data-i18n="hero.statusLbl">статус //</span> <span class="text-phos" data-i18n="hero.statusVal">аксолотль</span></div>
-        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage" data-i18n="hero.engineLbl">движок //</span> <span data-i18n="hero.engineVal">shad11t_os v2.0</span></div>
-        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage" data-i18n="hero.locLbl">локация //</span> <span data-i18n="hero.locVal">под водой</span></div>
-        <div class="bg-void/80 flex items-center justify-between px-4 py-3 backdrop-blur">
+      <div data-hero-fade class="font-mono mt-12 grid grid-cols-2 gap-px border border-white/15 bg-white/10 text-[11px] tracking-[0.14em] uppercase md:grid-cols-4">
+        <div class="bg-void/90 px-4 py-3 backdrop-blur"><span class="text-sage" data-i18n="hero.statusLbl">статус //</span> <span class="text-phos" data-i18n="hero.statusVal">аксолотль</span></div>
+        <div class="bg-void/90 px-4 py-3 backdrop-blur"><span class="text-sage" data-i18n="hero.engineLbl">движок //</span> <span data-i18n="hero.engineVal">shad11t_os v2.0</span></div>
+        <div class="bg-void/90 px-4 py-3 backdrop-blur"><span class="text-sage" data-i18n="hero.locLbl">локация //</span> <span data-i18n="hero.locVal">под водой</span></div>
+        <div class="bg-void/90 flex items-center justify-between px-4 py-3 backdrop-blur">
           <span><span class="text-sage" data-i18n="hero.scrollLbl">скролл //</span> <span data-i18n="hero.scrollVal">вниз</span></span>
           <span class="inline-block animate-bounce text-phos">↓</span>
         </div>
@@ -97,7 +102,7 @@ const jsonld = [
   </section>
 
   {/* ================= БЕГУЩАЯ СТРОКА ================= */}
-  <div class="border-y border-phos/25 bg-phos/[0.04]">
+  <div class="border-y border-phos/30 bg-phos/[0.04]">
     <Marquee
       items={['ПРОГРАММИРОВАНИЕ', 'ВЕБ', 'БОТЫ', 'ПРИЛОЖЕНИЯ', 'АКСОЛОТЛЬ', 'YOUTUBE', 'МОДЫ']}
       class="font-display py-4 text-lg font-bold tracking-wide text-bone md:text-xl"
@@ -106,7 +111,7 @@ const jsonld = [
 
   {/* ================= МАНИФЕСТ ================= */}
   <section class="relative mx-auto max-w-[1400px] px-5 py-24 md:px-8 md:py-36" data-parallax-wrap>
-    <div class="grid gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-10">
+    <div class="grid items-start gap-12 lg:grid-cols-[1.5fr_1fr] lg:gap-10">
       <div>
         <p data-reveal="up" data-i18n="manifesto.tag" class="font-mono mb-6 text-[12px] tracking-[0.3em] text-ember uppercase">// манифест</p>
         <p data-reveal="words" data-i18n="manifesto.text" class="font-display max-w-3xl text-2xl leading-[1.35] font-bold text-bone md:text-4xl md:leading-[1.3]">
@@ -119,16 +124,16 @@ const jsonld = [
         </div>
       </div>
 
-      <div class="grid content-start grid-cols-3 gap-px border border-white/10 bg-white/10 lg:mt-16">
-        <div data-reveal="up" class="bg-abyss p-4 sm:p-6">
+      <div data-reveal="up" class="grid grid-cols-3 gap-px self-start border border-white/15 bg-white/15 w-full">
+        <div class="bg-abyss p-4 sm:p-6 text-center sm:text-left">
           <p class="font-display text-4xl font-black text-phos md:text-5xl"><span data-count={projects.length}>0</span></p>
-          <p data-i18n="manifesto.statProjects" class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">проектов в витрине</p>
+          <p data-i18n="manifesto.statProjects" class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">проектов</p>
         </div>
-        <div data-reveal="up" data-delay="0.1" class="bg-abyss p-4 sm:p-6">
+        <div class="bg-abyss p-4 sm:p-6 text-center sm:text-left">
           <p class="font-display text-4xl font-black text-bone md:text-5xl"><span data-count={videosTotal}>0</span></p>
-          <p data-i18n="manifesto.statVideos" class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">видео на канале</p>
+          <p data-i18n="manifesto.statVideos" class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">видео</p>
         </div>
-        <div data-reveal="up" data-delay="0.2" class="bg-abyss p-4 sm:p-6">
+        <div class="bg-abyss p-4 sm:p-6 text-center sm:text-left">
           <p class="font-display text-4xl font-black text-ember md:text-5xl"><span data-count="11">0</span></p>
           <p data-i18n="manifesto.statLvl" class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">уровень лотла</p>
         </div>
@@ -168,7 +173,7 @@ const jsonld = [
         <a
           href={pg('projects')}
           data-cursor="Витрина"
-          class="group flex w-[70vw] shrink-0 flex-col items-start justify-between overflow-hidden border border-phos/30 bg-phos/[0.05] p-8 transition-colors hover:bg-phos/[0.1] sm:w-[340px]"
+          class="group flex w-[70vw] shrink-0 flex-col items-start justify-between overflow-hidden border border-phos/40 bg-phos/[0.05] p-8 transition-colors hover:bg-phos/[0.1] sm:w-[340px]"
         >
           <span class="font-display text-ghost-phos text-7xl font-black">+{Math.max(projects.length - featured.length, 1)}</span>
           <span>
@@ -199,7 +204,7 @@ const jsonld = [
               type="button"
               data-cmd={cmd}
               data-cursor="hover"
-              class="font-mono border border-white/15 px-3 py-1.5 text-[12px] text-bone/70 transition-all hover:-translate-y-0.5 hover:border-phos hover:text-phos"
+              class="font-mono border border-white/20 bg-void/60 px-3.5 py-1.5 text-[12px] text-bone/80 transition-all hover:-translate-y-0.5 hover:border-phos hover:text-phos"
             >
               $ {cmd}
             </button>
