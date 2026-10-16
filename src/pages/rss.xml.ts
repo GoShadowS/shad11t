@@ -24,7 +24,12 @@ export function GET({ site: astroSite }: { site?: URL }) {
   const items = projects
     .map((p) => {
       const link = `${base}/projects/${encodeURIComponent(p.id)}/`;
-      const pub = p.date ? new Date(`${p.date}T00:00:00Z`).toUTCString() : new Date().toUTCString();
+      // кривая дата не должна ронять сборку (toUTCString бросает на Invalid Date)
+      let pub = new Date().toUTCString();
+      if (p.date) {
+        const d = new Date(`${p.date}T00:00:00Z`);
+        if (!Number.isNaN(d.getTime())) pub = d.toUTCString();
+      }
       return `    <item>
       <title>${xml(p.title)}</title>
       <link>${xml(link)}</link>

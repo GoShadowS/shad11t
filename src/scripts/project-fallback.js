@@ -3,7 +3,7 @@
  * (у него нет статической страницы, т.к. он живёт только в localStorage-оверлее).
  */
 
-import { $, esc, pg, formatDateRu, CATS } from './utils.js';
+import { $, esc, pg, safeUrl, formatDateRu, CATS } from './utils.js';
 import { loadProjects, getOverlay } from './store.js';
 import { hydrateCovers } from './covers.js';
 import { refreshTriggers } from './reveal.js';
@@ -112,12 +112,12 @@ function projectHTML(p) {
             <div class="flex justify-between gap-4"><dt class="text-sage">статус</dt><dd class="text-right text-gold">локальный черновик</dd></div>
           </dl>
           <div class="mt-5 flex flex-col gap-2.5">
-            ${p.link ? `<a href="${esc(p.link)}" target="_blank" rel="noopener" class="btn-void btn-solid clip-corners-sm justify-center px-5 py-3 text-[12px]" data-cursor="hover">Открыть проект ↗</a>` : ''}
+            ${safeUrl(p.link) ? `<a href="${esc(safeUrl(p.link))}" target="_blank" rel="noopener" class="btn-void btn-solid clip-corners-sm justify-center px-5 py-3 text-[12px]" data-cursor="hover">Открыть проект ↗</a>` : ''}
             <a href="${pg('projects')}" class="btn-void btn-ghost clip-corners-sm justify-center px-5 py-3 text-[12px]" data-cursor="hover">← все проекты</a>
           </div>
         </div>
         <p class="font-mono mt-4 border border-gold/30 bg-gold/5 p-3 text-[12px] leading-relaxed text-gold/90">
-          ◈ Этот проект существует только в твоём браузере. Опубликуй его через /admin → «Публикация», чтобы он появился у всех.
+          ◈ Этот проект существует только в твоём браузере. Опубликуй его через <a class="underline hover:text-gold" href="${pg('admin')}">/admin → «Публикация»</a>, чтобы он появился у всех.
         </p>
       </aside>
     </div>

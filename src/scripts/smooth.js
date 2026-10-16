@@ -35,8 +35,9 @@ export function initSmooth() {
     const a = e.target.closest('a[href^="#"]');
     if (!a) return;
     const id = a.getAttribute('href');
-    if (id.length < 2) return;
-    const target = document.querySelector(id);
+    if (!id || id.length < 2) return;
+    // getElementById вместо querySelector: id со спецсимволами не роняют обработчик
+    const target = document.getElementById(id.slice(1));
     if (!target) return;
     e.preventDefault();
     lenis.scrollTo(target, { offset: -70, duration: 1.4 });

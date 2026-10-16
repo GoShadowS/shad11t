@@ -24,6 +24,13 @@ export const isReducedMotion = () =>
   document.documentElement.classList.contains('reduced') ||
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/** Безопасный URL для href: разрешаем только http(s), остальное отбрасываем. */
+export function safeUrl(href) {
+  const s = String(href || '').trim();
+  if (/^https?:\/\//i.test(s)) return s;
+  return '';
+}
+
 /** Экранирование пользовательского текста для вставки в HTML. */
 export function esc(s) {
   return String(s ?? '')

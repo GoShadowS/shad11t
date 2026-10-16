@@ -9,8 +9,6 @@ import { hydrateCovers } from './covers.js';
 import { initTilt } from './tilt.js';
 import { refreshTriggers } from './reveal.js';
 
-const CAT_ICON = { mod: 'Boxes', app: 'Monitor', 'mobile-app': 'Smartphone', other: 'Terminal' };
-
 function cardHTML(p, i, baseIds) {
   const num = String(i + 1).padStart(2, '0');
   const href = baseIds.has(String(p.id))
@@ -25,7 +23,7 @@ function cardHTML(p, i, baseIds) {
   const tags = (p.tags || []).slice(0, 4).map((t) => `<span class="font-mono border border-white/10 px-2 py-0.5 text-[11px] text-bone/60">#${esc(t)}</span>`).join('');
 
   return `
-  <article class="p-card group flex-col ${wide ? 'md:col-span-2 md:flex-row' : 'flex'} ${offset}" data-tilt>
+  <article class="p-card group flex flex-col ${wide ? 'md:col-span-2 md:flex-row' : ''} ${offset}" data-tilt>
     <div class="p-glow"></div>
     <a href="${href}" class="absolute inset-0 z-10" aria-label="Открыть проект: ${esc(p.title)}" data-cursor="Открыть"><span class="sr-only">${esc(p.title)}</span></a>
     <div class="relative overflow-hidden ${wide ? 'min-h-[240px] md:w-[46%]' : 'aspect-[16/10]'}">
@@ -123,7 +121,8 @@ export function initProjectsPage() {
   filterBtns.forEach((btn) => {
     const onClick = () => {
       state.cat = btn.dataset.filter;
-      filterBtns.forEach((b) => b.classList.toggle('on', b === btn));
+      // 'on' — только табам (кнопка «Показать всё» в пустом состоянии — не таб)
+      filterBtns.forEach((b) => b.classList.toggle('on', b.dataset.filter === state.cat && b.classList.contains('tab-btn')));
       render();
     };
     btn.addEventListener('click', onClick);

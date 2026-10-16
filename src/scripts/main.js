@@ -4,7 +4,7 @@
  * перед переходом (astro:before-swap) все подписки аккуратно снимаются.
  */
 
-import { $, $$, scrollToTarget, toast, pg } from './utils.js';
+import { $, $$, scrollToTarget, toast } from './utils.js';
 import { hydrateCovers } from './covers.js';
 import { initAudio, sfx } from './audio.js';
 import { initPreloader } from './preloader.js';
@@ -17,14 +17,14 @@ import { initReveal, refreshTriggers } from './reveal.js';
 import { initTerminal } from './terminal.js';
 import { initKonami } from './konami.js';
 import { initProjectsPage } from './projects-page.js';
-import { initProjectFallback } from './project-fallback.js';
+import { initProjectFallback, initStaticProject } from './project-fallback.js';
+import { initHomeSync } from './home-sync.js';
 import { initContact } from './contact.js';
 import { initAdmin } from './admin.js';
 
 /* ---------- шапка, прогресс, «наверх», бургер ---------- */
 function initNav() {
   const cleanups = [];
-  const header = $('#site-header');
   const inner = $('#header-inner');
   const progress = $('#scroll-progress');
   const toTop = $('#to-top');
@@ -92,12 +92,14 @@ function initNav() {
     };
     const toggle = () => setOpen(!menu.classList.contains('open'));
     const close = () => setOpen(false);
-    burger.addEventListener('click', toggle);
-    menu.addEventListener('click', (e) => {
+    const onMenuClick = (e) => {
       if (e.target.closest('a')) close();
-    });
+    };
+    burger.addEventListener('click', toggle);
+    menu.addEventListener('click', onMenuClick);
     cleanups.push(() => {
       burger.removeEventListener('click', toggle);
+      menu.removeEventListener('click', onMenuClick);
       document.documentElement.style.overflow = '';
     });
   }
@@ -152,13 +154,18 @@ function initConsoleEgg() {
 /* ---------- случайный глитч заголовков ---------- */
 function initGlitch() {
   const els = $$('[data-glitch-auto]');
-  if (!els.length) return () => {};
+  if (!els.length || isReducedMotion()) return () => {};
+  let off = 0;
   const t = setInterval(() => {
     const el = els[(Math.random() * els.length) | 0];
     el.classList.add('glitching');
-    setTimeout(() => el.classList.remove('glitching'), 320 + Math.random() * 300);
+    clearTimeout(off);
+    off = setTimeout(() => el.classList.remove('glitching'), 320 + Math.random() * 300);
   }, 2600);
-  return () => clearInterval(t);
+  return () => {
+    clearInterval(t);
+    clearTimeout(off);
+  };
 }
 
 /* ---------- boot ---------- */
@@ -171,36 +178,66 @@ function cleanupAll() {
   });
 }
 
+/** Один упавший модуль не должен ронять весь boot (иначе контент останется невидимым). */
+function safe(fn, name) {
+  try {
+    return fn();
+  } catch (err) {
+    console.error(`[shadvoid] ${name} failed:`, err);
+    return () => {};
+  }
+}
+
+// При первой загрузке boot() может вызваться дважды на одном документе
+// (сразу + astro:page-load): второй вызов пропускаем, иначе задвоятся
+// Lenis, rAF-циклы и ScrollTrigger'ы, а прелоадер оборвётся на старте.
+let bootedDoc = false;
+// Токен от гонки при быстрых переходах: пока boot ждёт dynamic import,
+// может стартовать следующий — тогда текущий сворачивается сам.
+let bootToken = 0;
+
 async function boot() {
+  if (bootedDoc) return;
+  bootedDoc = true;
+  const myToken = ++bootToken;
   cleanupAll();
   hydrateCovers(document);
 
   const c = [];
-  c.push(initAudio());
-  c.push(initPreloader());
-  c.push(initCursor());
-  c.push(initTrail());
-  c.push(initSmooth());
-  c.push(initTilt(document));
-  c.push(initMagnetic());
-  c.push(initReveal());
-  c.push(initNav());
-  c.push(initTerminal());
-  c.push(initKonami());
-  c.push(initLogoEgg());
-  c.push(initConsoleEgg());
-  c.push(initGlitch());
-  c.push(initContact());
-  c.push(initProjectsPage());
-  c.push(initProjectFallback());
-  c.push(initStaticProject());
-  c.push(initAdmin());
+  c.push(safe(initAudio, 'audio'));
+  c.push(safe(initPreloader, 'preloader'));
+  c.push(safe(initCursor, 'cursor'));
+  c.push(safe(initTrail, 'trail'));
+  c.push(safe(initSmooth, 'smooth'));
+  c.push(safe(() => initTilt(document), 'tilt'));
+  c.push(safe(initMagnetic, 'magnetic'));
+  c.push(safe(initReveal, 'reveal'));
+  c.push(safe(initNav, 'nav'));
+  c.push(safe(initTerminal, 'terminal'));
+  c.push(safe(initKonami, 'konami'));
+  c.push(safe(initLogoEgg, 'logo-egg'));
+  c.push(safe(initConsoleEgg, 'console-egg'));
+  c.push(safe(initGlitch, 'glitch'));
+  c.push(safe(initContact, 'contact'));
+  c.push(safe(initProjectsPage, 'projects-page'));
+  c.push(safe(initProjectFallback, 'project-fallback'));
+  c.push(safe(initStaticProject, 'static-project'));
+  c.push(safe(initHomeSync, 'home-sync'));
+  c.push(safe(initAdmin, 'admin'));
+
+  const stale = () => myToken !== bootToken;
+  const rollback = () => {
+    c.forEach((fn) => {
+      try { fn?.(); } catch { /* ignore */ }
+    });
+  };
 
   // тяжёлые штуки — лениво и только где нужно
   if (document.querySelector('[data-hero-3d]')) {
     try {
       const m = await import('./hero.js');
-      c.push(m.initHero());
+      if (stale()) { rollback(); return; }
+      c.push(safe(m.initHero, 'hero'));
     } catch (err) {
       console.warn('[shadvoid] hero 3d off:', err);
     }
@@ -208,19 +245,24 @@ async function boot() {
   if (document.querySelector('[data-orbit]')) {
     try {
       const m = await import('./orbit.js');
-      c.push(m.initOrbit());
+      if (stale()) { rollback(); return; }
+      c.push(safe(m.initOrbit, 'orbit'));
     } catch (err) {
       console.warn('[shadvoid] orbit off:', err);
     }
   }
 
+  if (stale()) { rollback(); return; }
   cleanups = c.filter(Boolean);
   requestAnimationFrame(() => refreshTriggers());
   window.dispatchEvent(new CustomEvent('shadvoid:booted'));
 }
 
 document.addEventListener('astro:page-load', boot);
-document.addEventListener('astro:before-swap', cleanupAll);
+document.addEventListener('astro:before-swap', () => {
+  bootedDoc = false;
+  cleanupAll();
+});
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', boot, { once: true });
 } else {

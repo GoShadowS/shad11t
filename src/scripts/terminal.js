@@ -61,12 +61,16 @@ function socialsHTML() {
 
 async function projectsHTML() {
   try {
-    const { projects } = await loadProjects();
+    const { projects, baseIds } = await loadProjects();
     const top = projects.slice(0, 6);
     if (!top.length) return '<span class="t-ember">проектов пока нет. тени пусты…</span>';
     return top.map((p, i) => {
       const num = String(i + 1).padStart(2, '0');
-      return `<div><span class="t-dim">${num}</span> <a class="t-bone font-bold underline decoration-phos/50 hover:text-phos" href="${pg(`projects/${encodeURIComponent(p.id)}`)}">${esc(p.title)}</a> <span class="t-dim">[${esc(p.category)}]</span></div>`;
+      // у черновиков из оверлея нет статической страницы — ведём на клиентский рендер
+      const href = baseIds.has(String(p.id))
+        ? pg(`projects/${encodeURIComponent(p.id)}`)
+        : `${pg('project')}?id=${encodeURIComponent(p.id)}`;
+      return `<div><span class="t-dim">${num}</span> <a class="t-bone font-bold underline decoration-phos/50 hover:text-phos" href="${href}">${esc(p.title)}</a> <span class="t-dim">[${esc(p.category)}]</span></div>`;
     }).join('') + `<div class="t-dim mt-1">все → <a class="t-phos underline" href="${pg('projects')}">/projects</a></div>`;
   } catch {
     return '<span class="t-ember">ошибка загрузки projects.json</span>';

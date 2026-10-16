@@ -127,14 +127,15 @@ export function coverURL(seed, title = '', cat = 'other') {
 
   // 6. гигантская буква-призрак
   const letter = (title.trim()[0] || '#').toUpperCase();
+  const lx = W - 300 + rnd() * 60;
   x.save();
   x.font = '900 300px Unbounded, "Arial Black", sans-serif';
   x.textBaseline = 'middle';
   x.lineWidth = 3;
   x.strokeStyle = `${style.c1}55`;
-  x.strokeText(letter, W - 300 + rnd() * 60, H / 2 + 10);
+  x.strokeText(letter, lx, H / 2 + 10);
   x.fillStyle = 'rgba(6,8,7,0.35)';
-  x.fillText(letter, W - 300 + rnd() * 60, H / 2 + 10);
+  x.fillText(letter, lx, H / 2 + 10);
   x.restore();
 
   // 7. hazard-полоса

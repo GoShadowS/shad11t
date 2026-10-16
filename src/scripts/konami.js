@@ -73,5 +73,10 @@ export function initKonami() {
   };
 
   document.addEventListener('keydown', onKey);
-  return () => document.removeEventListener('keydown', onKey);
+  return () => {
+    document.removeEventListener('keydown', onKey);
+    // корень persist'ится между страницами — не тащим открытую пасхалку дальше
+    const root = $('#konami-root');
+    if (root) root.innerHTML = '';
+  };
 }

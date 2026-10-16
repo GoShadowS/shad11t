@@ -22,7 +22,9 @@ import { pg } from '../lib/paths';
       var m = p.match(/\/projects\/([^\/]+)$/);
       if (m) {
         var base = p.slice(0, p.length - m[0].length) + '/';
-        location.replace(base + 'project/?id=' + encodeURIComponent(m[1]));
+        var raw = m[1];
+        try { raw = decodeURIComponent(raw); } catch (e2) { /* оставляем как есть */ }
+        location.replace(base + 'project/?id=' + encodeURIComponent(raw));
       }
     } catch (e) { /* тень молчит */ }
   </script>
