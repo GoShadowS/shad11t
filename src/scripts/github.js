@@ -5,6 +5,7 @@
  */
 
 import { mergedForPublish } from './store.js';
+import { GIST_FILE } from './utils.js';
 
 function b64encodeUnicode(str) {
   const bytes = new TextEncoder().encode(str);
@@ -67,4 +68,69 @@ export async function publishToGitHub({ owner, repo, branch = 'main', path = 'sr
     ...(sha ? { sha } : {}),
   };
   return ghFetch(api, token, { method: 'PUT', body: JSON.stringify(body) });
+}
+
+function contentsApi(owner, repo, path) {
+  const cleanPath = String(path).replace(/^\/+/, '');
+  return `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}/contents/${cleanPath
+    .split('/')
+    .map(encodeURIComponent)
+    .join('/')}`;
+}
+
+function b64decodeUnicode(b64) {
+  const bin = atob(String(b64).replace(/\s/g, ''));
+  const bytes = Uint8Array.from(bin, (c) => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+
+/** Прочитать текстовый файл из репозитория. @returns {{sha, text}} */
+export async function readRepoFile({ owner, repo, branch = 'main', path, token }) {
+  if (!owner || !repo) throw new Error('Укажите owner и repo.');
+  if (!token) throw new Error('Вставьте Personal Access Token.');
+  const data = await ghFetch(`${contentsApi(owner, repo, path)}?ref=${encodeURIComponent(branch)}`, token);
+  if (data.type !== 'file' || typeof data.content !== 'string') throw new Error('Это не файл.');
+  return { sha: data.sha, text: b64decodeUnicode(data.content) };
+}
+
+/** Записать текстовый файл в репозиторий (sha нужен, если файл существует). */
+export async function writeRepoFile({ owner, repo, branch = 'main', path, token, message, text, sha }) {
+  if (!owner || !repo) throw new Error('Укажите owner и repo.');
+  if (!token) throw new Error('Вставьте Personal Access Token.');
+  const body = {
+    message: message || `content(admin): обновление ${path}`,
+    content: b64encodeUnicode(String(text ?? '')),
+    branch,
+    ...(sha ? { sha } : {}),
+  };
+  return ghFetch(contentsApi(owner, repo, path), token, { method: 'PUT', body: JSON.stringify(body) });
+}
+
+/** Создать публичный Gist-хранилище данных. @returns {{id, user, html_url}} */
+export async function createGist({ token, description = 'SHADVOID runtime data (projects)' }) {
+  if (!token) throw new Error('Вставьте Personal Access Token.');
+  const projects = await mergedForPublish();
+  const data = await ghFetch('https://api.github.com/gists', token, {
+    method: 'POST',
+    body: JSON.stringify({
+      description,
+      public: true,
+      files: { [GIST_FILE]: { content: `${JSON.stringify(projects, null, 2)}\n` } },
+    }),
+  });
+  return { id: data.id, user: data.owner?.login || '', html_url: data.html_url || '' };
+}
+
+/** Обновить данные в Gist-хранилище. Мгновенно видно всему сайту. @returns число проектов */
+export async function updateGist({ token, gistId }) {
+  if (!token) throw new Error('Вставьте Personal Access Token.');
+  if (!gistId) throw new Error('Gist не подключён.');
+  const projects = await mergedForPublish();
+  await ghFetch(`https://api.github.com/gists/${encodeURIComponent(gistId)}`, token, {
+    method: 'PATCH',
+    body: JSON.stringify({
+      files: { [GIST_FILE]: { content: `${JSON.stringify(projects, null, 2)}\n` } },
+    }),
+  });
+  return projects.length;
 }

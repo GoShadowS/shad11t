@@ -24,6 +24,9 @@ export const isReducedMotion = () =>
   document.documentElement.classList.contains('reduced') ||
   window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/** Имя файла данных в Gist-хранилище (читает сайт, пишет админка). */
+export const GIST_FILE = 'shadvoid-projects.json';
+
 /** Безопасный URL для href: разрешаем только http(s), остальное отбрасываем. */
 export function safeUrl(href) {
   const s = String(href || '').trim();

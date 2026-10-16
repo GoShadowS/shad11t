@@ -160,19 +160,18 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
       {/* ------- публикация ------- */}
       <section data-panel="publish" class="mt-6 hidden" role="tabpanel">
         <div class="term-window p-5 md:p-7">
-          <h2 class="font-display text-xl font-black text-bone">Коммит в GitHub</h2>
+          <h2 class="font-display text-xl font-black text-bone">Подключение GitHub</h2>
           <p class="font-mono mt-2 text-[12px] leading-relaxed text-sage">
-            Админка запушит объединённый projects.json в ветку main — и Actions пересоберёт сайт.
-            Токен нигде не сохраняется, кроме вкладки (sessionStorage).
+            Один токен для обоих способов публикации. Нужен classic PAT со scope «repo» и «gist».
           </p>
           <div class="mt-5 grid gap-4 sm:grid-cols-2">
             <div>
               <label class="lbl" for="gh-owner">Owner (юзернейм)</label>
-              <input id="gh-owner" type="text" class="field" placeholder="GoShadowS" autocomplete="off" />
+              <input id="gh-owner" type="text" class="field" value="GoShadowS" placeholder="GoShadowS" autocomplete="off" />
             </div>
             <div>
               <label class="lbl" for="gh-repo">Репозиторий</label>
-              <input id="gh-repo" type="text" class="field" placeholder="GoShadowS.github.io" autocomplete="off" />
+              <input id="gh-repo" type="text" class="field" value="shad11t_the_shadow" placeholder="shad11t_the_shadow" autocomplete="off" />
             </div>
             <div>
               <label class="lbl" for="gh-branch">Ветка</label>
@@ -183,21 +182,72 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
               <input id="gh-path" type="text" class="field" placeholder="src/data/projects.json" autocomplete="off" />
             </div>
             <div class="sm:col-span-2">
-              <label class="lbl" for="gh-token">Personal Access Token (classic, scope repo)</label>
+              <label class="lbl" for="gh-token">Personal Access Token (classic, scope repo + gist)</label>
               <input id="gh-token" type="password" class="field" placeholder="github_pat_…" autocomplete="off" />
+              <label class="check-row mt-3">
+                <input id="gh-remember" type="checkbox" />
+                <span class="check-box"><Icon name="Check" class="h-4 w-4" /></span>
+                <span class="font-mono text-[13px] text-bone">запомнить токен в этом браузере</span>
+              </label>
             </div>
             <div class="sm:col-span-2">
               <label class="lbl" for="gh-message">Сообщение коммита</label>
               <input id="gh-message" type="text" class="field" placeholder="content(admin): обновление проектов" autocomplete="off" />
             </div>
           </div>
+          <p class="font-mono mt-4 text-[11px] leading-relaxed text-sage/70">
+            Как получить токен: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate → scope «repo» + «gist» → скопировать.
+          </p>
+        </div>
+
+        <div class="term-window mt-6 p-5 md:p-7">
+          <h2 class="font-display text-xl font-black text-bone">⚡ Мгновенная публикация</h2>
+          <p class="font-mono mt-2 text-[12px] leading-relaxed text-sage">
+            Пишет объединённые данные в Gist — сайт подхватит их сразу, без сборки. Для статических страниц, карты сайта и RSS иногда жми «Коммит» ниже.
+          </p>
+          <div id="gist-status" class="font-mono mt-4 min-h-[24px] text-[13px]"></div>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <button type="button" id="btn-gist-publish" data-cursor="hover" class="btn-void btn-solid clip-corners-sm px-7 py-3 text-[13px] disabled:opacity-60">
+              <Icon name="Zap" class="h-4 w-4" /> Опубликовать сейчас
+            </button>
+            <button type="button" id="btn-gist-create" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-6 py-3 text-[13px] disabled:opacity-60">
+              <Icon name="Plus" class="h-4 w-4" /> Создать Gist-хранилище
+            </button>
+          </div>
+          <div id="gist-finish-box" class="mt-4 hidden border border-gold/40 bg-gold/5 p-4">
+            <p class="font-mono text-[12px] text-gold">Gist создан: <span id="gist-new-id" class="font-bold"></span></p>
+            <p class="font-mono mt-1 text-[12px] text-sage">Последний шаг: записать его в site.json и закоммитить (одна сборка — и мгновенные публикации заработают).</p>
+            <button type="button" id="btn-gist-finish" data-cursor="hover" class="btn-void btn-solid clip-corners-sm mt-3 px-6 py-2.5 text-[12px] disabled:opacity-60">
+              Завершить настройку
+            </button>
+          </div>
+          <details class="mt-4 border border-white/10 p-4">
+            <summary data-cursor="hover" class="font-mono cursor-pointer text-[12px] text-sage hover:text-phos">подключить существующий gist…</summary>
+            <div class="mt-3 grid gap-3 sm:grid-cols-2">
+              <div>
+                <label class="lbl" for="gist-user">User (владелец gist)</label>
+                <input id="gist-user" type="text" class="field" placeholder="GoShadowS" autocomplete="off" />
+              </div>
+              <div>
+                <label class="lbl" for="gist-id">ID gist (32 символа)</label>
+                <input id="gist-id" type="text" class="field" placeholder="a1b2c3…" autocomplete="off" />
+              </div>
+            </div>
+            <button type="button" id="btn-gist-attach" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm mt-3 px-6 py-2.5 text-[12px] disabled:opacity-60">
+              Подключить
+            </button>
+          </details>
+        </div>
+
+        <div class="term-window mt-6 p-5 md:p-7">
+          <h2 class="font-display text-xl font-black text-bone">Коммит в GitHub</h2>
+          <p class="font-mono mt-2 text-[12px] leading-relaxed text-sage">
+            Надёжный способ: запушит объединённый projects.json в ветку main — Actions пересоберёт сайт целиком (включая статические страницы проектов, карту сайта и RSS).
+          </p>
           <button type="button" id="btn-publish" data-cursor="hover" class="btn-void btn-solid clip-corners-sm mt-5 px-7 py-3 text-[13px] disabled:opacity-60">
             <Icon name="Rocket" class="h-4 w-4" /> Опубликовать в GitHub
           </button>
           <div id="publish-status" class="font-mono mt-4 min-h-[24px] text-[13px]"></div>
-          <p class="font-mono mt-2 text-[11px] leading-relaxed text-sage/70">
-            Как получить токен: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate → scope «repo» → скопировать.
-          </p>
         </div>
 
         <div class="mt-6 grid gap-6 lg:grid-cols-2">

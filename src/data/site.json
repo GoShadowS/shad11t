@@ -10,6 +10,11 @@
     "boosty": "https://boosty.to/shad11ttheshadow",
     "github": "https://github.com/GoShadowS"
   },
+  "runtimeData": {
+    "_note": "Мгновенная публикация: user/id публичного Gist с файлом shadvoid-projects.json. Пусто = сайт читает только projects.json из сборки. Заполняется автоматически кнопкой «Завершить настройку» в админке.",
+    "gistUser": "",
+    "gistId": ""
+  },
   "now": {
     "title": "Сейчас в работе",
     "text": "Пилим измерение теней для ShadowCraft и новый сезон летсплеев на канале."

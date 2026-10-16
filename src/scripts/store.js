@@ -7,11 +7,13 @@
  * (нужно, чтобы отличать «настоящие» статические страницы от черновиков).
  */
 
-import { u } from './utils.js';
+import { u, GIST_FILE } from './utils.js';
+import site from '../data/site.json';
 
 const OVERLAY_KEY = 'shadvoid_overlay_v1';
 let baseCache = null;
 let basePromise = null;
+let runtimeCache; // undefined = не пробовали, null = нет gist или ошибка, array = данные
 
 export function emptyOverlay() {
   return { added: [], edited: {}, deleted: [], order: [] };
@@ -64,14 +66,50 @@ async function getBase() {
   return basePromise;
 }
 
+/** URL сырого файла gist (читает весь сайт). null — мгновенная публикация не настроена. */
+export function gistURL() {
+  const g = site?.runtimeData;
+  if (!g?.gistUser || !g?.gistId) return null;
+  return `https://gist.githubusercontent.com/${encodeURIComponent(g.gistUser)}/${encodeURIComponent(g.gistId)}/raw/${GIST_FILE}`;
+}
+
+/** Данные из gist (один запрос за сессию). null — нет gist или не загрузился. */
+async function getRuntime() {
+  if (runtimeCache !== undefined) return runtimeCache;
+  const url = gistURL();
+  if (!url) {
+    runtimeCache = null;
+    return null;
+  }
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error(`gist: HTTP ${res.status}`);
+    const data = await res.json();
+    runtimeCache = Array.isArray(data) ? data.filter((p) => p && p.id) : null;
+  } catch {
+    runtimeCache = null;
+  }
+  return runtimeCache;
+}
+
 /**
  * @returns {Promise<{projects: object[], baseIds: Set<string>, overlay: object}>}
  */
 export async function loadProjects() {
-  const baseList = await getBase();
+  const [baseRes, runtimeList] = await Promise.all([
+    getBase().then((v) => ({ ok: true, v }), () => ({ ok: false, v: [] })),
+    getRuntime(),
+  ]);
+  const baseList = baseRes.v;
+  if (!baseRes.ok && !runtimeList) {
+    throw new Error('данные недоступны: ни projects.json из сборки, ни gist не загрузились');
+  }
+  // свежий список — из gist (мгновенная публикация), иначе из сборки;
+  // baseIds всегда из сборки: только у этих проектов есть статические страницы
+  const list0 = runtimeList || baseList;
   const ov = getOverlay();
-  const map = new Map(baseList.map((p) => [String(p.id), { ...p }]));
-  const baseIds = new Set(map.keys());
+  const map = new Map(list0.map((p) => [String(p.id), { ...p }]));
+  const baseIds = new Set(baseList.map((p) => String(p.id)));
 
   for (const id of ov.deleted) map.delete(String(id));
   for (const [id, patch] of Object.entries(ov.edited)) {
