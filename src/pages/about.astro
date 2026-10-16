@@ -13,15 +13,15 @@ import { pg } from '../lib/paths';
 
 const facts = [
   { icon: 'Fish', title: 'Вид', text: 'аксолотль. это я' },
-  { icon: 'Gamepad2', title: 'Класс', text: 'lotl developer' },
-  { icon: 'Braces', title: 'Крафт', text: 'Java · Minecraft · YouTube' },
+  { icon: 'Gamepad2', title: 'Класс', text: 'fullstack lotl' },
+  { icon: 'Braces', title: 'Стек', text: 'Java · Web · Python · Apps' },
   { icon: 'brand:youtube', title: 'Канал', text: `${videosCount} видео` },
 ];
 ---
 
 <Base
   title="Обо мне"
-  description="Shad11t — Minecraft-блогер и программист. Досье, интересы и орбитальная карта."
+  description="Shad11t — программист и создатель контента. Досье, интересы и орбитальная карта."
   path={pg('about')}
 >
   {/* ================= HERO ДОСЬЕ ================= */}
@@ -68,7 +68,7 @@ const facts = [
             </div>
           </div>
           <p class="mt-6 max-w-xl text-[15px] leading-relaxed text-sage">
-            Меня зовут Shad11t. По паспорту — человек, по состоянию души — аксолотль: спокойный, розовый и беспощадный к багам. Пишу на Java моды и плагины для Minecraft, делаю приложения и снимаю всё это на YouTube. Этот сайт — мой аквариум: проекты, интересы, видосы и контакты.
+            Меня зовут Shad11t. По паспорту — человек, по состоянию души — аксолотль: спокойный, розовый и беспощадный к багам. Разрабатываю софт в самых разных направлениях — от приложений, ботов и веб-сервисов до модов и инструментов, и снимаю процесс на YouTube. Этот сайт — мой аквариум: проекты, интересы, видосы и контакты.
           </p>
         </div>
 
@@ -115,7 +115,7 @@ const facts = [
           <p class="lbl">Легенда орбит</p>
           <ul class="font-mono space-y-2 text-[12px]">
             <li class="flex items-center gap-3"><span class="h-2.5 w-2.5 rounded-full" style="background:#c6ff3d"></span> языки программирования</li>
-            <li class="flex items-center gap-3"><span class="h-2.5 w-2.5 rounded-full" style="background:#4ade80"></span> minecraft-стек</li>
+            <li class="flex items-center gap-3"><span class="h-2.5 w-2.5 rounded-full" style="background:#4ade80"></span> моддинг и плагины</li>
             <li class="flex items-center gap-3"><span class="h-2.5 w-2.5 rounded-full" style="background:#ff5a1f"></span> приложения и веб</li>
             <li class="flex items-center gap-3"><span class="h-2.5 w-2.5 rounded-full" style="background:#ece9df"></span> инструменты</li>
             <li class="flex items-center gap-3"><span class="h-2.5 w-2.5 rounded-full" style="background:#ffc53d"></span> медиа и контент</li>
@@ -125,12 +125,12 @@ const facts = [
     </div>
   </section>
 
-  {/* ================= RPG-БАРЫ ================= */}
+  {/* ================= НАВЫКИ ================= */}
   <section class="border-t border-white/10 bg-abyss">
     <div class="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
       <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// стек</p>
       <h2 data-reveal="chars" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
-        Чём я занимаюсь
+        Чем я занимаюсь
       </h2>
       <div class="mt-10 flex flex-wrap gap-3">
         {skills.map((s, i) => (
@@ -144,7 +144,7 @@ const facts = [
       <div data-reveal="up" class="mt-14 flex flex-col items-start justify-between gap-6 border border-phos/25 bg-phos/[0.04] p-6 md:flex-row md:items-center md:p-8">
         <div>
           <p class="font-display text-2xl font-black text-bone md:text-3xl">Хочешь так же? <span class="text-phos">Смотри, как я это делаю.</span></p>
-          <p class="mt-2 max-w-xl text-[14px] text-sage">Разбираю свой код и моды на канале — с фейлами и фиксами, как есть.</p>
+          <p class="mt-2 max-w-xl text-[14px] text-sage">Разбираю софт, код и проекты на канале — с реальными фичами и фиксами, как есть.</p>
         </div>
         <div class="flex flex-wrap gap-3">
           <a href={site.socials.youtube} target="_blank" rel="noopener" class="btn-void btn-solid magnetic clip-corners-sm px-6 py-3.5 text-[12px]" data-cursor="hover">

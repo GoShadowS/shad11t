@@ -34,9 +34,9 @@ function helpHTML() {
 
 function aboutHTML() {
   return [
-    '<span class="t-phos font-bold">Shad11t</span> — YouTube-блогер и программист.',
-    'Днём пишу <span class="t-gold">моды для Minecraft</span>, приложения и ботов.',
-    'Ночью превращаю это в контент на канале.',
+    '<span class="t-phos font-bold">Shad11t</span> — программист и создатель контента.',
+    'Пишу веб-сервисы, приложения, ботов, инструменты и моды.',
+    'Делюсь разработкой и девлогами на канале.',
     `База: <a class="t-phos underline" href="${pg('about')}">/about</a> · Проекты: <a class="t-phos underline" href="${pg('projects')}">/projects</a>`,
   ].join('<br>');
 }

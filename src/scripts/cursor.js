@@ -10,12 +10,16 @@ export function initCursor() {
   const dot = $('#cursor-dot');
   const ring = $('#cursor-ring');
   const label = $('#cursor-label');
+
+  if (!dot || !ring || !label) return () => {};
+
   // persist-элементы переживают навигацию — сбрасываем залипшее состояние
   label.classList.remove('show');
   dot.classList.add('hidden-cursor');
   ring.classList.add('hidden-cursor');
   ring.classList.remove('is-hover');
-  if (!dot || !ring || !label || !isFinePointer() || isReducedMotion()) return () => {};
+
+  if (!isFinePointer() || isReducedMotion()) return () => {};
 
   document.documentElement.classList.add('has-cursor');
 
@@ -24,11 +28,13 @@ export function initCursor() {
   let visible = false;
 
   const show = () => {
-    if (visible) return;
     visible = true;
-    dot.classList.remove('hidden-cursor');
-    ring.classList.remove('hidden-cursor');
+    if (!label.classList.contains('show')) {
+      dot.classList.remove('hidden-cursor');
+      ring.classList.remove('hidden-cursor');
+    }
   };
+
   const hide = () => {
     visible = false;
     dot.classList.add('hidden-cursor');
@@ -40,7 +46,7 @@ export function initCursor() {
   const onMove = (e) => {
     mx = e.clientX;
     my = e.clientY;
-    show();
+    if (!visible) show();
     dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
     label.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
   };
@@ -58,6 +64,10 @@ export function initCursor() {
     if (!t) {
       label.classList.remove('show');
       ring.classList.remove('is-hover');
+      if (visible) {
+        dot.classList.remove('hidden-cursor');
+        ring.classList.remove('hidden-cursor');
+      }
       return;
     }
     const mode = t.closest('[data-cursor]')?.dataset.cursor;
@@ -68,8 +78,10 @@ export function initCursor() {
       dot.classList.add('hidden-cursor');
     } else {
       label.classList.remove('show');
-      ring.classList.remove('hidden-cursor');
-      dot.classList.remove('hidden-cursor');
+      if (visible) {
+        ring.classList.remove('hidden-cursor');
+        dot.classList.remove('hidden-cursor');
+      }
       ring.classList.add('is-hover');
     }
   };
