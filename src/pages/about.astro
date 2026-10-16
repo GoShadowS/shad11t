@@ -37,7 +37,7 @@ const facts = [
         <span data-i18n="about.title">Привет. Я — аксолотль, который пишет код.</span>
       </h1>
 
-      <div class="mt-12 grid gap-6 lg:grid-cols-[1.15fr_1fr]">
+      <div class="mt-12 grid gap-6 lg:grid-cols-[1.15fr_1fr] items-start">
         {/* карточка игрока */}
         <div data-reveal="left" class="term-window scanlines clip-corners relative overflow-hidden p-6 md:p-8" data-tilt>
           <div class="mb-6 flex items-center justify-between">
@@ -45,19 +45,14 @@ const facts = [
             <span class="chip">lvl 11</span>
           </div>
           <div class="flex items-center gap-5">
-            <div class="pixel-frame float-slow shrink-0 bg-panel p-1.5">
-              <svg viewBox="0 0 12 12" class="h-20 w-20 md:h-24 md:w-24" shape-rendering="crispEdges" role="img" aria-label="Аксолотль Shad11t">
-                <rect width="12" height="12" fill="#f2a9c4" />
-                <rect x="3" y="0" width="6" height="1" fill="#ffd7e6" />
-                <rect x="2" y="11" width="8" height="1" fill="#d9759b" />
-                <rect x="1" y="1" width="1" height="1" fill="#d9759b" /><rect x="10" y="1" width="1" height="1" fill="#d9759b" />
-                <rect x="0" y="3" width="2" height="3" fill="#e05260" /><rect x="10" y="3" width="2" height="3" fill="#e05260" />
-                <rect x="3" y="5" width="2" height="2" fill="#14100e" /><rect x="7" y="5" width="2" height="2" fill="#14100e" />
-                <rect x="3" y="5" width="1" height="1" fill="#ffffff" /><rect x="7" y="5" width="1" height="1" fill="#ffffff" />
-                <rect x="4" y="7" width="1" height="1" fill="#7a2f45" /><rect x="7" y="7" width="1" height="1" fill="#7a2f45" />
-                <rect x="5" y="8" width="2" height="1" fill="#7a2f45" />
-                <rect x="2" y="7" width="1" height="1" fill="#e05260" opacity="0.8" /><rect x="9" y="7" width="1" height="1" fill="#e05260" opacity="0.8" />
-              </svg>
+            <div class="pixel-frame float-slow shrink-0 bg-panel p-1 flex items-center justify-center h-20 w-20 md:h-24 md:w-24 overflow-hidden rounded">
+              <img
+                src={site.avatar || '/avatar.png'}
+                alt="Аватар Shad11t"
+                class="h-full w-full object-cover"
+                loading="eager"
+                onerror="this.onerror=null;this.src='/favicon.svg';"
+              />
             </div>
             <div>
               <p class="font-display text-2xl font-black text-bone md:text-3xl">Shad11t<span class="text-phos">_</span></p>
@@ -72,8 +67,8 @@ const facts = [
           </p>
         </div>
 
-        {/* факты */}
-        <div class="grid grid-cols-2 gap-px border border-white/10 bg-white/10 sm:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+        {/* факты: 2x2 симметричная сетка */}
+        <div class="grid grid-cols-2 gap-px border border-white/15 bg-white/10 self-start w-full">
           {facts.map((f, i) => (
             <div data-reveal="up" data-delay={(i * 0.06).toFixed(2)} class="group bg-abyss p-5 transition-colors hover:bg-panel">
               <Icon name={f.icon} class="h-6 w-6 text-phos transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110" />

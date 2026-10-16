@@ -132,16 +132,6 @@ export function initHero() {
   hero.addEventListener('mousemove', onMove, { passive: true });
   hero.addEventListener('mouseleave', onLeave, { passive: true });
 
-  // spotlight-слой: двигаем маску за курсором
-  const spot = hero.querySelector('.spot-hidden');
-  const onSpot = (e) => {
-    if (!spot) return;
-    const r = hero.getBoundingClientRect();
-    spot.style.setProperty('--mx', `${(((e.clientX - r.left) / r.width) * 100).toFixed(1)}%`);
-    spot.style.setProperty('--my', `${(((e.clientY - r.top) / r.height) * 100).toFixed(1)}%`);
-  };
-  hero.addEventListener('mousemove', onSpot, { passive: true });
-
   let running = true;
   let raf = 0;
   const clock = new THREE.Clock();
@@ -172,7 +162,6 @@ export function initHero() {
     window.removeEventListener('resize', resize);
     hero.removeEventListener('mousemove', onMove);
     hero.removeEventListener('mouseleave', onLeave);
-    hero.removeEventListener('mousemove', onSpot);
     geo.dispose();
     mat.dispose();
     renderer.dispose();

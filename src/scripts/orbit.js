@@ -6,11 +6,11 @@
 import { $, esc, isReducedMotion } from './utils.js';
 
 const CAT_STYLE = {
-  lang: { color: '#c6ff3d', ring: 0.3, label: 'Языки' },
-  mc: { color: '#4ade80', ring: 0.44, label: 'Minecraft' },
-  app: { color: '#ff5a1f', ring: 0.58, label: 'Приложения' },
-  tools: { color: '#ece9df', ring: 0.71, label: 'Инструменты' },
-  media: { color: '#ffc53d', ring: 0.83, label: 'Медиа' },
+  lang: { color: '#c6ff3d', ring: 0.32, label: 'Языки' },
+  mc: { color: '#4ade80', ring: 0.46, label: 'Minecraft' },
+  app: { color: '#ff5a1f', ring: 0.60, label: 'Приложения' },
+  tools: { color: '#ece9df', ring: 0.74, label: 'Инструменты' },
+  media: { color: '#ffc53d', ring: 0.88, label: 'Медиа' },
 };
 
 export function initOrbit() {
@@ -32,23 +32,36 @@ export function initOrbit() {
   if (!skills.length) return () => {};
 
   const reduced = isReducedMotion();
-  const nodes = skills.map((s, i) => {
-    const st = CAT_STYLE[s.cat] || CAT_STYLE.tools;
-    return {
-      ...s,
-      color: st.color,
-      ring: st.ring,
-      angle: (i / skills.length) * Math.PI * 2 + (i % 3) * 0.35,
-      speed: (0.34 - st.ring * 0.16) * (i % 2 === 0 ? 1 : -1) * 0.55,
-      wobble: Math.random() * Math.PI * 2,
-    };
+
+  // Группируем по категориям для равномерного распределения углов
+  const byCat = {};
+  skills.forEach((s) => {
+    byCat[s.cat] = byCat[s.cat] || [];
+    byCat[s.cat].push(s);
+  });
+
+  const nodes = [];
+  Object.entries(byCat).forEach(([catKey, list]) => {
+    const st = CAT_STYLE[catKey] || CAT_STYLE.tools;
+    list.forEach((s, idx) => {
+      const angleStep = (Math.PI * 2) / list.length;
+      const initialAngle = idx * angleStep + (catKey.charCodeAt(0) % 5) * 0.4;
+      nodes.push({
+        ...s,
+        color: st.color,
+        ring: st.ring,
+        angle: initialAngle,
+        speed: 0.12 * (catKey === 'mc' || catKey === 'tools' ? -1 : 1),
+        wobble: (idx * 1.5),
+      });
+    });
   });
 
   let W = 0, H = 0, R = 0, raf = 0, running = true;
   let t = 0;
   let timeScale = 1, timeTarget = 1;
   let hovered = null;
-  let selected = nodes[Math.max(0, nodes.findIndex((n) => n.name.includes('Forge')))] || nodes[0];
+  let selected = nodes.find((n) => n.name.includes('Forge')) || nodes[0];
 
   const resize = () => {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -60,14 +73,13 @@ export function initOrbit() {
     cv.style.width = `${W}px`;
     cv.style.height = `${H}px`;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    R = Math.min(W, H) / 2 - 44;
+    R = Math.min(W, H) / 2 - 50;
     if (reduced) render(0);
   };
 
   const posOf = (n, time) => {
-    const wob = Math.sin(time * 0.7 + n.wobble) * 6;
-    const r = n.ring * R + wob;
-    const a = n.angle + time * n.speed;
+    const r = n.ring * R;
+    const a = n.angle + (reduced ? 0 : time * n.speed);
     return { x: W / 2 + Math.cos(a) * r, y: H / 2 + Math.sin(a) * r, r, a };
   };
 
@@ -79,7 +91,7 @@ export function initOrbit() {
     Object.values(CAT_STYLE).forEach((st) => {
       ctx.beginPath();
       ctx.arc(cx, cy, st.ring * R, 0, Math.PI * 2);
-      ctx.strokeStyle = 'rgba(236,233,223,0.07)';
+      ctx.strokeStyle = 'rgba(236,233,223,0.08)';
       ctx.lineWidth = 1;
       ctx.stroke();
     });
@@ -91,13 +103,13 @@ export function initOrbit() {
       ctx.beginPath();
       ctx.moveTo(cx, cy);
       ctx.lineTo(p.x, p.y);
-      ctx.strokeStyle = hot ? `${n.color}55` : 'rgba(236,233,223,0.06)';
+      ctx.strokeStyle = hot ? `${n.color}66` : 'rgba(236,233,223,0.06)';
       ctx.lineWidth = hot ? 1.5 : 1;
       ctx.stroke();
     });
 
     // ядро
-    const pulse = reduced ? 0 : Math.sin(time * 2.2) * 3;
+    const pulse = reduced ? 0 : Math.sin(time * 2.2) * 2;
     ctx.beginPath();
     ctx.arc(cx, cy, 26 + pulse, 0, Math.PI * 2);
     ctx.fillStyle = '#0a0d0b';
@@ -106,26 +118,26 @@ export function initOrbit() {
     ctx.lineWidth = 2;
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(cx, cy, 34 + pulse * 1.6, 0, Math.PI * 2);
+    ctx.arc(cx, cy, 34 + pulse * 1.5, 0, Math.PI * 2);
     ctx.strokeStyle = 'rgba(255,90,31,0.5)';
     ctx.lineWidth = 1;
-    ctx.setLineDash([6, 8]);
+    ctx.setLineDash([5, 6]);
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.fillStyle = '#c6ff3d';
     ctx.font = '800 11px "JetBrains Mono", monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('SHD11T', cx, cy);
+    ctx.fillText('SHAD11T', cx, cy);
 
     // узлы
     nodes.forEach((n) => {
       const p = posOf(n, time);
       const hot = n === hovered || n === selected;
-      const size = 5 + (n.level / 100) * 8 + (hot ? 2.5 : 0);
+      const size = 5 + (n.level / 100) * 7 + (hot ? 2 : 0);
       ctx.save();
       ctx.shadowColor = n.color;
-      ctx.shadowBlur = hot ? 22 : 10;
+      ctx.shadowBlur = hot ? 20 : 8;
       ctx.beginPath();
       ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
       ctx.fillStyle = '#0a0d0b';
@@ -140,17 +152,20 @@ export function initOrbit() {
       ctx.fill();
 
       // подпись
-      ctx.font = `${hot ? '800' : '500'} 11px "JetBrains Mono", monospace`;
+      ctx.font = `${hot ? '800' : '600'} 11px "JetBrains Mono", monospace`;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       const label = n.name;
       const lx = p.x + size + 7;
       const tw = ctx.measureText(label).width;
       let tx = lx;
-      if (lx + tw > W - 8) tx = p.x - size - 7 - tw;
-      ctx.fillStyle = 'rgba(6,8,7,0.72)';
+      if (lx + tw > W - 10) tx = p.x - size - 7 - tw;
+      ctx.fillStyle = 'rgba(6,8,7,0.88)';
+      ctx.strokeStyle = hot ? n.color : 'rgba(255,255,255,0.12)';
+      ctx.lineWidth = 1;
       ctx.fillRect(tx - 4, p.y - 10, tw + 8, 20);
-      ctx.fillStyle = hot ? '#ffffff' : 'rgba(236,233,223,0.82)';
+      ctx.strokeRect(tx - 4, p.y - 10, tw + 8, 20);
+      ctx.fillStyle = hot ? '#ffffff' : 'rgba(236,233,223,0.9)';
       ctx.fillText(label, tx, p.y + 0.5);
     });
   }
@@ -168,7 +183,7 @@ export function initOrbit() {
     const mx = e.clientX - r.left;
     const my = e.clientY - r.top;
     let best = null;
-    let bestD = 30;
+    let bestD = 32;
     nodes.forEach((n) => {
       const p = posOf(n, t);
       const d = Math.hypot(mx - p.x, my - p.y);
@@ -198,7 +213,6 @@ export function initOrbit() {
     hovered = pick(e);
     timeTarget = hovered ? 0.12 : 1;
     cv.style.cursor = hovered ? 'pointer' : 'default';
-    // без rAF-цикла (reduced motion) перерисовываем вручную, иначе ховер не виден
     if (reduced) render(t);
     if (tip) {
       if (hovered) {
@@ -206,7 +220,7 @@ export function initOrbit() {
         tip.style.opacity = '1';
         tip.style.left = `${e.clientX - r.left + 16}px`;
         tip.style.top = `${e.clientY - r.top - 10}px`;
-        tip.innerHTML = `<span class="font-mono border px-2 py-1 text-[11px] font-bold whitespace-nowrap" style="border-color:${hovered.color}; color:${hovered.color}; background:rgba(6,8,7,.9)">${esc(hovered.name)} · ${Number(hovered.level) || 0}</span>`;
+        tip.innerHTML = `<span class="font-mono border px-2 py-1 text-[11px] font-bold whitespace-nowrap" style="border-color:${hovered.color}; color:${hovered.color}; background:rgba(6,8,7,.92)">${esc(hovered.name)} · ${Number(hovered.level) || 0}</span>`;
       } else {
         tip.style.opacity = '0';
       }
