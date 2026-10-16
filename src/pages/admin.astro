@@ -1,7 +1,7 @@
 ---
 /**
  * Shad11t — /admin: панель управления проектами и сайтом.
- * Безопасный локальный вход без хранения хешей в GitHub.
+ * Безопасная аутентификация с поддержкой сохранения паролей в репозиторий GitHub.
  */
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
@@ -9,7 +9,13 @@ import admin from '../data/admin.json';
 import site from '../data/site.json';
 import { pg } from '../lib/paths';
 
-const adminConfig = { adminUser: admin.adminUser || 'shad11t', avatar: site.avatar || '/avatar.png' };
+const adminConfig = {
+  adminUser: admin.adminUser || 'shad11t',
+  salt: admin.salt || '',
+  iterations: admin.iterations || 25000,
+  hash: admin.hash || '',
+  avatar: site.avatar || '/avatar.png'
+};
 ---
 
 <Base
@@ -21,17 +27,17 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t', avatar: site.avat
   <div id="admin-root" class="mx-auto max-w-[1100px] px-5 pt-[120px] pb-24 md:px-8">
     <script type="application/json" id="admin-auth-config" set:html={JSON.stringify(adminConfig)} />
 
-    {/* ================= ВХОД / НАСТРОЙКА ================= */}
+    {/* ================= ВХОД В ПАНЕЛЬ ================= */}
     <div id="admin-login" class="mx-auto max-w-md">
       <div class="border border-white/15 bg-abyss p-6 md:p-8">
         <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
           <span class="font-mono text-[12px] font-bold text-bone uppercase tracking-wider">ADMIN PANEL</span>
-          <span class="font-mono text-[11px] text-phos">v2.1</span>
+          <span class="font-mono text-[11px] text-phos">v2.2</span>
         </div>
 
         <h1 id="login-title" class="font-display text-2xl font-bold text-bone">Вход в панель</h1>
         <p id="login-desc" class="font-mono mt-2 text-[12px] text-sage">
-          Введите учётные данные администратора
+          Введите пароль администратора или GitHub Token
         </p>
 
         <form id="login-form" class="mt-6 space-y-4" autocomplete="off">
@@ -53,7 +59,7 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t', avatar: site.avat
 
           <div id="regular-pass-group">
             <label class="lbl" for="login-pass">Пароль или GitHub Token</label>
-            <input id="login-pass" type="password" class="field" placeholder="••••••••••" autocomplete="current-password" />
+            <input id="login-pass" type="password" class="field" placeholder="••••••••••" autocomplete="current-password" required />
           </div>
 
           <p id="login-error" class="font-mono min-h-[18px] text-[12px] text-blood" role="alert"></p>
@@ -66,7 +72,7 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t', avatar: site.avat
 
         <div class="mt-6 border-t border-white/10 pt-4">
           <p class="font-mono text-[11px] leading-relaxed text-sage/70">
-            Безопасность: пароль шифруется и хранится исключительно в вашем локальном браузере. В репозитории GitHub пароли не сохраняются.
+            Пароль защищён криптографическим хешированием SHA-256 с солью и итерациями растяжения ключа.
           </p>
         </div>
       </div>
@@ -97,7 +103,7 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t', avatar: site.avat
       <section data-panel="projects" class="mt-6" role="tabpanel">
         <div id="ov-summary" class="mb-4 flex flex-wrap gap-2"></div>
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <p class="font-mono text-[12px] text-sage">Черновики и правки сохраняются в браузере мгновенно</p>
+          <p class="font-mono text-[12px] text-sage">Черновики и правки сохраняются мгновенно</p>
           <button type="button" id="btn-new" data-cursor="hover" class="btn-void btn-solid px-5 py-2.5 text-[12px]">
             <Icon name="Plus" class="h-4 w-4" /> Новый проект
           </button>
@@ -314,7 +320,7 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t', avatar: site.avat
         </div>
       </section>
 
-      {/* ------- безопасность ------- */}
+      {/* ------- безопасность & пароль ------- */}
       <section data-panel="security" class="mt-6 hidden" role="tabpanel">
         <div class="border border-phos/30 bg-phos/[0.04] max-w-2xl p-5 md:p-6 mb-6">
           <div class="flex items-center justify-between">
@@ -330,9 +336,9 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t', avatar: site.avat
         </div>
 
         <div class="border border-white/10 bg-abyss max-w-2xl p-5 md:p-7">
-          <h2 class="font-display text-xl font-bold text-bone">Смена мастер-пароля</h2>
+          <h2 class="font-display text-xl font-bold text-bone">Управление паролем</h2>
           <p class="font-mono mt-1 text-[12px] text-sage">
-            Пароль сохраняется локально в зашифрованном виде в вашем браузере
+            Смените пароль и сохраните его локально или отправьте сразу в репозиторий GitHub
           </p>
           <form id="pass-form" class="mt-5 space-y-4" autocomplete="off">
             <div>
@@ -349,10 +355,16 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t', avatar: site.avat
                 <input id="pw-confirm" type="password" class="field" autocomplete="new-password" required minlength="6" />
               </div>
             </div>
-            <button type="submit" class="btn-void btn-solid px-6 py-2.5 text-[12px]" data-cursor="hover">
-              <Icon name="ShieldCheck" class="h-4 w-4" /> Обновить пароль
-            </button>
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+              <button type="submit" id="btn-pass-local" class="btn-void btn-solid px-6 py-2.5 text-[12px]" data-cursor="hover">
+                <Icon name="ShieldCheck" class="h-4 w-4" /> Обновить пароль локально
+              </button>
+              <button type="button" id="btn-pass-gh" class="btn-void btn-ghost px-6 py-2.5 text-[12px]" data-cursor="hover">
+                <Icon name="Github" class="h-4 w-4" /> Сохранить в репозиторий GitHub
+              </button>
+            </div>
           </form>
+          <div id="pass-status" class="font-mono mt-4 min-h-[20px] text-[12px]"></div>
         </div>
       </section>
     </div>

@@ -57,7 +57,6 @@ export async function testGitHubAuth({ owner = 'GoShadowS', repo = 'shad11t', to
   try {
     user = await ghFetch('https://api.github.com/user', t);
   } catch (err) {
-    // Для Fine-Grained токенов /user может вернуть 403, пробуем сразу репозиторий
     if (err.status !== 403 && err.status !== 401) throw err;
     if (err.status === 401) throw new Error('Неверный токен (401 Bad Credentials). Проверьте правильность токена.');
   }
@@ -143,23 +142,38 @@ export async function readRepoFile({ owner, repo, branch = 'main', path, token }
   const t = cleanToken(token);
   if (!owner || !repo) throw new Error('Укажите owner и repo.');
   if (!t) throw new Error('Вставьте Personal Access Token.');
-  const data = await ghFetch(`${contentsApi(owner, repo, path)}?ref=${encodeURIComponent(branch)}`, t);
+  const cleanPath = String(path).replace(/^\/+/, '');
+  const data = await ghFetch(`${contentsApi(owner, repo, cleanPath)}?ref=${encodeURIComponent(branch)}`, t);
   if (data.type !== 'file' || typeof data.content !== 'string') throw new Error('Это не файл.');
   return { sha: data.sha, text: b64decodeUnicode(data.content) };
 }
 
-/** Записать текстовый файл в репозиторий (sha нужен, если файл существует). */
+/** Записать текстовый файл в репозиторий (автоматически находит sha при необходимости). */
 export async function writeRepoFile({ owner, repo, branch = 'main', path, token, message, text, sha }) {
   const t = cleanToken(token);
   if (!owner || !repo) throw new Error('Укажите owner и repo.');
   if (!t) throw new Error('Вставьте Personal Access Token.');
+  const cleanPath = String(path).replace(/^\/+/, '');
+  const api = contentsApi(owner, repo, cleanPath);
+
+  let targetSha = sha;
+  if (!targetSha) {
+    try {
+      const current = await ghFetch(`${api}?ref=${encodeURIComponent(branch)}`, t);
+      targetSha = current.sha;
+    } catch (err) {
+      if (err.status !== 404 && !/not found/i.test(String(err.message))) throw err;
+      targetSha = undefined;
+    }
+  }
+
   const body = {
-    message: message || `content(admin): обновление ${path}`,
+    message: message || `content(admin): обновление ${cleanPath}`,
     content: b64encodeUnicode(String(text ?? '')),
     branch,
-    ...(sha ? { sha } : {}),
+    ...(targetSha ? { sha: targetSha } : {}),
   };
-  return ghFetch(contentsApi(owner, repo, path), t, { method: 'PUT', body: JSON.stringify(body) });
+  return ghFetch(api, t, { method: 'PUT', body: JSON.stringify(body) });
 }
 
 /** Создать публичный Gist-хранилище данных. @returns {{id, user, html_url}} */
@@ -178,7 +192,7 @@ export async function createGist({ token, description = 'Shad11t runtime data (p
   return { id: data.id, user: data.owner?.login || '', html_url: data.html_url || '' };
 }
 
-/** Обновить данные в Gist-хранилище. @returns число проектов */
+/** Обновить данные в Gist-хранилище. Мгновенно видно всему сайту. @returns число проектов */
 export async function updateGist({ token, gistId }) {
   const t = cleanToken(token);
   if (!t) throw new Error('Вставьте Personal Access Token.');

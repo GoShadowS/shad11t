@@ -1,14 +1,14 @@
 /**
  * Shad11t — админ-панель (/admin).
- * Безопасная аутентификация без хранения паролей в GitHub.
+ * Безопасная аутентификация с поддержкой сохранения паролей в репозиторий GitHub.
  * Управление проектами (CRUD), публикация в репозиторий через GitHub API.
  */
 
 import { $, $$, esc, toast, copyText } from './utils.js';
 import { loadProjects, getOverlay, saveOverlay, clearOverlay, mergedForPublish } from './store.js';
 import { coverURL } from './covers.js';
-import { hashPassword, safeEqual, randomSalt } from './hash-client.js';
-import { publishToGitHub, testGitHubAuth } from './github.js';
+import { hashPassword, safeEqual, randomSalt, ITERATIONS } from './hash-client.js';
+import { publishToGitHub, testGitHubAuth, writeRepoFile } from './github.js';
 import site from '../data/site.json';
 import { sfx } from './audio.js';
 
@@ -49,6 +49,7 @@ export function initAdmin() {
 
   /* ---------- auth state ---------- */
   function getMasterAuth() {
+    // 1. Сначала проверяем локально обновленный пароль
     try {
       const raw = localStorage.getItem(MASTER_AUTH_KEY);
       if (raw) {
@@ -58,13 +59,32 @@ export function initAdmin() {
     } catch {
       /* ignore */
     }
+
+    // 2. Затем конфигурацию из репозитория (src/data/admin.json)
+    try {
+      const cfgEl = $('#admin-auth-config');
+      if (cfgEl) {
+        const cfg = JSON.parse(cfgEl.textContent || '{}');
+        if (cfg?.hash && cfg?.salt) {
+          return {
+            user: cfg.adminUser || 'shad11t',
+            salt: cfg.salt,
+            iterations: cfg.iterations || 25000,
+            hash: cfg.hash,
+          };
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+
     return null;
   }
 
   function saveMasterAuth(user, pass) {
-    const salt = randomSalt();
-    const hash = hashPassword(pass, salt, 100000);
-    const data = { user: user || 'shad11t', salt, iterations: 100000, hash };
+    const salt = randomSalt(16);
+    const hash = hashPassword(pass, salt, ITERATIONS);
+    const data = { user: user || 'shad11t', salt, iterations: ITERATIONS, hash };
     localStorage.setItem(MASTER_AUTH_KEY, JSON.stringify(data));
     return data;
   }
@@ -94,7 +114,7 @@ export function initAdmin() {
       if (setupGroup) setupGroup.classList.remove('hidden');
       if (regularGroup) regularGroup.classList.add('hidden');
       if (loginTitle) loginTitle.textContent = 'Первоначальная настройка';
-      if (loginDesc) loginDesc.textContent = 'Установите мастер-пароль. Он сохранится только в этом браузере и никогда не попадет на GitHub.';
+      if (loginDesc) loginDesc.textContent = 'Установите мастер-пароль администратора.';
       if (loginSubmitLabel) loginSubmitLabel.textContent = 'Установить пароль и войти';
     } else {
       if (setupGroup) setupGroup.classList.add('hidden');
@@ -134,7 +154,7 @@ export function initAdmin() {
       sessionStorage.setItem(SESSION_KEY, JSON.stringify({ ts: Date.now() }));
       if (err) err.textContent = '';
       try { sfx('success'); } catch { /* ignore */ }
-      toast('Мастер-пароль успешно установлен локально');
+      toast('Пароль успешно установлен');
       showPanel();
       return;
     }
@@ -142,12 +162,15 @@ export function initAdmin() {
     const pass = $('#login-pass')?.value || '';
     let ok = false;
 
+    // 1. Проверка по хешу пароля
     try {
-      ok = (user === currentAuth.user || user === 'shad11t') && safeEqual(hashPassword(pass, currentAuth.salt, currentAuth.iterations), currentAuth.hash);
+      const computed = hashPassword(pass, currentAuth.salt, currentAuth.iterations || 25000);
+      ok = safeEqual(computed, currentAuth.hash);
     } catch {
       ok = false;
     }
 
+    // 2. Вход по прямому GitHub PAT
     if (!ok && (pass.startsWith('ghp_') || pass.startsWith('github_pat_'))) {
       ok = true;
       sessionStorage.setItem(GH_TOKEN_KEY, pass.trim());
@@ -480,6 +503,11 @@ export function initAdmin() {
     if (el) el.innerHTML = html;
   }
 
+  function setPassStatus(html) {
+    const el = $('#pass-status');
+    if (el) el.innerHTML = html;
+  }
+
   function ghErr(err) {
     const s = String(err?.message || err || 'Неизвестная ошибка');
     if (/bad credentials/i.test(s) || err?.status === 401) {
@@ -525,7 +553,7 @@ export function initAdmin() {
     }
   });
 
-  // Публикация в репозиторий
+  // Публикация проектов в репозиторий
   on($('#btn-publish'), 'click', async () => {
     const btn = $('#btn-publish');
     const s = ghSettings();
@@ -662,37 +690,112 @@ export function initAdmin() {
     toast('Локальные правки очищены');
   });
 
-  /* ---------- security: сброс пароля ---------- */
-  on($('#pass-form'), 'submit', (e) => {
-    e.preventDefault();
+  /* ---------- security: смена пароля (локально и в GitHub) ---------- */
+  function validatePasswordInputs() {
     const cur = $('#pw-current')?.value || '';
     const nw = $('#pw-new')?.value || '';
     const cf = $('#pw-confirm')?.value || '';
 
-    if (!currentAuth) {
+    const auth = getMasterAuth();
+    if (!auth) {
       toast('Пароль ещё не был установлен', 'err');
-      return;
+      return null;
     }
-    if (!safeEqual(hashPassword(cur, currentAuth.salt, currentAuth.iterations), currentAuth.hash)) {
+    const computed = hashPassword(cur, auth.salt, auth.iterations || 25000);
+    if (!safeEqual(computed, auth.hash)) {
       toast('Текущий пароль неверен', 'err');
-      return;
+      setPassStatus('<span class="text-blood">✕ Текущий пароль неверен.</span>');
+      return null;
     }
     if (nw.length < 6) {
       toast('Новый пароль должен быть от 6 символов', 'err');
-      return;
+      setPassStatus('<span class="text-blood">✕ Новый пароль должен содержать от 6 символов.</span>');
+      return null;
     }
     if (nw !== cf) {
       toast('Пароли не совпадают', 'err');
-      return;
+      setPassStatus('<span class="text-blood">✕ Пароли не совпадают.</span>');
+      return null;
     }
 
-    saveMasterAuth(currentAuth.user, nw);
+    return { nw, user: auth.user || 'shad11t' };
+  }
+
+  // 1. Сохранить пароль локально
+  on($('#pass-form'), 'submit', (e) => {
+    e.preventDefault();
+    const validated = validatePasswordInputs();
+    if (!validated) return;
+
+    saveMasterAuth(validated.user, validated.nw);
     updateLoginUI();
     $('#pw-current').value = '';
     $('#pw-new').value = '';
     $('#pw-confirm').value = '';
-    toast('Мастер-пароль успешно обновлён локально');
+    setPassStatus('<span class="text-phos font-bold">✓ Пароль успешно обновлён локально в вашем браузере.</span>');
+    toast('Пароль обновлён локально');
     try { sfx('success'); } catch { /* ignore */ }
+  });
+
+  // 2. Сохранить пароль прямо в репозиторий GitHub
+  on($('#btn-pass-gh'), 'click', async () => {
+    const validated = validatePasswordInputs();
+    if (!validated) return;
+
+    const token = getToken();
+    if (!token) {
+      toast('Введите GitHub Token во вкладке «Публикация»', 'err');
+      setPassStatus('<span class="text-blood">✕ Для сохранения в GitHub укажите GitHub Token (вкладка «Публикация»).</span>');
+      return;
+    }
+
+    const btn = $('#btn-pass-gh');
+    btn.disabled = true;
+    const old = btn.innerHTML;
+    btn.innerHTML = 'Сохранение в GitHub…';
+    setPassStatus('<span class="text-sage">Отправка нового пароля в репозиторий GitHub…</span>');
+
+    try {
+      const salt = randomSalt(16);
+      const hash = hashPassword(validated.nw, salt, ITERATIONS);
+      const adminData = {
+        adminUser: validated.user || 'shad11t',
+        salt,
+        iterations: ITERATIONS,
+        hash,
+      };
+
+      const s = ghSettings();
+      await writeRepoFile({
+        owner: s.owner,
+        repo: s.repo,
+        branch: s.branch,
+        path: 'src/data/admin.json',
+        token,
+        message: 'security: update admin password hash',
+        text: JSON.stringify(adminData, null, 2) + '\n',
+      });
+
+      // Сохраняем также локально
+      localStorage.setItem(MASTER_AUTH_KEY, JSON.stringify(adminData));
+      updateLoginUI();
+
+      $('#pw-current').value = '';
+      $('#pw-new').value = '';
+      $('#pw-confirm').value = '';
+
+      setPassStatus('<span class="text-phos font-bold">✓ Новый пароль успешно сохранён и закоммичен в репозиторий GitHub!</span>');
+      toast('Пароль сохранён в репозиторий!');
+      try { sfx('success'); } catch { /* ignore */ }
+    } catch (err) {
+      const msg = ghErr(err);
+      setPassStatus(`<span class="text-blood font-bold">✕ Ошибка сохранения в GitHub:</span> <span class="text-sage">${esc(msg)}</span>`);
+      toast(`Ошибка: ${msg}`, 'err');
+      try { sfx('error'); } catch { /* ignore */ }
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = old;
+    }
   });
 
   /* ---------- boot ---------- */
