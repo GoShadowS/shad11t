@@ -116,7 +116,7 @@ export function initTerminal() {
 
       switch (low) {
         case 'help': print(helpHTML()); break;
-        case 'whoami': print('<span class="t-phos font-bold">shad11t_the_shadow</span> <span class="t-dim">(uid=11, gid=shadow)</span>'); break;
+        case 'whoami': print('<span class="t-phos font-bold">shad11t_the_shadow</span> <span class="t-dim">(uid=11, gid=shadow, вид=аксолотль)</span>'); break;
         case 'about': print(aboutHTML()); break;
         case 'projects': print('<span class="t-dim">читаю projects.json…</span>'); print(await projectsHTML()); break;
         case 'skills': print(skillsHTML()); break;

@@ -60,7 +60,7 @@ function blip(freq, dur = 0.05, type = 'square', when = 0, slideTo = null) {
   } catch { /* ignore */ }
 }
 
-/** Именованные эффекты: hover | click | open | success | error | key | boot */
+/** Именованные эффекты: hover | click | open | success | error | key | boot | bubbles */
 export function sfx(name) {
   switch (name) {
     case 'hover': blip(1150, 0.035, 'square'); break;
@@ -71,6 +71,7 @@ export function sfx(name) {
     case 'error': blip(180, 0.16, 'sawtooth', 0, 110); break;
     case 'boot': blip(330, 0.07, 'square'); blip(495, 0.07, 'square', 0.08); blip(660, 0.12, 'square', 0.16); break;
     case 'creeper': blip(220, 0.3, 'sawtooth', 0, 60); blip(90, 0.4, 'sine', 0.1, 40); break;
+    case 'bubbles': blip(520, 0.07, 'sine'); blip(720, 0.07, 'sine', 0.07); blip(980, 0.1, 'sine', 0.14); break;
     default: break;
   }
 }
