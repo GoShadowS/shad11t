@@ -251,10 +251,10 @@ html.lenis, html.lenis body { height: auto; }
 
 /* Срезанные углы — фирменный приём */
 .clip-corners {
-  clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
+  clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
 }
 .clip-corners-sm {
-  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+  clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
 }
 .clip-tag {
   clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
@@ -263,51 +263,94 @@ html.lenis, html.lenis body { height: auto; }
   clip-path: polygon(0 0, 100% 0, calc(100% - 18px) 100%, 0 100%);
 }
 
-/* Основная кнопка: лаймовый слайс + сдвиг при hover */
+/* Основная кнопка: высококонтрастная, чистая, с плавным свечением */
 .btn-void {
   position: relative;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.6rem;
   font-family: var(--font-mono);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   isolation: isolate;
-  overflow: hidden;
-  transition: color 0.25s ease, transform 0.15s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
   will-change: transform;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+  white-space: nowrap;
 }
-.btn-void::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: var(--color-phos);
-  transform: translateX(-101%) skewX(-12deg) scaleX(1.2);
-  transform-origin: left;
-  transition: transform 0.32s cubic-bezier(0.65, 0, 0.35, 1);
+.btn-void:active {
+  transform: scale(0.97);
 }
-.btn-void:hover::before { transform: translateX(0) skewX(0) scaleX(1); }
-.btn-void:hover { color: #060807 !important; }
-.btn-void:active { transform: scale(0.96); }
 
+/* Солидная кнопка: яркий фосфорный фон + контрастный темный текст и иконки */
 .btn-solid {
-  background: var(--color-phos);
+  background-color: var(--color-phos);
   color: #060807 !important;
+  border: 1px solid var(--color-phos);
+  box-shadow: 0 0 16px -4px rgba(198, 255, 61, 0.45);
 }
-.btn-solid::before { background: var(--color-bone); }
+.btn-solid svg, .btn-solid path {
+  color: #060807 !important;
+  fill: currentColor;
+}
+.btn-solid:hover {
+  background-color: #d6ff5e;
+  border-color: #d6ff5e;
+  color: #060807 !important;
+  box-shadow: 0 0 24px -2px rgba(198, 255, 61, 0.75);
+  transform: translateY(-2px);
+}
+.btn-solid:hover svg, .btn-solid:hover path {
+  color: #060807 !important;
+  fill: currentColor;
+}
 
+/* Призрачная кнопка: темный полупрозрачный фон, четкая светлая граница */
 .btn-ghost {
-  border: 1px solid rgba(236, 233, 223, 0.25);
-  color: var(--color-bone);
+  background-color: rgba(14, 20, 17, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(236, 233, 223, 0.22);
+  color: var(--color-bone) !important;
 }
-.btn-ghost:hover { border-color: var(--color-phos); }
+.btn-ghost svg {
+  color: currentColor;
+}
+.btn-ghost:hover {
+  background-color: rgba(198, 255, 61, 0.14);
+  border-color: var(--color-phos);
+  color: var(--color-phos) !important;
+  box-shadow: 0 0 20px -6px rgba(198, 255, 61, 0.4);
+  transform: translateY(-2px);
+}
+.btn-ghost:hover svg {
+  color: var(--color-phos);
+}
+
+/* Опасная/акцентная кнопка */
+.btn-danger {
+  background-color: rgba(224, 82, 96, 0.12);
+  border: 1px solid rgba(224, 82, 96, 0.4);
+  color: #ff6b7a !important;
+}
+.btn-danger:hover {
+  background-color: #e05260;
+  border-color: #e05260;
+  color: #060807 !important;
+  box-shadow: 0 0 20px -4px rgba(224, 82, 96, 0.6);
+  transform: translateY(-2px);
+}
+.btn-danger svg {
+  color: currentColor;
+}
 
 /* Магнитные кнопки двигает JS (transform), transition только для цвета */
-.magnetic { transition: color 0.25s ease, border-color 0.25s ease; }
+.magnetic { transition: color 0.25s ease, border-color 0.25s ease, background-color 0.25s ease, box-shadow 0.25s ease; }
 
-/* Пиксельная рамка (Minecraft-вайб) */
+/* Пиксельная рамка */
 .pixel-frame {
   border: 2px solid rgba(198, 255, 61, 0.35);
   box-shadow:
@@ -351,27 +394,31 @@ html.has-cursor label {
   transition: width 0.25s ease, height 0.25s ease, margin 0.25s ease, background 0.25s ease, opacity 0.25s ease;
 }
 #cursor-ring.is-hover {
-  width: 64px; height: 64px;
-  margin: -32px 0 0 -32px;
+  width: 60px; height: 60px;
+  margin: -30px 0 0 -30px;
   background: rgba(198, 255, 61, 0.12);
 }
-#cursor-ring.is-down { transform-origin: center; scale: 0.8; }
+#cursor-ring.is-down { transform-origin: center; scale: 0.85; }
 #cursor-label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 84px; height: 84px;
-  margin: -42px 0 0 -42px;
+  padding: 0.45rem 0.9rem;
+  min-width: 60px;
+  height: auto;
   border-radius: 999px;
   background: var(--color-phos);
   color: #060807;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: 0 0 20px rgba(198, 255, 61, 0.6);
   opacity: 0;
-  scale: 0.5;
+  scale: 0.6;
+  transform-origin: center center;
   transition: opacity 0.2s ease, scale 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 #cursor-label.show { opacity: 1; scale: 1; }
