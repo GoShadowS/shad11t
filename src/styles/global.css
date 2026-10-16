@@ -654,9 +654,21 @@ html.js:not(.reduced) [data-reveal="chars"] .char { opacity: 0; }
   will-change: transform;
 }
 @media (max-width: 767px) {
-  .h-viewport { overflow-x: auto; scrollbar-width: none; }
+  .h-viewport {
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scroll-padding: 1.25rem;
+  }
   .h-viewport::-webkit-scrollbar { display: none; }
-  .h-track { padding-inline: 1.25rem; }
+  .h-track {
+    padding-inline: 1.25rem;
+    gap: 1rem;
+  }
+  [data-project-wrap] {
+    scroll-snap-align: center;
+  }
 }
 
 
