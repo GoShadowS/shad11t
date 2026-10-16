@@ -22,23 +22,38 @@ import { initContact } from './contact.js';
 import { initAdmin } from './admin.js';
 import { initI18n } from './i18n.js';
 
-/* ---------- защита от открытия кода элемента / DevTools ---------- */
+/* ---------- защита от открытия кода элемента / DevTools (разрешено для вошедшего админа) ---------- */
 function initInspectGuard() {
-  // 1. Отключение контекстного меню (ПКМ)
+  const isDevToolsAllowed = () => {
+    try {
+      const s = JSON.parse(sessionStorage.getItem('shad11t_admin_session_v2') || 'null');
+      if (s && Date.now() - (s.ts || 0) < 12 * 3600 * 1000) return true;
+    } catch { /* ignore */ }
+    return false;
+  };
+
+  // Если пользователь авторизован в админ-панели — блокировку полностью снимаем
+  if (isDevToolsAllowed()) {
+    return () => {};
+  }
+
+  // 1. Отключение контекстного меню (ПКМ) для гостей
   const onContext = (e) => {
+    if (isDevToolsAllowed()) return;
     // Разрешаем контекстное меню только внутри полей ввода
     if (e.target.closest('input, textarea')) return;
     e.preventDefault();
     return false;
   };
 
-  // 2. Блокировка клавиш DevTools (F12, Ctrl+Shift+I/J/C, Ctrl+U, Cmd+Option+I/J/C, Cmd+Option+U)
+  // 2. Блокировка клавиш DevTools для гостей (F12, Ctrl+Shift+I/J/C, Ctrl+U, Cmd+Option+I/J/C, Cmd+Option+U)
   const onKeyDown = (e) => {
+    if (isDevToolsAllowed()) return;
     // F12
     if (e.key === 'F12' || e.keyCode === 123) {
       e.preventDefault();
       e.stopPropagation();
-      toast('Исходный код защищён');
+      toast('Исходный код защищён. Войдите в /admin для доступа к DevTools.');
       return false;
     }
     const ctrlOrCmd = e.ctrlKey || e.metaKey;
@@ -48,7 +63,7 @@ function initInspectGuard() {
     if ((ctrlOrCmd && shiftOrAlt && (k === 'i' || k === 'j' || k === 'c')) || (ctrlOrCmd && (k === 'u' || k === 's'))) {
       e.preventDefault();
       e.stopPropagation();
-      toast('Просмотр кода заблокирован');
+      toast('Просмотр кода заблокирован (доступен в режиме администратора)');
       return false;
     }
   };

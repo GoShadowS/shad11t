@@ -316,6 +316,19 @@ const adminConfig = { adminUser: admin.adminUser || 'shad11t', avatar: site.avat
 
       {/* ------- безопасность ------- */}
       <section data-panel="security" class="mt-6 hidden" role="tabpanel">
+        <div class="border border-phos/30 bg-phos/[0.04] max-w-2xl p-5 md:p-6 mb-6">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="pulse-dot inline-block h-2.5 w-2.5 rounded-full bg-phos"></span>
+              <div>
+                <h3 class="font-display text-base font-bold text-bone">Доступ к коду элемента (DevTools)</h3>
+                <p class="font-mono mt-0.5 text-[12px] text-sage">Для авторизованного администратора контекстное меню (ПКМ) и F12 разблокированы по всему сайту</p>
+              </div>
+            </div>
+            <span class="chip font-mono text-[11px] text-phos">Активен</span>
+          </div>
+        </div>
+
         <div class="border border-white/10 bg-abyss max-w-2xl p-5 md:p-7">
           <h2 class="font-display text-xl font-bold text-bone">Смена мастер-пароля</h2>
           <p class="font-mono mt-1 text-[12px] text-sage">
