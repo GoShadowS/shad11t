@@ -1,1 +1,13 @@
-[]
+[
+  {
+    "id": "test",
+    "title": "test",
+    "description": "test",
+    "category": "mod",
+    "image": "",
+    "link": "",
+    "tags": [],
+    "date": "2026-10-16",
+    "featured": true
+  }
+]
