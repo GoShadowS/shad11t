@@ -198,6 +198,8 @@ export function initOrbit() {
     hovered = pick(e);
     timeTarget = hovered ? 0.12 : 1;
     cv.style.cursor = hovered ? 'pointer' : 'default';
+    // без rAF-цикла (reduced motion) перерисовываем вручную, иначе ховер не виден
+    if (reduced) render(t);
     if (tip) {
       if (hovered) {
         const r = wrap.getBoundingClientRect();
@@ -220,6 +222,7 @@ export function initOrbit() {
     if (n) {
       selected = n;
       showDetail(n);
+      if (reduced) render(t);
     }
   };
 

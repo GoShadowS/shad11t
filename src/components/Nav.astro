@@ -94,7 +94,7 @@ const links = [
 
   {/* мобильное меню */}
   <div id="mobile-menu" class="bg-void/95 fixed inset-0 top-0 -z-10 backdrop-blur-xl lg:hidden" aria-hidden="true">
-    <div class="bg-blueprint-fade flex h-full flex-col justify-center gap-2 px-8 pt-[72px]">
+    <div class="bg-blueprint-fade flex h-full flex-col justify-center gap-2 overflow-y-auto px-8 pt-[72px]">
       {links.map((l, i) => (
         <a
           href={l.href}

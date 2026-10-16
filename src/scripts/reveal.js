@@ -67,6 +67,12 @@ function splitWords(el) {
 export function initReveal() {
   if (isReducedMotion()) return () => {};
 
+  // <details> (FAQ) меняют высоту страницы — пересчитываем триггеры
+  const onToggle = () => {
+    setTimeout(refreshTriggers, 60);
+  };
+  document.addEventListener('toggle', onToggle, true);
+
   const ctx = gsap.context(() => {
     /* ---------- hero-интро ---------- */
     const hero = document.querySelector('[data-hero]');
@@ -208,5 +214,8 @@ export function initReveal() {
     document.fonts.ready.then(() => refreshTriggers()).catch(() => {});
   }
 
-  return () => ctx.revert();
+  return () => {
+    document.removeEventListener('toggle', onToggle, true);
+    ctx.revert();
+  };
 }

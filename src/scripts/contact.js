@@ -2,7 +2,7 @@
  * SHADVOID — страница контактов: копирование, «передача» сообщения в Telegram.
  */
 
-import { $, $$, esc, toast, copyText, isReducedMotion } from './utils.js';
+import { $, $$, toast, copyText, isReducedMotion } from './utils.js';
 import { sfx } from './audio.js';
 import site from '../data/site.json';
 

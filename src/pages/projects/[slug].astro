@@ -126,6 +126,7 @@ const jsonld = {
     </div>
 
     {/* prev / next */}
+    {list.length > 1 && (
     <nav class="mt-16 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2" aria-label="Другие проекты">
       <a href={pg(`projects/${prev.id}`)} data-cursor="hover" class="group bg-abyss p-6 transition-colors hover:bg-panel">
         <span class="font-mono text-[11px] tracking-[0.25em] text-sage uppercase">← предыдущий</span>
@@ -136,6 +137,7 @@ const jsonld = {
         <span class="font-display mt-2 block text-xl font-bold text-bone group-hover:text-phos">{next.title}</span>
       </a>
     </nav>
+    )}
 
     {related.length > 0 && (
       <section class="mt-16">

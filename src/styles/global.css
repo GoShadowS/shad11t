@@ -172,7 +172,9 @@ html.lenis, html.lenis body { height: auto; }
 
 /* Глитч-заголовок: включается классом .glitching (JS) или hover */
 .glitch { position: relative; display: inline-block; }
-.glitch::before, .glitch::after {
+.glitching { position: relative; }
+.glitch::before, .glitch::after,
+.glitching::before, .glitching::after {
   content: attr(data-text);
   position: absolute;
   inset: 0;
@@ -462,6 +464,9 @@ html.has-cursor label {
 }
 .p-card:hover { border-color: rgba(198, 255, 61, 0.45); }
 
+/* процедурные обложки: пока JS не подставил src — прячем «битый» слот */
+img[data-cover]:not([src]) { opacity: 0; }
+
 .p-card .p-cover {
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), filter 0.6s ease;
   filter: saturate(0.85);
@@ -628,6 +633,10 @@ html.js:not(.reduced) [data-reveal="chars"] .char { opacity: 0; }
 }
 .field::placeholder { color: #4d5a51; }
 select.field option { background: #0a0e0c; }
+/* iOS зумит страницу при фокусе на полях меньше 16px — запрещаем */
+@media (max-width: 767px) {
+  .field { font-size: 16px; }
+}
 
 .lbl {
   display: block;
@@ -639,7 +648,17 @@ select.field option { background: #0a0e0c; }
   margin-bottom: 0.45rem;
 }
 
-.check-row { display: flex; align-items: center; gap: 0.7rem; cursor: pointer; user-select: none; }
+.check-row { position: relative; display: flex; align-items: center; gap: 0.7rem; cursor: pointer; user-select: none; }
+.check-row input:not([type="hidden"]) {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.check-row input:focus-visible + .check-box {
+  outline: 2px solid var(--color-phos);
+  outline-offset: 3px;
+}
 .check-box {
   width: 22px; height: 22px;
   border: 1px solid rgba(236, 233, 223, 0.3);
@@ -650,7 +669,6 @@ select.field option { background: #0a0e0c; }
   transition: all 0.2s ease;
   flex-shrink: 0;
 }
-.check-row input { display: none; }
 .check-row input:checked + .check-box {
   background: var(--color-phos);
   border-color: var(--color-phos);
@@ -844,9 +862,14 @@ select.field option { background: #0a0e0c; }
 /* Мобильное меню */
 #mobile-menu {
   clip-path: inset(0 0 100% 0);
-  transition: clip-path 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+  visibility: hidden;
+  transition: clip-path 0.5s cubic-bezier(0.65, 0, 0.35, 1), visibility 0s 0.5s;
 }
-#mobile-menu.open { clip-path: inset(0 0 0% 0); }
+#mobile-menu.open {
+  clip-path: inset(0 0 0% 0);
+  visibility: visible;
+  transition: clip-path 0.5s cubic-bezier(0.65, 0, 0.35, 1), visibility 0s 0s;
+}
 
 /* Текст поверх canvas-орбиты */
 #orbit-tip {
@@ -894,7 +917,9 @@ select.field option { background: #0a0e0c; }
 @media (prefers-reduced-motion: reduce) {
   .marquee-track, .scanbeam::after, .grain::after,
   .float-slow, .flicker, .spin-slower, .pulse-dot,
-  .ring-dash, .xp-fill::after {
+  .ring-dash, .xp-fill::after,
+  .glitching::before, .glitching::after, .glitch:hover::before, .glitch:hover::after,
+  .animate-ping, .animate-bounce, .animate-pulse {
     animation: none !important;
   }
   ::view-transition-old(root), ::view-transition-new(root) {
