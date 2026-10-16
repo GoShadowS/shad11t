@@ -38,6 +38,17 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Заголовки: четкие слова без разрывов посередине */
+h1, h2, h3, .font-display {
+  word-break: keep-all;
+  overflow-wrap: normal;
+  hyphens: none;
+}
+.w-chars {
+  display: inline-block;
+  white-space: nowrap;
+}
+
 ::selection {
   background: var(--color-phos);
   color: #060807;

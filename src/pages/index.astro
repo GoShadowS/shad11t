@@ -53,22 +53,10 @@ const jsonld = [
     <div class="pointer-events-none absolute -top-32 -right-32 h-[480px] w-[480px] rounded-full bg-phos/10 blur-[140px]"></div>
     <div class="pointer-events-none absolute bottom-0 -left-40 h-[420px] w-[420px] rounded-full bg-ember/10 blur-[140px]"></div>
 
-    {/* скрытый слой: проявляется только под «фонариком» курсора */}
-    <div class="spot-hidden pointer-events-none absolute inset-0 z-[5] flex items-center justify-center" aria-hidden="true">
-      <p class="font-display max-w-3xl -rotate-3 px-6 text-center text-2xl font-black text-phos drop-shadow-[0_0_24px_rgba(198,255,61,0.6)] md:text-4xl">
-        ты нашёл аксолотля.<br />он уже нашёл тебя.
-      </p>
-    </div>
-
-    {/* гигантское «11» — пасхалка ника */}
-    <div class="pointer-events-none absolute top-[8%] right-[2%] z-[1] select-none" aria-hidden="true">
-      <span data-parallax="0.25" class="font-display text-ghost block text-[34vw] leading-none font-black opacity-40 md:text-[24vw]">11</span>
-    </div>
-
     <div class="relative z-10 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center px-5 pt-[120px] pb-10 md:px-8">
       <p data-hero-fade class="font-mono mb-5 inline-flex w-fit items-center gap-3 border border-phos/30 bg-void/60 px-4 py-2 text-[11px] tracking-[0.25em] text-phos uppercase backdrop-blur">
         <span class="pulse-dot inline-block h-2 w-2 rounded-full bg-phos"></span>
-        shad11t.exe — запущен
+        <span data-i18n="hero.badge">shad11t.exe — запущен</span>
       </p>
 
       <h1 class="font-display font-black" aria-label="SHAD11T">
@@ -81,42 +69,37 @@ const jsonld = [
 
       <div class="mt-7 flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
         <p data-hero-fade class="max-w-xl text-[16px] leading-relaxed text-sage md:text-lg">
-          <span class="font-bold text-bone">Программист и создатель контента.</span>
-          Разработка в самых разных сферах: веб-сервисы, приложения, боты, моды и видео на YouTube.
-          Осмотрись — тут всё моё.
+          <span data-i18n="hero.role" class="font-bold text-bone">Программист и создатель контента.</span>
+          <span data-i18n="hero.desc"> Разработка в самых разных сферах: веб-сервисы, приложения, боты, моды и видео на YouTube. Осмотрись — тут всё моё.</span>
         </p>
         <div data-hero-fade class="flex flex-wrap gap-3">
           <a href={pg('projects')} class="btn-void btn-solid magnetic clip-corners px-7 py-4 text-[13px]" data-cursor="hover">
-            Смотреть проекты
+            <span data-i18n="hero.btnProjects">Смотреть проекты</span>
             <Icon name="ArrowRight" class="h-4 w-4" />
           </a>
           <a href={site.socials.youtube} target="_blank" rel="noopener" class="btn-void btn-ghost magnetic clip-corners px-7 py-4 text-[13px]" data-cursor="hover">
             <Icon name="brand:youtube" class="h-4 w-4" />
-            YouTube
+            <span data-i18n="nav.youtube">YouTube</span>
           </a>
         </div>
       </div>
 
       <div data-hero-fade class="font-mono mt-12 grid grid-cols-2 gap-px border border-white/10 bg-white/10 text-[11px] tracking-[0.14em] uppercase md:grid-cols-4">
-        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">статус //</span> <span class="text-phos">аксолотль</span></div>
-        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">движок //</span> shad11t_os v2.0</div>
-        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">локация //</span> под водой</div>
+        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage" data-i18n="hero.statusLbl">статус //</span> <span class="text-phos" data-i18n="hero.statusVal">аксолотль</span></div>
+        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage" data-i18n="hero.engineLbl">движок //</span> <span data-i18n="hero.engineVal">shad11t_os v2.0</span></div>
+        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage" data-i18n="hero.locLbl">локация //</span> <span data-i18n="hero.locVal">под водой</span></div>
         <div class="bg-void/80 flex items-center justify-between px-4 py-3 backdrop-blur">
-          <span><span class="text-sage">скролл //</span> вниз</span>
+          <span><span class="text-sage" data-i18n="hero.scrollLbl">скролл //</span> <span data-i18n="hero.scrollVal">вниз</span></span>
           <span class="inline-block animate-bounce text-phos">↓</span>
         </div>
       </div>
     </div>
-
-    <p class="v-label font-mono absolute top-1/2 left-4 z-10 hidden -translate-y-1/2 text-[10px] text-sage/50 uppercase xl:block" aria-hidden="true">
-      scroll to enter the aquarium
-    </p>
   </section>
 
   {/* ================= БЕГУЩАЯ СТРОКА ================= */}
   <div class="border-y border-phos/25 bg-phos/[0.04]">
     <Marquee
-      items={['ПРОГРАММИРОВАНИЕ', 'ВЕБ', 'БОТЫ', 'ПРИЛОЖЕНИЯ', 'АКСОЛОТЛЬ', 'YOUTUBE', 'МОДЫ', 'БУЛЬК']}
+      items={['ПРОГРАММИРОВАНИЕ', 'ВЕБ', 'БОТЫ', 'ПРИЛОЖЕНИЯ', 'АКСОЛОТЛЬ', 'YOUTUBE', 'МОДЫ']}
       class="font-display py-4 text-lg font-bold tracking-wide text-bone md:text-xl"
     />
   </div>
@@ -125,13 +108,13 @@ const jsonld = [
   <section class="relative mx-auto max-w-[1400px] px-5 py-24 md:px-8 md:py-36" data-parallax-wrap>
     <div class="grid gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-10">
       <div>
-        <p data-reveal="up" class="font-mono mb-6 text-[12px] tracking-[0.3em] text-ember uppercase">// манифест</p>
-        <p data-reveal="words" class="font-display max-w-3xl text-2xl leading-[1.35] font-bold text-bone md:text-4xl md:leading-[1.3]">
+        <p data-reveal="up" data-i18n="manifesto.tag" class="font-mono mb-6 text-[12px] tracking-[0.3em] text-ember uppercase">// манифест</p>
+        <p data-reveal="words" data-i18n="manifesto.text" class="font-display max-w-3xl text-2xl leading-[1.35] font-bold text-bone md:text-4xl md:leading-[1.3]">
           Меня зовут Shad11t. Я программирую софт в самых разных направлениях, делаю приложения, моды и снимаю это на YouTube. Этот сайт — мой аквариум: заглядывай, вода тёплая.
         </p>
         <div data-reveal="up" class="mt-8">
           <a href={pg('about')} class="link-line font-mono text-[13px] tracking-[0.18em] text-phos uppercase" data-cursor="hover">
-            → кто этот аксолотль
+            <span data-i18n="manifesto.link">→ кто этот аксолотль</span>
           </a>
         </div>
       </div>
@@ -139,15 +122,15 @@ const jsonld = [
       <div class="grid content-start grid-cols-3 gap-px border border-white/10 bg-white/10 lg:mt-16">
         <div data-reveal="up" class="bg-abyss p-4 sm:p-6">
           <p class="font-display text-4xl font-black text-phos md:text-5xl"><span data-count={projects.length}>0</span></p>
-          <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">проектов в витрине</p>
+          <p data-i18n="manifesto.statProjects" class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">проектов в витрине</p>
         </div>
         <div data-reveal="up" data-delay="0.1" class="bg-abyss p-4 sm:p-6">
           <p class="font-display text-4xl font-black text-bone md:text-5xl"><span data-count={videosTotal}>0</span></p>
-          <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">видео на канале</p>
+          <p data-i18n="manifesto.statVideos" class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">видео на канале</p>
         </div>
         <div data-reveal="up" data-delay="0.2" class="bg-abyss p-4 sm:p-6">
           <p class="font-display text-4xl font-black text-ember md:text-5xl"><span data-count="11">0</span></p>
-          <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">уровень лотла</p>
+          <p data-i18n="manifesto.statLvl" class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">уровень лотла</p>
         </div>
       </div>
     </div>
@@ -160,17 +143,17 @@ const jsonld = [
       <div data-h-track class="h-track items-stretch px-5 md:px-8">
         {/* заголовочная панель */}
         <div class="flex w-[86vw] shrink-0 flex-col justify-center pr-4 sm:w-[380px] md:w-[34vw] md:min-w-[380px]">
-          <p class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// избранное</p>
+          <p data-i18n="showcase.tag" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// избранное</p>
           <h2 class="font-display text-4xl leading-[1.02] font-black text-bone md:text-6xl">
-            Собрано<br />в одном<br /><span class="text-phos">аквариуме</span>
+            <span data-i18n="showcase.title">Собрано в одном аквариуме</span>
           </h2>
-          <p class="mt-5 max-w-sm text-[15px] leading-relaxed text-sage">
+          <p data-i18n="showcase.sub" class="mt-5 max-w-sm text-[15px] leading-relaxed text-sage">
             Избранное с витрины. Листай вбок — там дальше ещё интереснее.
           </p>
           <a href={pg('projects')} class="btn-void btn-ghost magnetic clip-corners-sm mt-7 w-fit px-6 py-3.5 text-[12px]" data-cursor="hover">
-            Вся витрина <Icon name="ArrowRight" class="h-4 w-4" />
+            <span data-i18n="showcase.allBtn">Вся витрина</span> <Icon name="ArrowRight" class="h-4 w-4" />
           </a>
-          <p class="font-mono mt-8 hidden items-center gap-2 text-[11px] tracking-[0.25em] text-sage/60 uppercase md:flex">
+          <p data-i18n="showcase.scrollHint" class="font-mono mt-8 hidden items-center gap-2 text-[11px] tracking-[0.25em] text-sage/60 uppercase md:flex">
             скролль → едет вбок <span class="text-phos">⟶</span>
           </p>
         </div>
@@ -189,9 +172,9 @@ const jsonld = [
         >
           <span class="font-display text-ghost-phos text-7xl font-black">+{Math.max(projects.length - featured.length, 1)}</span>
           <span>
-            <span class="font-display block text-2xl font-bold text-bone group-hover:text-phos">и это не всё</span>
+            <span data-i18n="showcase.moreTitle" class="font-display block text-2xl font-bold text-bone group-hover:text-phos">и это не всё</span>
             <span class="font-mono mt-2 inline-flex items-center gap-2 text-[12px] tracking-[0.2em] text-phos uppercase">
-              открыть витрину <Icon name="ArrowRight" class="h-4 w-4 transition-transform group-hover:translate-x-2" />
+              <span data-i18n="showcase.moreLink">открыть витрину</span> <Icon name="ArrowRight" class="h-4 w-4 transition-transform group-hover:translate-x-2" />
             </span>
           </span>
         </a>
@@ -203,15 +186,15 @@ const jsonld = [
   <section class="mx-auto max-w-[1400px] px-5 py-24 md:px-8 md:py-36">
     <div class="grid items-start gap-10 lg:grid-cols-[1fr_1.25fr]">
       <div>
-        <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// прямой доступ</p>
-        <h2 data-reveal="chars" class="font-display text-4xl leading-[1.05] font-black text-bone md:text-5xl">
+        <p data-reveal="up" data-i18n="term.tag" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// прямой доступ</p>
+        <h2 data-reveal="chars" data-i18n="term.title" class="font-display text-4xl leading-[1.05] font-black text-bone md:text-5xl">
           Живой терминал
         </h2>
-        <p data-reveal="up" class="mt-5 max-w-md text-[15px] leading-relaxed text-sage">
+        <p data-reveal="up" data-i18n="term.sub" class="mt-5 max-w-md text-[15px] leading-relaxed text-sage">
           Настоящий, кликабельный, с характером. Спроси его о проектах, навыках и секретах. Только не пиши <span class="font-mono text-ember">sudo</span>. Хотя… попробуй.
         </p>
         <div data-reveal="up" class="mt-6 flex flex-wrap gap-2">
-          {['help', 'projects', 'skills', 'socials', 'konami'].map((cmd) => (
+          {['help', 'projects', 'skills', 'socials'].map((cmd) => (
             <button
               type="button"
               data-cmd={cmd}
@@ -234,13 +217,13 @@ const jsonld = [
     <div class="mx-auto max-w-[1400px] px-5 py-24 md:px-8 md:py-32">
       <div class="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
         <div>
-          <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// с канала</p>
-          <h2 data-reveal="chars" class="font-display max-w-2xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
+          <p data-reveal="up" data-i18n="content.tag" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// с канала</p>
+          <h2 data-reveal="chars" data-i18n="content.title" class="font-display max-w-2xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
             Свежее с канала
           </h2>
         </div>
         <a data-reveal="up" href={pg('content')} class="link-line font-mono w-fit text-[13px] tracking-[0.18em] text-phos uppercase" data-cursor="hover">
-          → весь контент
+          <span data-i18n="content.allLink">→ весь контент</span>
         </a>
       </div>
       <div class="grid gap-6 md:grid-cols-3">
@@ -255,9 +238,8 @@ const jsonld = [
           data-cursor="hover"
         >
           <Icon name="brand:youtube" class="h-5 w-5" />
-          Подписаться на канал
+          <span data-i18n="content.subBtn">Подписаться на канал</span>
         </a>
-        <p class="font-mono text-[11px] tracking-[0.2em] text-sage/70 uppercase">аксолотли тоже жмут колокольчик</p>
       </div>
     </div>
   </section>
@@ -266,11 +248,11 @@ const jsonld = [
   <section class="relative overflow-hidden" data-parallax-wrap>
     <div class="pointer-events-none absolute top-1/2 left-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-phos/[0.07] blur-[140px]"></div>
     <div class="relative mx-auto max-w-[1400px] px-5 py-28 text-center md:px-8 md:py-40">
-      <p data-reveal="up" class="font-mono mb-6 text-[12px] tracking-[0.3em] text-ember uppercase">// связь</p>
-      <h2 data-reveal="chars" class="font-display mx-auto max-w-4xl text-[11vw] leading-[0.95] font-black text-bone md:text-7xl" data-glitch-auto data-text="ЗАЛЕТАЙ В АКВАРИУМ">
+      <p data-reveal="up" data-i18n="connect.tag" class="font-mono mb-6 text-[12px] tracking-[0.3em] text-ember uppercase">// связь</p>
+      <h2 data-reveal="chars" data-i18n="connect.title" class="font-display mx-auto max-w-4xl text-4xl sm:text-6xl md:text-7xl leading-[1.0] font-black text-bone">
         ЗАЛЕТАЙ В АКВАРИУМ
       </h2>
-      <p data-reveal="up" class="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-sage md:text-base">
+      <p data-reveal="up" data-i18n="connect.sub" class="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-sage md:text-base">
         Видео — на YouTube. Код — на GitHub. Всё остальное — тоже где-то рядом. Выбирай портал.
       </p>
       <div data-reveal="up" class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -284,16 +266,6 @@ const jsonld = [
           <Icon name="brand:boosty" class="h-5 w-5" /> Boosty
         </a>
       </div>
-    </div>
-
-    <div class="border-t border-white/10">
-      <Marquee
-        items={['НЕ БОЙСЯ ГЛУБИНЫ', 'БОЙСЯ СКУЧНЫХ САЙТОВ']}
-        speed="slow"
-        reverse
-        class="font-mono py-3 text-[12px] tracking-[0.3em] text-sage/70 uppercase"
-        separator="◆"
-      />
     </div>
   </section>
 </Base>

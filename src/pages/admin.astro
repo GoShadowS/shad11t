@@ -1,76 +1,102 @@
 ---
 /**
- * Shad11t — /admin: скрытая панель управления проектами.
- * noindex, вход для единственного администратора.
+ * Shad11t — /admin: панель управления проектами.
+ * noindex, безопасный локальный вход без хранения хешей в GitHub.
  */
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import admin from '../data/admin.json';
 import { pg } from '../lib/paths';
 
-const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterations, hash: admin.hash };
+const adminConfig = { adminUser: admin.adminUser || 'shad11t' };
 ---
 
 <Base
-  title="Админка"
-  description="Пульт управления Shad11t. Только для своих."
+  title="Панель управления"
+  description="Панель управления проектами Shad11t"
   path={pg('admin')}
   noindex
 >
   <div id="admin-root" class="mx-auto max-w-[1100px] px-5 pt-[120px] pb-24 md:px-8">
-    <script type="application/json" id="admin-auth-data" set:html={JSON.stringify(authData)} />
+    <script type="application/json" id="admin-auth-config" set:html={JSON.stringify(adminConfig)} />
 
-    {/* ================= ВХОД ================= */}
+    {/* ================= ВХОД / НАСТРОЙКА ================= */}
     <div id="admin-login" class="mx-auto max-w-md">
-      <p class="font-mono mb-4 text-center text-[12px] tracking-[0.3em] text-ember uppercase">// restricted zone</p>
-      <h1 class="font-display text-center text-4xl font-black text-bone md:text-5xl">Привет, аксолотль<span class="text-phos">.</span></h1>
-      <p class="font-mono mt-3 text-center text-[12px] text-sage">посторонним тут делать нечего. серьёзно.</p>
+      <div class="border border-white/10 bg-abyss p-6 md:p-8">
+        <div class="mb-6 flex items-center justify-between border-b border-white/10 pb-4">
+          <span class="font-mono text-[12px] font-bold text-bone uppercase tracking-wider">ADMIN PANEL</span>
+          <span class="font-mono text-[11px] text-phos">v2.0</span>
+        </div>
 
-      <form id="login-form" class="term-window scanlines clip-corners mt-8 p-6 md:p-8" autocomplete="off">
-        <div>
-          <label class="lbl" for="login-user">Логин</label>
-          <input id="login-user" type="text" class="field" placeholder="shad11t" autocomplete="username" />
-        </div>
-        <div class="mt-4">
-          <label class="lbl" for="login-pass">Пароль</label>
-          <input id="login-pass" type="password" class="field" placeholder="••••••••••" autocomplete="current-password" />
-        </div>
-        <p id="login-error" class="font-mono mt-3 min-h-[20px] text-[13px] text-blood" role="alert"></p>
-        <button type="submit" class="btn-void btn-solid clip-corners-sm mt-2 w-full justify-center px-6 py-3.5 text-[13px]" data-cursor="hover">
-          <Icon name="KeyRound" class="h-4 w-4" /> Открыть пульт
-        </button>
-        <p class="font-mono mt-4 text-center text-[11px] leading-relaxed text-sage/60">
-          забыл пароль? он записан в README репозитория.<br />а если и его потерял — правь src/data/admin.json :)
+        <h1 id="login-title" class="font-display text-2xl font-bold text-bone">Вход в панель</h1>
+        <p id="login-desc" class="font-mono mt-2 text-[12px] text-sage">
+          Введите учётные данные администратора
         </p>
-      </form>
+
+        <form id="login-form" class="mt-6 space-y-4" autocomplete="off">
+          <div>
+            <label class="lbl" for="login-user">Пользователь</label>
+            <input id="login-user" type="text" class="field" value="shad11t" autocomplete="username" required />
+          </div>
+
+          <div id="setup-pass-group" class="space-y-4 hidden">
+            <div>
+              <label class="lbl" for="setup-pass">Задайте мастер-пароль</label>
+              <input id="setup-pass" type="password" class="field" placeholder="Минимум 6 символов" autocomplete="new-password" />
+            </div>
+            <div>
+              <label class="lbl" for="setup-pass-confirm">Повторите пароль</label>
+              <input id="setup-pass-confirm" type="password" class="field" placeholder="Повтор пароля" autocomplete="new-password" />
+            </div>
+          </div>
+
+          <div id="regular-pass-group">
+            <label class="lbl" for="login-pass">Пароль или GitHub Token</label>
+            <input id="login-pass" type="password" class="field" placeholder="••••••••••" autocomplete="current-password" />
+          </div>
+
+          <p id="login-error" class="font-mono min-h-[18px] text-[12px] text-blood" role="alert"></p>
+
+          <button type="submit" id="btn-login-submit" class="btn-void btn-solid w-full justify-center py-3 text-[12px]" data-cursor="hover">
+            <Icon name="KeyRound" class="h-4 w-4" />
+            <span id="btn-login-label">Войти</span>
+          </button>
+        </form>
+
+        <div class="mt-6 border-t border-white/10 pt-4">
+          <p class="font-mono text-[11px] leading-relaxed text-sage/70">
+            Безопасность: пароль шифруется и хранится исключительно в вашем локальном браузере. В репозитории GitHub пароли не сохраняются.
+          </p>
+        </div>
+      </div>
     </div>
 
-    {/* ================= ПАНЕЛЬ ================= */}
+    {/* ================= РАБОЧАЯ ПАНЕЛЬ ================= */}
     <div id="admin-panel" class="hidden">
-      <div class="flex flex-wrap items-end justify-between gap-4">
+      <div class="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-5">
         <div>
-          <p class="font-mono mb-4 text-[12px] tracking-[0.3em] text-phos uppercase">// control room // доступ разрешён</p>
-          <h1 class="font-display text-4xl font-black text-bone md:text-5xl">Пульт аксолотля<span class="text-ember">.</span></h1>
+          <span class="font-mono text-[11px] text-phos tracking-wider uppercase">Управление контентом</span>
+          <h1 class="font-display text-3xl font-black text-bone">Панель управления</h1>
         </div>
-        <button type="button" id="btn-logout" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-5 py-2.5 text-[12px]">
+        <button type="button" id="btn-logout" data-cursor="hover" class="btn-void btn-ghost px-4 py-2 text-[12px]">
           <Icon name="LogOut" class="h-4 w-4" /> Выйти
         </button>
       </div>
 
-      <div class="mt-8 flex flex-wrap gap-2" role="tablist" aria-label="Разделы админки">
-        <button type="button" data-tab="projects" data-cursor="hover" class="tab-btn clip-corners-sm on" role="tab"><Icon name="LayoutGrid" class="h-4 w-4" /> Проекты</button>
-        <button type="button" data-tab="editor" data-cursor="hover" class="tab-btn clip-corners-sm" role="tab"><Icon name="Pencil" class="h-4 w-4" /> Редактор</button>
-        <button type="button" data-tab="order" data-cursor="hover" class="tab-btn clip-corners-sm" role="tab"><Icon name="ListOrdered" class="h-4 w-4" /> Порядок</button>
-        <button type="button" data-tab="publish" data-cursor="hover" class="tab-btn clip-corners-sm" role="tab"><Icon name="Rocket" class="h-4 w-4" /> Публикация</button>
-        <button type="button" data-tab="security" data-cursor="hover" class="tab-btn clip-corners-sm" role="tab"><Icon name="ShieldCheck" class="h-4 w-4" /> Безопасность</button>
+      <div class="mt-6 flex flex-wrap gap-2" role="tablist" aria-label="Разделы админки">
+        <button type="button" data-tab="projects" data-cursor="hover" class="tab-btn on" role="tab"><Icon name="LayoutGrid" class="h-4 w-4" /> Проекты</button>
+        <button type="button" data-tab="editor" data-cursor="hover" class="tab-btn" role="tab"><Icon name="Pencil" class="h-4 w-4" /> Редактор</button>
+        <button type="button" data-tab="order" data-cursor="hover" class="tab-btn" role="tab"><Icon name="ListOrdered" class="h-4 w-4" /> Порядок</button>
+        <button type="button" data-tab="publish" data-cursor="hover" class="tab-btn" role="tab"><Icon name="Rocket" class="h-4 w-4" /> Публикация</button>
+        <button type="button" data-tab="security" data-cursor="hover" class="tab-btn" role="tab"><Icon name="ShieldCheck" class="h-4 w-4" /> Безопасность</button>
       </div>
 
       {/* ------- проекты ------- */}
       <section data-panel="projects" class="mt-6" role="tabpanel">
         <div id="ov-summary" class="mb-4 flex flex-wrap gap-2"></div>
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <p class="font-mono text-[12px] text-sage">★ — в топе · правки живут в браузере, пока не опубликуешь</p>
-          <button type="button" id="btn-new" data-cursor="hover" class="btn-void btn-solid clip-corners-sm px-5 py-2.5 text-[12px]">
+          <p class="font-mono text-[12px] text-sage">Черновики и правки сохраняются в браузере до публикации</p>
+          <button type="button" id="btn-new" data-cursor="hover" class="btn-void btn-solid px-5 py-2.5 text-[12px]">
             <Icon name="Plus" class="h-4 w-4" /> Новый проект
           </button>
         </div>
@@ -79,16 +105,16 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
 
       {/* ------- редактор ------- */}
       <section data-panel="editor" class="mt-6 hidden" role="tabpanel">
-        <h2 id="editor-title" class="font-display text-2xl font-black text-bone">Новый проект</h2>
-        <form id="project-form" class="term-window mt-4 p-5 md:p-7" autocomplete="off">
+        <h2 id="editor-title" class="font-display text-2xl font-bold text-bone">Параметры проекта</h2>
+        <form id="project-form" class="border border-white/10 bg-abyss mt-4 p-5 md:p-7" autocomplete="off">
           <div class="grid gap-5 md:grid-cols-2">
             <div class="md:col-span-2">
-              <label class="lbl" for="f-title">Название *</label>
-              <input id="f-title" type="text" maxlength="80" class="field" placeholder="Мой крутой мод" />
+              <label class="lbl" for="f-title">Название проекта *</label>
+              <input id="f-title" type="text" maxlength="80" class="field" placeholder="Название проекта" required />
             </div>
             <div>
-              <label class="lbl" for="f-id">ID (латиница, для ссылки)</label>
-              <input id="f-id" type="text" maxlength="60" class="field" placeholder="авто из названия" />
+              <label class="lbl" for="f-id">ID (латиница, для URL)</label>
+              <input id="f-id" type="text" maxlength="60" class="field" placeholder="автоматически из названия" />
             </div>
             <div class="grid grid-cols-2 gap-4">
               <div>
@@ -97,49 +123,49 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
                   <option value="mod">Моды и плагины</option>
                   <option value="app">Десктопное приложение</option>
                   <option value="mobile-app">Мобильное приложение</option>
-                  <option value="other">Скрипты и прочее</option>
+                  <option value="other">Скрипты и боты</option>
                 </select>
               </div>
               <div>
-                <label class="lbl" for="f-date">Дата</label>
+                <label class="lbl" for="f-date">Дата релиза</label>
                 <input id="f-date" type="date" class="field" />
               </div>
             </div>
             <div class="md:col-span-2">
-              <label class="lbl" for="f-description">Описание (пустая строка = новый абзац)</label>
-              <textarea id="f-description" rows="5" class="field resize-y" placeholder="Что это, зачем и чем гордишься…"></textarea>
+              <label class="lbl" for="f-description">Описание проекта</label>
+              <textarea id="f-description" rows="5" class="field resize-y" placeholder="Описание возможностей, архитектуры и технологий…"></textarea>
             </div>
             <div>
-              <label class="lbl" for="f-image">Обложка (URL)</label>
-              <input id="f-image" type="url" class="field" placeholder="пусто = сгенерируется автоматически" />
+              <label class="lbl" for="f-image">Обложка (URL картинки)</label>
+              <input id="f-image" type="url" class="field" placeholder="Оставьте пустым для автогенерации" />
             </div>
             <div>
-              <label class="lbl" for="f-link">Ссылка на проект</label>
-              <input id="f-link" type="url" class="field" placeholder="https://github.com/…" />
+              <label class="lbl" for="f-link">Ссылка на проект / GitHub</label>
+              <input id="f-link" type="url" class="field" placeholder="https://github.com/GoShadowS/…" />
             </div>
             <div>
               <label class="lbl" for="f-tags">Теги (через запятую)</label>
-              <input id="f-tags" type="text" class="field" placeholder="Minecraft, Java, Forge" />
+              <input id="f-tags" type="text" class="field" placeholder="Java, Web, Python, Tauri" />
             </div>
             <div class="flex items-end pb-1">
               <label class="check-row">
                 <input id="f-featured" type="checkbox" />
                 <span class="check-box"><Icon name="Check" class="h-4 w-4" /></span>
-                <span class="font-mono text-[13px] text-bone">★ в топ (на главную)</span>
+                <span class="font-mono text-[13px] text-bone">В избранное (на главную)</span>
               </label>
             </div>
           </div>
 
           <div class="mt-5">
-            <p class="lbl">Превью обложки</p>
+            <p class="lbl">Предпросмотр обложки</p>
             <div id="cover-preview-box" class="cover-preview"></div>
           </div>
 
           <div class="mt-6 flex flex-wrap gap-3">
-            <button type="submit" class="btn-void btn-solid clip-corners-sm px-7 py-3 text-[13px]" data-cursor="hover">
-              <Icon name="Save" class="h-4 w-4" /> Сохранить локально
+            <button type="submit" class="btn-void btn-solid px-6 py-3 text-[12px]" data-cursor="hover">
+              <Icon name="Save" class="h-4 w-4" /> Сохранить проект
             </button>
-            <button type="button" id="btn-cancel" class="btn-void btn-ghost clip-corners-sm px-6 py-3 text-[13px]" data-cursor="hover">
+            <button type="button" id="btn-cancel" class="btn-void btn-ghost px-5 py-3 text-[12px]" data-cursor="hover">
               Отмена
             </button>
           </div>
@@ -149,8 +175,8 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
       {/* ------- порядок ------- */}
       <section data-panel="order" class="mt-6 hidden" role="tabpanel">
         <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-          <p class="font-mono text-[12px] text-sage">двигай стрелками — сохраняется сразу</p>
-          <button type="button" id="btn-order-reset" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-5 py-2.5 text-[12px]">
+          <p class="font-mono text-[12px] text-sage">Используйте стрелки для изменения порядка отображения на витрине</p>
+          <button type="button" id="btn-order-reset" data-cursor="hover" class="btn-void btn-ghost px-4 py-2 text-[12px]">
             Сбросить порядок
           </button>
         </div>
@@ -159,18 +185,18 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
 
       {/* ------- публикация ------- */}
       <section data-panel="publish" class="mt-6 hidden" role="tabpanel">
-        <div class="term-window p-5 md:p-7">
-          <h2 class="font-display text-xl font-black text-bone">Подключение GitHub</h2>
-          <p class="font-mono mt-2 text-[12px] leading-relaxed text-sage">
-            Один токен для обоих способов публикации. Нужен classic PAT со scope «repo» и «gist».
+        <div class="border border-white/10 bg-abyss p-5 md:p-7">
+          <h2 class="font-display text-xl font-bold text-bone">Подключение к GitHub</h2>
+          <p class="font-mono mt-1 text-[12px] text-sage">
+            Персональный токен GitHub (PAT classic) с правами repo и gist для публикации обновлений
           </p>
           <div class="mt-5 grid gap-4 sm:grid-cols-2">
             <div>
-              <label class="lbl" for="gh-owner">Owner (юзернейм)</label>
+              <label class="lbl" for="gh-owner">Владелец репозитория</label>
               <input id="gh-owner" type="text" class="field" value="GoShadowS" placeholder="GoShadowS" autocomplete="off" />
             </div>
             <div>
-              <label class="lbl" for="gh-repo">Репозиторий</label>
+              <label class="lbl" for="gh-repo">Имя репозитория</label>
               <input id="gh-repo" type="text" class="field" value="shad11t" placeholder="shad11t" autocomplete="off" />
             </div>
             <div>
@@ -182,107 +208,81 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
               <input id="gh-path" type="text" class="field" placeholder="src/data/projects.json" autocomplete="off" />
             </div>
             <div class="sm:col-span-2">
-              <label class="lbl" for="gh-token">Personal Access Token (classic, scope repo + gist)</label>
-              <input id="gh-token" type="password" class="field" placeholder="github_pat_…" autocomplete="off" />
+              <label class="lbl" for="gh-token">GitHub Token (PAT)</label>
+              <input id="gh-token" type="password" class="field" placeholder="ghp_…" autocomplete="off" />
               <label class="check-row mt-3">
                 <input id="gh-remember" type="checkbox" />
                 <span class="check-box"><Icon name="Check" class="h-4 w-4" /></span>
-                <span class="font-mono text-[13px] text-bone">запомнить токен в этом браузере</span>
+                <span class="font-mono text-[13px] text-bone">Сохранить токен локально в этом браузере</span>
               </label>
             </div>
             <div class="sm:col-span-2">
-              <label class="lbl" for="gh-message">Сообщение коммита</label>
-              <input id="gh-message" type="text" class="field" placeholder="content(admin): обновление проектов" autocomplete="off" />
+              <label class="lbl" for="gh-message">Текст коммита</label>
+              <input id="gh-message" type="text" class="field" placeholder="content: update projects showcase" autocomplete="off" />
             </div>
           </div>
-          <p class="font-mono mt-4 text-[11px] leading-relaxed text-sage/70">
-            Как получить токен: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate → scope «repo» + «gist» → скопировать.
-          </p>
         </div>
 
-        <div class="term-window mt-6 p-5 md:p-7">
-          <h2 class="font-display text-xl font-black text-bone">⚡ Мгновенная публикация</h2>
-          <p class="font-mono mt-2 text-[12px] leading-relaxed text-sage">
-            Пишет объединённые данные в Gist — сайт подхватит их сразу, без сборки. Для статических страниц, карты сайта и RSS иногда жми «Коммит» ниже.
+        <div class="border border-white/10 bg-abyss mt-6 p-5 md:p-7">
+          <h2 class="font-display text-xl font-bold text-bone">Публикация в репозиторий</h2>
+          <p class="font-mono mt-1 text-[12px] text-sage">
+            Запушит projects.json прямо в main ветку репозитория. GitHub Actions автоматически пересоберёт сайт и обновит страницы.
           </p>
-          <div id="gist-status" class="font-mono mt-4 min-h-[24px] text-[13px]"></div>
-          <div class="mt-4 flex flex-wrap gap-3">
-            <button type="button" id="btn-gist-publish" data-cursor="hover" class="btn-void btn-solid clip-corners-sm px-7 py-3 text-[13px] disabled:opacity-60">
-              <Icon name="Zap" class="h-4 w-4" /> Опубликовать сейчас
-            </button>
-            <button type="button" id="btn-gist-create" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-6 py-3 text-[13px] disabled:opacity-60">
-              <Icon name="Plus" class="h-4 w-4" /> Создать Gist-хранилище
-            </button>
-          </div>
-          <div id="gist-finish-box" class="mt-4 hidden border border-gold/40 bg-gold/5 p-4">
-            <p class="font-mono text-[12px] text-gold">Gist создан: <span id="gist-new-id" class="font-bold"></span></p>
-            <p class="font-mono mt-1 text-[12px] text-sage">Последний шаг: записать его в site.json и закоммитить (одна сборка — и мгновенные публикации заработают).</p>
-            <button type="button" id="btn-gist-finish" data-cursor="hover" class="btn-void btn-solid clip-corners-sm mt-3 px-6 py-2.5 text-[12px] disabled:opacity-60">
-              Завершить настройку
-            </button>
-          </div>
-          <details class="mt-4 border border-white/10 p-4">
-            <summary data-cursor="hover" class="font-mono cursor-pointer text-[12px] text-sage hover:text-phos">подключить существующий gist…</summary>
-            <div class="mt-3 grid gap-3 sm:grid-cols-2">
-              <div>
-                <label class="lbl" for="gist-user">User (владелец gist)</label>
-                <input id="gist-user" type="text" class="field" placeholder="GoShadowS" autocomplete="off" />
-              </div>
-              <div>
-                <label class="lbl" for="gist-id">ID gist (32 символа)</label>
-                <input id="gist-id" type="text" class="field" placeholder="a1b2c3…" autocomplete="off" />
-              </div>
-            </div>
-            <button type="button" id="btn-gist-attach" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm mt-3 px-6 py-2.5 text-[12px] disabled:opacity-60">
-              Подключить
-            </button>
-          </details>
-        </div>
-
-        <div class="term-window mt-6 p-5 md:p-7">
-          <h2 class="font-display text-xl font-black text-bone">Коммит в GitHub</h2>
-          <p class="font-mono mt-2 text-[12px] leading-relaxed text-sage">
-            Надёжный способ: запушит объединённый projects.json в ветку main — Actions пересоберёт сайт целиком (включая статические страницы проектов, карту сайта и RSS).
-          </p>
-          <button type="button" id="btn-publish" data-cursor="hover" class="btn-void btn-solid clip-corners-sm mt-5 px-7 py-3 text-[13px] disabled:opacity-60">
-            <Icon name="Rocket" class="h-4 w-4" /> Опубликовать в GitHub
+          <button type="button" id="btn-publish" data-cursor="hover" class="btn-void btn-solid mt-4 px-6 py-3 text-[12px] disabled:opacity-60">
+            <Icon name="Rocket" class="h-4 w-4" /> Опубликовать в репозиторий
           </button>
-          <div id="publish-status" class="font-mono mt-4 min-h-[24px] text-[13px]"></div>
+          <div id="publish-status" class="font-mono mt-3 min-h-[20px] text-[12px]"></div>
+        </div>
+
+        <div class="border border-white/10 bg-abyss mt-6 p-5 md:p-7">
+          <h2 class="font-display text-xl font-bold text-bone">Мгновенная публикация через Gist</h2>
+          <p class="font-mono mt-1 text-[12px] text-sage">
+            Обновляет проекты в Gist-хранилище — изменения сразу видны на сайте без пересборки.
+          </p>
+          <div id="gist-status" class="font-mono mt-3 min-h-[20px] text-[12px]"></div>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <button type="button" id="btn-gist-publish" data-cursor="hover" class="btn-void btn-solid px-6 py-2.5 text-[12px] disabled:opacity-60">
+              <Icon name="Zap" class="h-4 w-4" /> Опубликовать в Gist
+            </button>
+            <button type="button" id="btn-gist-create" data-cursor="hover" class="btn-void btn-ghost px-5 py-2.5 text-[12px] disabled:opacity-60">
+              <Icon name="Plus" class="h-4 w-4" /> Создать Gist
+            </button>
+          </div>
         </div>
 
         <div class="mt-6 grid gap-6 lg:grid-cols-2">
-          <div class="border border-white/10 bg-abyss p-5 md:p-6">
-            <h3 class="font-display text-lg font-bold text-bone">Экспорт</h3>
-            <p class="font-mono mt-1 text-[12px] text-sage">забери JSON руками и закоммить сам</p>
+          <div class="border border-white/10 bg-abyss p-5">
+            <h3 class="font-display text-lg font-bold text-bone">Экспорт данных</h3>
+            <p class="font-mono mt-1 text-[12px] text-sage">Скачать или скопировать JSON файл проектов</p>
             <div class="mt-4 flex flex-wrap gap-3">
-              <button type="button" id="btn-download" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-5 py-2.5 text-[12px]">
+              <button type="button" id="btn-download" data-cursor="hover" class="btn-void btn-ghost px-4 py-2.5 text-[12px]">
                 <Icon name="Download" class="h-4 w-4" /> Скачать JSON
               </button>
-              <button type="button" id="btn-copy-json" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-5 py-2.5 text-[12px]">
+              <button type="button" id="btn-copy-json" data-cursor="hover" class="btn-void btn-ghost px-4 py-2.5 text-[12px]">
                 <Icon name="Copy" class="h-4 w-4" /> Копировать
               </button>
             </div>
           </div>
-          <div class="border border-white/10 bg-abyss p-5 md:p-6">
-            <h3 class="font-display text-lg font-bold text-bone">Импорт</h3>
-            <p class="font-mono mt-1 text-[12px] text-sage">вставь JSON или выбери файл</p>
-            <textarea id="import-text" rows="3" class="field mt-3" placeholder='[{"id": "…", …}]'></textarea>
+          <div class="border border-white/10 bg-abyss p-5">
+            <h3 class="font-display text-lg font-bold text-bone">Импорт данных</h3>
+            <p class="font-mono mt-1 text-[12px] text-sage">Загрузить JSON проектов</p>
+            <textarea id="import-text" rows="2" class="field mt-3" placeholder='[{"id": "...", ...}]'></textarea>
             <div class="mt-3 flex flex-wrap items-center gap-3">
-              <label class="btn-void btn-ghost clip-corners-sm cursor-pointer px-5 py-2.5 text-[12px]" data-cursor="hover">
-                <Icon name="Upload" class="h-4 w-4" /> Файл…
+              <label class="btn-void btn-ghost cursor-pointer px-4 py-2 text-[12px]" data-cursor="hover">
+                <Icon name="Upload" class="h-4 w-4" /> Выбрать файл
                 <input id="file-import" type="file" accept="application/json,.json" class="hidden" />
               </label>
-              <button type="button" id="btn-import" data-cursor="hover" class="btn-void btn-solid clip-corners-sm px-5 py-2.5 text-[12px]">
+              <button type="button" id="btn-import" data-cursor="hover" class="btn-void btn-solid px-4 py-2 text-[12px]">
                 Импортировать
               </button>
             </div>
           </div>
         </div>
 
-        <div class="mt-6 border border-blood/40 bg-blood/5 p-5 md:p-6">
-          <h3 class="font-display text-lg font-bold text-blood">Опасная зона</h3>
-          <p class="font-mono mt-1 text-[12px] text-sage">удалить все локальные правки и вернуться к версии из репозитория</p>
-          <button type="button" id="btn-overlay-reset" data-cursor="hover" class="btn-void btn-danger clip-corners-sm mt-4 px-5 py-2.5 text-[12px]">
+        <div class="mt-6 border border-blood/30 bg-blood/5 p-5">
+          <h3 class="font-display text-lg font-bold text-blood">Сброс локальных правок</h3>
+          <p class="font-mono mt-1 text-[12px] text-sage">Удалить черновики из браузера и вернуться к данным репозитория</p>
+          <button type="button" id="btn-overlay-reset" data-cursor="hover" class="btn-void btn-danger mt-3 px-5 py-2.5 text-[12px]">
             <Icon name="Trash2" class="h-4 w-4" /> Сбросить локальные правки
           </button>
         </div>
@@ -290,46 +290,30 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
 
       {/* ------- безопасность ------- */}
       <section data-panel="security" class="mt-6 hidden" role="tabpanel">
-        <div class="term-window max-w-2xl p-5 md:p-7">
-          <h2 class="font-display text-xl font-black text-bone">Смена пароля</h2>
-          <p class="font-mono mt-2 text-[12px] leading-relaxed text-sage">
-            Новый пароль сразу заработает в этом браузере. Чтобы он работал везде — вставь сгенерированный хеш в src/data/admin.json и запушь.
+        <div class="border border-white/10 bg-abyss max-w-2xl p-5 md:p-7">
+          <h2 class="font-display text-xl font-bold text-bone">Смена мастер-пароля</h2>
+          <p class="font-mono mt-1 text-[12px] text-sage">
+            Пароль сохраняется локально в зашифрованном виде в вашем браузере
           </p>
           <form id="pass-form" class="mt-5 space-y-4" autocomplete="off">
             <div>
               <label class="lbl" for="pw-current">Текущий пароль</label>
-              <input id="pw-current" type="password" class="field" autocomplete="current-password" />
+              <input id="pw-current" type="password" class="field" autocomplete="current-password" required />
             </div>
             <div class="grid gap-4 sm:grid-cols-2">
               <div>
-                <label class="lbl" for="pw-new">Новый пароль (мин. 8)</label>
-                <input id="pw-new" type="password" class="field" autocomplete="new-password" />
+                <label class="lbl" for="pw-new">Новый пароль (мин. 6)</label>
+                <input id="pw-new" type="password" class="field" autocomplete="new-password" required minlength="6" />
               </div>
               <div>
-                <label class="lbl" for="pw-confirm">Ещё раз</label>
-                <input id="pw-confirm" type="password" class="field" autocomplete="new-password" />
+                <label class="lbl" for="pw-confirm">Подтверждение</label>
+                <input id="pw-confirm" type="password" class="field" autocomplete="new-password" required minlength="6" />
               </div>
             </div>
-            <button type="submit" class="btn-void btn-solid clip-corners-sm px-6 py-3 text-[13px]" data-cursor="hover">
-              <Icon name="ShieldCheck" class="h-4 w-4" /> Сменить пароль
+            <button type="submit" class="btn-void btn-solid px-6 py-2.5 text-[12px]" data-cursor="hover">
+              <Icon name="ShieldCheck" class="h-4 w-4" /> Обновить пароль
             </button>
           </form>
-          <div id="pw-result" class="mt-6 hidden border border-gold/40 bg-gold/5 p-4">
-            <p class="font-mono text-[12px] text-gold">✓ пароль сменён локально. Для остальных устройств вставь это в src/data/admin.json:</p>
-            <div data-hash class="mt-3 overflow-x-auto bg-black/50 p-3">
-              <pre class="font-mono text-[12px] text-bone"><code></code></pre>
-            </div>
-            <button type="button" id="btn-hash-copy" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm mt-3 px-5 py-2.5 text-[12px]">
-              <Icon name="Copy" class="h-4 w-4" /> Копировать хеш
-            </button>
-          </div>
-        </div>
-        <div class="mt-6 max-w-2xl border border-white/10 bg-abyss p-5">
-          <p class="font-mono text-[12px] leading-relaxed text-sage">
-            <span class="text-gold">◈ честно о безопасности:</span> это статический сайт без бэкенда — хеш пароля виден в исходниках,
-            поэтому пароль защищает скорее от случайных гостей, чем от целенаправленного взлома. Не храни в админке секреты,
-            а для публикации используй отдельный токен с минимальным scope.
-          </p>
         </div>
       </section>
     </div>

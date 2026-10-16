@@ -20,27 +20,27 @@ const formats = [
   {
     icon: 'Gamepad2',
     title: 'Летсплеи',
-    text: 'Выживание, хардкор и челленджи. Много криков, ещё больше криперов.',
+    text: 'Выживание, хардкор и челленджи. Новые миры и приключения.',
     tag: 'каждую неделю',
   },
   {
     icon: 'Code2',
     title: 'Девлоги',
-    text: 'Пишу моды и приложения на камеру: с багами, гуглом и честными фейлами.',
-    tag: 'по настроению лотла',
+    text: 'Пишу моды и приложения на камеру: фичи, архитектура и реальный код.',
+    tag: 'регулярно',
   },
   {
     icon: 'GraduationCap',
     title: 'Туториалы',
-    text: 'Разбираю Forge, плагины и автоматизацию так, чтобы понял даже крипер.',
-    tag: 'по запросам',
+    text: 'Разбор разработки, плагинов и инструментов простым и понятным языком.',
+    tag: 'по темам',
   },
 ];
 ---
 
 <Base
   title="Контент"
-  description="Видео Shad11t: летсплеи по Minecraft, девлоги модов и приложений, туториалы по программированию."
+  description="Видео Shad11t: летсплеи, девлоги модов и приложений, туториалы по программированию."
   path={pg('content')}
 >
   <section class="relative overflow-hidden pt-[130px] pb-12" data-parallax-wrap>
@@ -50,11 +50,11 @@ const formats = [
     </div>
 
     <div class="relative mx-auto max-w-[1400px] px-5 md:px-8">
-      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// эфир // rec ●</p>
-      <h1 data-reveal="chars" class="font-display max-w-4xl text-5xl leading-[1.02] font-black text-bone md:text-7xl">
-        Эфир из аквариума<span class="text-phos">.</span>
+      <p data-reveal="up" data-i18n="contentPage.tag" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// эфир // видео</p>
+      <h1 data-reveal="chars" class="font-display max-w-4xl text-4xl sm:text-5xl md:text-6xl font-black text-bone">
+        <span data-i18n="contentPage.title">Эфир из аквариума.</span>
       </h1>
-      <p data-reveal="up" class="mt-5 max-w-xl text-[15px] leading-relaxed text-sage">
+      <p data-reveal="up" data-i18n="contentPage.sub" class="mt-5 max-w-xl text-[15px] leading-relaxed text-sage">
         Канал — это закулисье всех проектов с витрины: летсплеи, девлоги и туториалы без воды и занудства.
       </p>
     </div>
@@ -83,11 +83,11 @@ const formats = [
             <span class="flex h-20 w-20 items-center justify-center rounded-full bg-phos text-void shadow-[0_0_60px_-5px_rgba(198,255,61,0.9)] transition-transform duration-300 group-hover:scale-110 md:h-24 md:w-24">
               <Icon name="Play" class="ml-1.5 h-8 w-8 fill-current md:h-10 md:w-10" />
             </span>
-            <span class="font-mono text-[11px] tracking-[0.3em] text-bone/80 uppercase">нажми — будет видео</span>
+            <span class="font-mono text-[11px] tracking-[0.3em] text-bone/80 uppercase">Смотреть видео</span>
           </button>
           <div class="pointer-events-none absolute right-0 bottom-0 left-0 flex flex-wrap items-end justify-between gap-3 p-5 md:p-8">
             <div>
-              <span class="chip clip-tag mb-3 !border-ember/60 !bg-ember/15 !text-ember">свежий выпуск</span>
+              <span class="chip clip-tag mb-3 !border-phos/60 !bg-phos/15 !text-phos" data-i18n="contentPage.featuredTag">Главный релиз</span>
               <p class="font-display max-w-2xl text-xl font-black text-white drop-shadow md:text-3xl">{featured.title}</p>
             </div>
             {featured.duration && (
@@ -113,10 +113,10 @@ const formats = [
             class="absolute inset-0 h-full w-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-105"
           />
           <div class="absolute inset-0 bg-gradient-to-t from-void via-void/40 to-transparent"></div>
-          <span class="chip clip-tag relative mb-3 !border-ember/60 !bg-ember/15 !text-ember">свежий выпуск</span>
+          <span class="chip clip-tag relative mb-3 !border-phos/60 !bg-phos/15 !text-phos" data-i18n="contentPage.featuredTag">Главный релиз</span>
           <span class="font-display relative max-w-2xl text-2xl font-black text-bone md:text-4xl">{featured.title}</span>
           <span class="font-mono relative mt-3 inline-flex items-center gap-2 text-[12px] tracking-[0.2em] text-phos uppercase">
-            <Icon name="brand:youtube" class="h-4 w-4" /> смотреть на канале
+            <Icon name="brand:youtube" class="h-4 w-4" /> <span data-i18n="contentPage.watchBtn">Смотреть на канале ↗</span>
           </span>
         </a>
       )}
@@ -145,15 +145,12 @@ const formats = [
   {/* ================= СЕТКА ================= */}
   <section class="mx-auto max-w-[1400px] px-5 pb-20 md:px-8">
     <div class="mb-8 flex items-center justify-between">
-      <h2 data-reveal="up" class="font-display text-2xl font-black text-bone md:text-3xl">Архив выпусков</h2>
+      <h2 data-reveal="up" data-i18n="contentPage.allVideosTag" class="font-display text-2xl font-bold text-bone md:text-3xl">Все видео</h2>
       <span data-reveal="up" class="font-mono text-[12px] text-sage">{videos.length} видео</span>
     </div>
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {videos.map((v) => <VideoCard video={v} />)}
     </div>
-    {rest.length === 0 && videos.length <= 3 && (
-      <p class="font-mono mt-6 text-center text-[12px] text-sage/60">…а остальные сотни — прямо на канале ↓</p>
-    )}
   </section>
 
   {/* ================= РУБРИКИ ================= */}
@@ -161,7 +158,7 @@ const formats = [
     <div class="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
       <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// рубрики</p>
       <h2 data-reveal="chars" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
-        Три иллюминатора
+        Направления контента
       </h2>
       <div class="mt-10 grid gap-6 md:grid-cols-3">
         {formats.map((f, i) => (
@@ -177,14 +174,14 @@ const formats = [
             </span>
             <h3 class="font-display mt-5 text-xl font-bold text-bone">{f.title}</h3>
             <p class="mt-2 flex-1 text-[14px] leading-relaxed text-sage">{f.text}</p>
-            <p class="font-mono mt-4 text-[11px] tracking-[0.2em] text-ember uppercase">{f.tag}</p>
+            <p class="font-mono mt-4 text-[11px] tracking-[0.2em] text-phos uppercase">{f.tag}</p>
           </div>
         ))}
       </div>
 
       <div data-reveal="up" class="mt-12 flex flex-col items-center gap-5 border border-phos/25 bg-phos/[0.04] p-8 text-center md:p-12">
         <p class="font-display max-w-2xl text-2xl leading-tight font-black text-bone md:text-4xl">
-          Подпишись — новые видео приплывут сами<span class="text-phos">.</span>
+          Смотри новые видео на канале
         </p>
         <a
           href={site.socials.youtube}
@@ -194,9 +191,8 @@ const formats = [
           data-cursor="hover"
         >
           <Icon name="brand:youtube" class="h-5 w-5" />
-          Подписаться
+          Подписаться на канал
         </a>
-        <p class="font-mono text-[11px] tracking-[0.2em] text-sage/70 uppercase">это бесплатно. честно.</p>
       </div>
     </div>
   </section>

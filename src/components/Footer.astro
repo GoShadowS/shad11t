@@ -9,11 +9,11 @@ import { pg, u } from '../lib/paths';
 
 const year = new Date().getFullYear();
 const nav = [
-  { href: pg(''), label: 'Главная' },
-  { href: pg('projects'), label: 'Проекты' },
-  { href: pg('about'), label: 'Обо мне' },
-  { href: pg('content'), label: 'Контент' },
-  { href: pg('contact'), label: 'Контакты' },
+  { href: pg(''), label: 'Главная', key: 'nav.home' },
+  { href: pg('projects'), label: 'Проекты', key: 'nav.projects' },
+  { href: pg('about'), label: 'Обо мне', key: 'nav.about' },
+  { href: pg('content'), label: 'Контент', key: 'nav.content' },
+  { href: pg('contact'), label: 'Контакты', key: 'nav.contact' },
 ];
 const socials = [
   { href: site.socials.youtube, label: 'YouTube', icon: 'brand:youtube' },
@@ -28,7 +28,7 @@ const socials = [
     <div class="grid gap-10 md:grid-cols-[1.3fr_1fr_1fr_1fr]">
       <div>
         <Logo />
-        <p class="mt-5 max-w-[280px] text-[14px] leading-relaxed text-sage">
+        <p data-i18n="footer.desc" class="mt-5 max-w-[280px] text-[14px] leading-relaxed text-sage">
           {site.description}
         </p>
         <div class="mt-5 flex gap-2">
@@ -49,12 +49,12 @@ const socials = [
       </div>
 
       <nav aria-label="Навигация в подвале">
-        <p class="lbl">Навигация</p>
+        <p data-i18n="footer.nav" class="lbl">Навигация</p>
         <ul class="space-y-2.5">
           {nav.map((n) => (
             <li>
               <a href={n.href} data-cursor="hover" class="link-line font-mono text-[13px] text-bone/75 hover:text-phos">
-                <span class="text-phos/50">~/</span>{n.label}
+                <span class="text-phos/50">~/</span><span data-i18n={n.key}>{n.label}</span>
               </a>
             </li>
           ))}
@@ -62,34 +62,34 @@ const socials = [
       </nav>
 
       <div>
-        <p class="lbl">Система</p>
+        <p data-i18n="footer.sys" class="lbl">Система</p>
         <ul class="font-mono space-y-2.5 text-[13px] text-bone/75">
           <li><a href={u('sitemap.xml')} data-astro-reload data-cursor="hover" class="link-line hover:text-phos">sitemap.xml</a></li>
-          <li><a href={u('rss.xml')} data-astro-reload data-cursor="hover" class="link-line hover:text-phos">rss-лента</a></li>
+          <li><a href={u('rss.xml')} data-astro-reload data-cursor="hover" class="link-line hover:text-phos">rss.xml</a></li>
           <li><a href={u('robots.txt')} data-astro-reload data-cursor="hover" class="link-line hover:text-phos">robots.txt</a></li>
-          <li class="text-sage/70">v2.0 «bloop»</li>
+          <li class="text-sage/70">v2.0</li>
         </ul>
       </div>
 
       <div>
-        <p class="lbl">Статус</p>
+        <p data-i18n="footer.status" class="lbl">Статус</p>
         <div class="term-window scanlines p-4">
           <p class="font-mono text-[12px] leading-relaxed">
             <span class="t-dim">$</span> <span class="t-bone">whoami</span><br />
             <span class="t-phos">shad11t</span><br />
-            <span class="t-dim">$</span> <span class="t-bone">uptime</span><br />
-            <span class="t-phos">пока светится фосфор<span class="caret"></span></span>
+            <span class="t-dim">$</span> <span class="t-bone">status</span><br />
+            <span class="t-phos">online / coding<span class="caret"></span></span>
           </p>
         </div>
       </div>
     </div>
 
     <div class="mt-12 flex flex-col items-start justify-between gap-3 border-t border-white/10 pt-6 md:flex-row md:items-center">
-      <p class="font-mono text-[12px] text-sage">
-        © {year} <span class="text-bone">{site.author}</span> · все бульки защищены
+      <p data-i18n="footer.copy" class="font-mono text-[12px] text-sage">
+        © {year} <span class="text-bone">{site.author}</span> · все права защищены
       </p>
       <p class="font-mono text-[12px] text-sage/70">
-        собрано под водой · <a href={pg('admin')} data-cursor="hover" class="link-line opacity-60 hover:opacity-100 hover:text-ember" title="только для своих">/admin</a> · <span title="↑ ↑ ↓ ↓ ← → ← → B A" class="cursor-help opacity-60 hover:text-phos hover:opacity-100">???</span>
+        <a href={pg('admin')} data-cursor="hover" class="link-line opacity-60 hover:opacity-100 hover:text-ember">/admin</a>
       </p>
     </div>
   </div>
