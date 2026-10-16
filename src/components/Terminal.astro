@@ -1,0 +1,41 @@
+---
+/**
+ * SHADVOID — интерактивный терминал. Оживляет src/scripts/terminal.js.
+ * Поддерживает несколько экземпляров на странице (data-terminal).
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  title?: string;
+  id?: string;
+}
+
+const { title = 'shad11t@shadvoid: ~', id = 'term-main' } = Astro.props;
+---
+
+<div class="term-window scanlines scanbeam clip-corners overflow-hidden" data-terminal={id}>
+  <div class="flex items-center gap-2 border-b border-white/10 bg-white/[0.02] px-4 py-3">
+    <span class="term-dot bg-blood/80"></span>
+    <span class="term-dot bg-gold/80"></span>
+    <span class="term-dot bg-phos/80"></span>
+    <span class="font-mono ml-2 flex items-center gap-2 text-[12px] text-sage">
+      <Icon name="Terminal" class="h-3.5 w-3.5 text-phos" />
+      {title}
+    </span>
+    <span class="font-mono ml-auto hidden text-[11px] text-sage/50 sm:block">напиши «help» ↓</span>
+  </div>
+  <div class="term-body t-bone h-[340px] overflow-y-auto p-4 md:h-[380px] md:p-5" data-term-out role="log" aria-live="polite" aria-label="Вывод терминала"></div>
+  <form data-term-form class="flex items-center gap-2 border-t border-white/10 bg-black/30 px-4 py-3 md:px-5" autocomplete="off">
+    <span class="font-mono t-phos text-[13px] font-bold whitespace-nowrap">➜ ~</span>
+    <input
+      data-term-in
+      class="term-input"
+      type="text"
+      maxlength="80"
+      placeholder="help — список команд…"
+      aria-label="Команда терминала"
+      spellcheck="false"
+    />
+    <button type="submit" class="font-mono hidden text-[11px] tracking-widest text-sage/50 uppercase sm:block" tabindex="-1">⏎</button>
+  </form>
+</div>

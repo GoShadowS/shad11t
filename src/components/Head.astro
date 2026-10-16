@@ -1,0 +1,93 @@
+---
+/**
+ * SHADVOID — <head>: SEO, Open Graph, шрифты, ClientRouter.
+ */
+import { ClientRouter } from 'astro:transitions';
+import site from '../data/site.json';
+import { u } from '../lib/paths';
+
+interface Props {
+  title: string;
+  description?: string;
+  path: string;
+  image?: string;
+  noindex?: boolean;
+  type?: 'website' | 'article';
+}
+
+const {
+  title,
+  description = site.description,
+  path,
+  image = 'og-cover.jpg',
+  noindex = false,
+  type = 'website',
+} = Astro.props;
+
+const siteUrl = (Astro.site?.toString() ?? 'https://example.com/').replace(/\/$/, '');
+// path и u() уже содержат base-префикс, а siteUrl — полный корень сайта (с /<repo>):
+// убираем дубль base, чтобы не получить /repo/repo/…
+const basePrefix = (import.meta.env.BASE_URL || '/').replace(/\/$/, '');
+let rel = path;
+if (basePrefix && rel.startsWith(basePrefix)) rel = rel.slice(basePrefix.length) || '/';
+if (!rel.startsWith('/')) rel = `/${rel}`;
+const canonical = siteUrl + rel;
+// абсолютные URL (свои обложки проектов) — как есть, относительные — от корня сайта
+const ogImage = /^https?:\/\//.test(image) ? image : `${siteUrl}/${String(image).replace(/^\/+/, '')}`;
+const fullTitle = title === site.name ? `${site.name} — ${site.tagline}` : `${title} — ${site.name}`;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="generator" content={Astro.generator} />
+<title>{fullTitle}</title>
+<meta name="title" content={fullTitle} />
+<meta name="description" content={description} />
+<meta name="author" content={site.author} />
+<meta name="theme-color" content="#060807" />
+<meta name="color-scheme" content="dark" />
+{noindex
+  ? <meta name="robots" content="noindex, nofollow" />
+  : <meta name="robots" content="index, follow" />}
+<link rel="canonical" href={canonical} />
+
+{/* Open Graph */}
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content="ru_RU" />
+
+{/* Twitter */}
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+{/* Иконки и PWA */}
+<link rel="icon" type="image/svg+xml" href={u('favicon.svg')} />
+<link rel="apple-touch-icon" href={u('favicon.svg')} />
+<link rel="manifest" href={u('manifest.webmanifest')} />
+
+{/* Шрифты: Unbounded (дисплейный) + Manrope (текст) + JetBrains Mono (код). Все с кириллицей. */}
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;0,800;1,400&display=swap"
+  rel="stylesheet"
+/>
+
+{/* Ранний флаг JS + reduced motion (до первого рендера, чтобы не мигало) */}
+<script is:inline>
+  document.documentElement.classList.add('js');
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    document.documentElement.classList.add('reduced');
+  }
+</script>
+
+{/* Плавные переходы между страницами (View Transitions API + client routing) */}
+<ClientRouter />

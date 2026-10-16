@@ -1,0 +1,287 @@
+---
+/**
+ * SHADVOID — /admin: скрытая панель управления проектами.
+ * noindex, вход для единственного администратора.
+ */
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import admin from '../data/admin.json';
+import { pg } from '../lib/paths';
+
+const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterations, hash: admin.hash };
+---
+
+<Base
+  title="Админка"
+  description="Пульт управления SHADVOID. Только для тени."
+  path={pg('admin')}
+  noindex
+>
+  <div id="admin-root" class="mx-auto max-w-[1100px] px-5 pt-[120px] pb-24 md:px-8">
+    <script type="application/json" id="admin-auth-data" set:html={JSON.stringify(authData)} />
+
+    {/* ================= ВХОД ================= */}
+    <div id="admin-login" class="mx-auto max-w-md">
+      <p class="font-mono mb-4 text-center text-[12px] tracking-[0.3em] text-ember uppercase">// restricted zone</p>
+      <h1 class="font-display text-center text-4xl font-black text-bone md:text-5xl">Вход для тени<span class="text-phos">.</span></h1>
+      <p class="font-mono mt-3 text-center text-[12px] text-sage">посторонним тут делать нечего. серьёзно.</p>
+
+      <form id="login-form" class="term-window scanlines clip-corners mt-8 p-6 md:p-8" autocomplete="off">
+        <div>
+          <label class="lbl" for="login-user">Логин</label>
+          <input id="login-user" type="text" class="field" placeholder="shad11t" autocomplete="username" />
+        </div>
+        <div class="mt-4">
+          <label class="lbl" for="login-pass">Пароль</label>
+          <input id="login-pass" type="password" class="field" placeholder="••••••••••" autocomplete="current-password" />
+        </div>
+        <p id="login-error" class="font-mono mt-3 min-h-[20px] text-[13px] text-blood" role="alert"></p>
+        <button type="submit" class="btn-void btn-solid clip-corners-sm mt-2 w-full justify-center px-6 py-3.5 text-[13px]" data-cursor="hover">
+          <Icon name="KeyRound" class="h-4 w-4" /> Разбудить тень
+        </button>
+        <p class="font-mono mt-4 text-center text-[11px] leading-relaxed text-sage/60">
+          забыл пароль? он записан в README репозитория.<br />а если и его потерял — правь src/data/admin.json :)
+        </p>
+      </form>
+    </div>
+
+    {/* ================= ПАНЕЛЬ ================= */}
+    <div id="admin-panel" class="hidden">
+      <div class="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p class="font-mono mb-4 text-[12px] tracking-[0.3em] text-phos uppercase">// control room // доступ разрешён</p>
+          <h1 class="font-display text-4xl font-black text-bone md:text-5xl">Пульт тени<span class="text-ember">.</span></h1>
+        </div>
+        <button type="button" id="btn-logout" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-5 py-2.5 text-[12px]">
+          <Icon name="LogOut" class="h-4 w-4" /> Выйти
+        </button>
+      </div>
+
+      <div class="mt-8 flex flex-wrap gap-2" role="tablist" aria-label="Разделы админки">
+        <button type="button" data-tab="projects" data-cursor="hover" class="tab-btn clip-corners-sm on" role="tab"><Icon name="LayoutGrid" class="h-4 w-4" /> Проекты</button>
+        <button type="button" data-tab="editor" data-cursor="hover" class="tab-btn clip-corners-sm" role="tab"><Icon name="Pencil" class="h-4 w-4" /> Редактор</button>
+        <button type="button" data-tab="order" data-cursor="hover" class="tab-btn clip-corners-sm" role="tab"><Icon name="ListOrdered" class="h-4 w-4" /> Порядок</button>
+        <button type="button" data-tab="publish" data-cursor="hover" class="tab-btn clip-corners-sm" role="tab"><Icon name="Rocket" class="h-4 w-4" /> Публикация</button>
+        <button type="button" data-tab="security" data-cursor="hover" class="tab-btn clip-corners-sm" role="tab"><Icon name="ShieldCheck" class="h-4 w-4" /> Безопасность</button>
+      </div>
+
+      {/* ------- проекты ------- */}
+      <section data-panel="projects" class="mt-6" role="tabpanel">
+        <div id="ov-summary" class="mb-4 flex flex-wrap gap-2"></div>
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <p class="font-mono text-[12px] text-sage">★ — в топе · правки живут в браузере, пока не опубликуешь</p>
+          <button type="button" id="btn-new" data-cursor="hover" class="btn-void btn-solid clip-corners-sm px-5 py-2.5 text-[12px]">
+            <Icon name="Plus" class="h-4 w-4" /> Новый проект
+          </button>
+        </div>
+        <div id="admin-list" class="space-y-3"></div>
+      </section>
+
+      {/* ------- редактор ------- */}
+      <section data-panel="editor" class="mt-6 hidden" role="tabpanel">
+        <h2 id="editor-title" class="font-display text-2xl font-black text-bone">Новый проект</h2>
+        <form id="project-form" class="term-window mt-4 p-5 md:p-7" autocomplete="off">
+          <div class="grid gap-5 md:grid-cols-2">
+            <div class="md:col-span-2">
+              <label class="lbl" for="f-title">Название *</label>
+              <input id="f-title" type="text" maxlength="80" class="field" placeholder="ShadowCraft 2.0" />
+            </div>
+            <div>
+              <label class="lbl" for="f-id">ID (латиница, для ссылки)</label>
+              <input id="f-id" type="text" maxlength="60" class="field" placeholder="авто из названия" />
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="lbl" for="f-category">Категория</label>
+                <select id="f-category" class="field" data-cursor="hover">
+                  <option value="mod">Моды и плагины</option>
+                  <option value="app">Десктопное приложение</option>
+                  <option value="mobile-app">Мобильное приложение</option>
+                  <option value="other">Скрипты и прочее</option>
+                </select>
+              </div>
+              <div>
+                <label class="lbl" for="f-date">Дата</label>
+                <input id="f-date" type="date" class="field" />
+              </div>
+            </div>
+            <div class="md:col-span-2">
+              <label class="lbl" for="f-description">Описание (пустая строка = новый абзац)</label>
+              <textarea id="f-description" rows="5" class="field resize-y" placeholder="Что это, зачем и чем гордишься…"></textarea>
+            </div>
+            <div>
+              <label class="lbl" for="f-image">Обложка (URL)</label>
+              <input id="f-image" type="url" class="field" placeholder="пусто = сгенерируется автоматически" />
+            </div>
+            <div>
+              <label class="lbl" for="f-link">Ссылка на проект</label>
+              <input id="f-link" type="url" class="field" placeholder="https://github.com/…" />
+            </div>
+            <div>
+              <label class="lbl" for="f-tags">Теги (через запятую)</label>
+              <input id="f-tags" type="text" class="field" placeholder="Minecraft, Java, Forge" />
+            </div>
+            <div class="flex items-end pb-1">
+              <label class="check-row">
+                <input id="f-featured" type="checkbox" />
+                <span class="check-box"><Icon name="Check" class="h-4 w-4" /></span>
+                <span class="font-mono text-[13px] text-bone">★ в топ (на главную)</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="mt-5">
+            <p class="lbl">Превью обложки</p>
+            <div id="cover-preview-box" class="cover-preview"></div>
+          </div>
+
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button type="submit" class="btn-void btn-solid clip-corners-sm px-7 py-3 text-[13px]" data-cursor="hover">
+              <Icon name="Save" class="h-4 w-4" /> Сохранить локально
+            </button>
+            <button type="button" id="btn-cancel" class="btn-void btn-ghost clip-corners-sm px-6 py-3 text-[13px]" data-cursor="hover">
+              Отмена
+            </button>
+          </div>
+        </form>
+      </section>
+
+      {/* ------- порядок ------- */}
+      <section data-panel="order" class="mt-6 hidden" role="tabpanel">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <p class="font-mono text-[12px] text-sage">двигай стрелками — сохраняется сразу</p>
+          <button type="button" id="btn-order-reset" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-5 py-2.5 text-[12px]">
+            Сбросить порядок
+          </button>
+        </div>
+        <div id="order-list" class="max-w-2xl space-y-2"></div>
+      </section>
+
+      {/* ------- публикация ------- */}
+      <section data-panel="publish" class="mt-6 hidden" role="tabpanel">
+        <div class="term-window p-5 md:p-7">
+          <h2 class="font-display text-xl font-black text-bone">Коммит в GitHub</h2>
+          <p class="font-mono mt-2 text-[12px] leading-relaxed text-sage">
+            Админка запушит объединённый projects.json в ветку main — и Actions пересоберёт сайт.
+            Токен нигде не сохраняется, кроме вкладки (sessionStorage).
+          </p>
+          <div class="mt-5 grid gap-4 sm:grid-cols-2">
+            <div>
+              <label class="lbl" for="gh-owner">Owner (юзернейм)</label>
+              <input id="gh-owner" type="text" class="field" placeholder="GoShadowS" autocomplete="off" />
+            </div>
+            <div>
+              <label class="lbl" for="gh-repo">Репозиторий</label>
+              <input id="gh-repo" type="text" class="field" placeholder="GoShadowS.github.io" autocomplete="off" />
+            </div>
+            <div>
+              <label class="lbl" for="gh-branch">Ветка</label>
+              <input id="gh-branch" type="text" class="field" placeholder="main" autocomplete="off" />
+            </div>
+            <div>
+              <label class="lbl" for="gh-path">Путь к файлу</label>
+              <input id="gh-path" type="text" class="field" placeholder="src/data/projects.json" autocomplete="off" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="lbl" for="gh-token">Personal Access Token (classic, scope repo)</label>
+              <input id="gh-token" type="password" class="field" placeholder="github_pat_…" autocomplete="off" />
+            </div>
+            <div class="sm:col-span-2">
+              <label class="lbl" for="gh-message">Сообщение коммита</label>
+              <input id="gh-message" type="text" class="field" placeholder="content(admin): обновление проектов" autocomplete="off" />
+            </div>
+          </div>
+          <button type="button" id="btn-publish" data-cursor="hover" class="btn-void btn-solid clip-corners-sm mt-5 px-7 py-3 text-[13px] disabled:opacity-60">
+            <Icon name="Rocket" class="h-4 w-4" /> Опубликовать в GitHub
+          </button>
+          <div id="publish-status" class="font-mono mt-4 min-h-[24px] text-[13px]"></div>
+          <p class="font-mono mt-2 text-[11px] leading-relaxed text-sage/70">
+            Как получить токен: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate → scope «repo» → скопировать.
+          </p>
+        </div>
+
+        <div class="mt-6 grid gap-6 lg:grid-cols-2">
+          <div class="border border-white/10 bg-abyss p-5 md:p-6">
+            <h3 class="font-display text-lg font-bold text-bone">Экспорт</h3>
+            <p class="font-mono mt-1 text-[12px] text-sage">забери JSON руками и закоммить сам</p>
+            <div class="mt-4 flex flex-wrap gap-3">
+              <button type="button" id="btn-download" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-5 py-2.5 text-[12px]">
+                <Icon name="Download" class="h-4 w-4" /> Скачать JSON
+              </button>
+              <button type="button" id="btn-copy-json" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-5 py-2.5 text-[12px]">
+                <Icon name="Copy" class="h-4 w-4" /> Копировать
+              </button>
+            </div>
+          </div>
+          <div class="border border-white/10 bg-abyss p-5 md:p-6">
+            <h3 class="font-display text-lg font-bold text-bone">Импорт</h3>
+            <p class="font-mono mt-1 text-[12px] text-sage">вставь JSON или выбери файл</p>
+            <textarea id="import-text" rows="3" class="field mt-3" placeholder='[{"id": "…", …}]'></textarea>
+            <div class="mt-3 flex flex-wrap items-center gap-3">
+              <label class="btn-void btn-ghost clip-corners-sm cursor-pointer px-5 py-2.5 text-[12px]" data-cursor="hover">
+                <Icon name="Upload" class="h-4 w-4" /> Файл…
+                <input id="file-import" type="file" accept="application/json,.json" class="hidden" />
+              </label>
+              <button type="button" id="btn-import" data-cursor="hover" class="btn-void btn-solid clip-corners-sm px-5 py-2.5 text-[12px]">
+                Импортировать
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 border border-blood/40 bg-blood/5 p-5 md:p-6">
+          <h3 class="font-display text-lg font-bold text-blood">Опасная зона</h3>
+          <p class="font-mono mt-1 text-[12px] text-sage">удалить все локальные правки и вернуться к версии из репозитория</p>
+          <button type="button" id="btn-overlay-reset" data-cursor="hover" class="btn-void mt-4 border border-blood/60 px-5 py-2.5 text-[12px] text-blood hover:!text-void">
+            <Icon name="Trash2" class="h-4 w-4" /> Сбросить локальные правки
+          </button>
+        </div>
+      </section>
+
+      {/* ------- безопасность ------- */}
+      <section data-panel="security" class="mt-6 hidden" role="tabpanel">
+        <div class="term-window max-w-2xl p-5 md:p-7">
+          <h2 class="font-display text-xl font-black text-bone">Смена пароля</h2>
+          <p class="font-mono mt-2 text-[12px] leading-relaxed text-sage">
+            Новый пароль сразу заработает в этом браузере. Чтобы он работал везде — вставь сгенерированный хеш в src/data/admin.json и запушь.
+          </p>
+          <form id="pass-form" class="mt-5 space-y-4" autocomplete="off">
+            <div>
+              <label class="lbl" for="pw-current">Текущий пароль</label>
+              <input id="pw-current" type="password" class="field" autocomplete="current-password" />
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label class="lbl" for="pw-new">Новый пароль (мин. 8)</label>
+                <input id="pw-new" type="password" class="field" autocomplete="new-password" />
+              </div>
+              <div>
+                <label class="lbl" for="pw-confirm">Ещё раз</label>
+                <input id="pw-confirm" type="password" class="field" autocomplete="new-password" />
+              </div>
+            </div>
+            <button type="submit" class="btn-void btn-solid clip-corners-sm px-6 py-3 text-[13px]" data-cursor="hover">
+              <Icon name="ShieldCheck" class="h-4 w-4" /> Сменить пароль
+            </button>
+          </form>
+          <div id="pw-result" class="mt-6 hidden border border-gold/40 bg-gold/5 p-4">
+            <p class="font-mono text-[12px] text-gold">✓ пароль сменён локально. Для остальных устройств вставь это в src/data/admin.json:</p>
+            <div data-hash class="mt-3 overflow-x-auto bg-black/50 p-3">
+              <pre class="font-mono text-[12px] text-bone"><code></code></pre>
+            </div>
+            <button type="button" id="btn-hash-copy" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm mt-3 px-5 py-2.5 text-[12px]">
+              <Icon name="Copy" class="h-4 w-4" /> Копировать хеш
+            </button>
+          </div>
+        </div>
+        <div class="mt-6 max-w-2xl border border-white/10 bg-abyss p-5">
+          <p class="font-mono text-[12px] leading-relaxed text-sage">
+            <span class="text-gold">◈ честно о безопасности:</span> это статический сайт без бэкенда — хеш пароля виден в исходниках,
+            поэтому пароль защищает скорее от случайных гостей, чем от целенаправленного взлома. Не храни в админке секреты,
+            а для публикации используй отдельный токен с минимальным scope.
+          </p>
+        </div>
+      </section>
+    </div>
+  </div>
+</Base>

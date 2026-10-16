@@ -1,0 +1,75 @@
+---
+/**
+ * SHADVOID — базовый layout: head, шапка, подвал, курсор, прелоадер, тосты, скрипты.
+ */
+import Head from '../components/Head.astro';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import Preloader from '../components/Preloader.astro';
+import Cursor from '../components/Cursor.astro';
+import Icon from '../components/Icon.astro';
+import '../styles/global.css';
+import { BASE_URL } from '../lib/paths';
+
+interface Props {
+  title: string;
+  description?: string;
+  path: string;
+  image?: string;
+  noindex?: boolean;
+  type?: 'website' | 'article';
+  jsonld?: Record<string, unknown> | Record<string, unknown>[];
+}
+
+const { title, description, path, image, noindex, type, jsonld } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ru" class="grain">
+  <head>
+    <Head title={title} description={description} path={path} image={image} noindex={noindex} type={type} />
+    {jsonld && (
+      <script type="application/ld+json" set:html={JSON.stringify(jsonld)} />
+    )}
+  </head>
+  <body class="bg-void font-sans text-bone antialiased">
+    <a
+      href="#main"
+      class="font-mono sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[400] focus:bg-phos focus:px-4 focus:py-2 focus:text-[12px] focus:font-bold focus:text-void"
+    >
+      Перейти к содержимому
+    </a>
+
+    <Preloader />
+    <Cursor />
+    <Nav />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer />
+
+    {/* тосты */}
+    <div id="toast-root" transition:persist aria-live="polite"></div>
+    {/* konami-оверлей */}
+    <div id="konami-root" transition:persist></div>
+
+    {/* кнопка «наверх» */}
+    <button
+      id="to-top"
+      type="button"
+      aria-label="Наверх"
+      data-cursor="hover"
+      class="magnetic clip-corners-sm flex h-12 w-12 items-center justify-center border border-phos/50 bg-void/80 text-phos backdrop-blur transition-colors hover:bg-phos hover:text-void"
+    >
+      <Icon name="ArrowUp" class="h-5 w-5" />
+    </button>
+
+    {/* base-путь для клиентских скриптов (GitHub Pages: / или /<repo>/) */}
+    <script is:inline define:vars={{ base: BASE_URL }}>
+      window.__BASE__ = base.endsWith('/') ? base : base + '/';
+    </script>
+    <script src="../scripts/main.js"></script>
+  </body>
+</html>

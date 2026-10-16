@@ -1,0 +1,29 @@
+---
+/**
+ * SHADVOID — бегущая строка. items: string[]; speed: 'fast' | 'slow' | ''.
+ */
+interface Props {
+  items: string[];
+  speed?: 'fast' | 'slow' | '';
+  reverse?: boolean;
+  class?: string;
+  separator?: string;
+}
+
+const { items, speed = '', reverse = false, class: cls = '', separator = '✦' } = Astro.props;
+---
+
+<div class:list={['marquee', cls]}>
+  <div class:list={['marquee-track', speed, { reverse }]}>
+    {[false, true].map((hidden) => (
+      <span class="contents" aria-hidden={hidden || undefined}>
+        {items.map((t) => (
+          <span class="inline-flex items-center gap-10">
+            <span>{t}</span>
+            <span class="text-phos">{separator}</span>
+          </span>
+        ))}
+      </span>
+    ))}
+  </div>
+</div>

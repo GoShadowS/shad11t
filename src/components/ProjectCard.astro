@@ -1,0 +1,117 @@
+---
+/**
+ * SHADVOID — карточка проекта (серверный рендер; клиентский дубликат — в projects-page.js).
+ */
+import Icon from './Icon.astro';
+import { pg } from '../lib/paths';
+import { formatDateRu, categoryShort, CATEGORIES } from '../lib/format';
+
+interface Props {
+  project: {
+    id: string;
+    title: string;
+    description: string;
+    category: string;
+    image?: string;
+    link?: string;
+    tags?: string[];
+    date?: string;
+    featured?: boolean;
+  };
+  index?: number;
+  wide?: boolean;
+}
+
+const { project: p, index = 0, wide = false } = Astro.props;
+const num = String(index + 1).padStart(2, '0');
+const cat = (CATEGORIES as Record<string, { icon: string }>)[p.category]?.icon ?? 'Boxes';
+const firstLine = (p.description || '').split('\n')[0];
+---
+
+  <article
+  class:list={['p-card group flex w-full flex-col', wide ? 'md:col-span-2 md:flex-row' : '']}
+  data-tilt
+  data-project-card={p.id}
+>
+  <div class:list={['p-glow']}></div>
+  <a
+    href={pg(`projects/${p.id}`)}
+    class="absolute inset-0 z-10"
+    aria-label={`Открыть проект: ${p.title}`}
+    data-cursor="Открыть"
+  >
+    <span class="sr-only">{p.title}</span>
+  </a>
+
+  {/* обложка */}
+  <div class:list={['relative overflow-hidden', wide ? 'md:w-[46%] min-h-[220px]' : 'aspect-[16/10]']}>
+    {p.image ? (
+      <img
+        src={p.image}
+        alt={`Обложка проекта ${p.title}`}
+        loading="lazy"
+        class="p-cover absolute inset-0 h-full w-full object-cover"
+      />
+    ) : (
+      <img
+        data-cover={p.id}
+        data-cover-title={p.title}
+        data-cover-cat={p.category}
+        alt={`Обложка проекта ${p.title}`}
+        loading="lazy"
+        class="p-cover absolute inset-0 h-full w-full object-cover"
+      />
+    )}
+    <div class="p-veil"></div>
+    <span class="p-index pointer-events-none absolute top-3 right-4 text-5xl font-black md:text-6xl">{num}</span>
+    {p.featured && (
+      <span class="chip clip-tag absolute top-3 left-3 !border-ember/60 !bg-ember/15 !text-ember">
+        <Icon name="Star" class="h-3 w-3" /> топ
+      </span>
+    )}
+  </div>
+
+  {/* тело */}
+  <div class="relative flex flex-1 flex-col p-5 md:p-6">
+    <div class="mb-3 flex flex-wrap items-center gap-2">
+      <span class="chip clip-tag">
+        <Icon name={cat} class="h-3 w-3" />
+        {categoryShort(p.category)}
+      </span>
+      {p.date && (
+        <span class="font-mono text-[11px] tracking-[0.14em] text-sage/80 uppercase">
+          {formatDateRu(p.date)}
+        </span>
+      )}
+    </div>
+
+    <h3 class="font-display text-xl leading-tight font-bold text-bone transition-colors duration-300 group-hover:text-phos md:text-2xl">
+      {p.title}
+    </h3>
+    <p class="p-desc mt-2 text-[14px] leading-relaxed text-sage">{firstLine}</p>
+
+    {p.tags && p.tags.length > 0 && (
+      <div class="mt-3 flex flex-wrap gap-1.5">
+        {p.tags.slice(0, 4).map((t) => (
+          <span class="font-mono border border-white/10 px-2 py-0.5 text-[11px] text-bone/60">#{t}</span>
+        ))}
+      </div>
+    )}
+
+    <div class="mt-auto flex items-center justify-between pt-5">
+      <span class="p-cta font-mono inline-flex items-center gap-2 text-[12px] font-bold tracking-[0.18em] text-phos uppercase">
+        Открыть кейс
+        <Icon name="ArrowRight" class="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+      </span>
+      {p.link && (
+        <span class="font-mono pointer-events-none relative z-20 inline-flex items-center gap-1.5 text-[11px] text-sage/70">
+          <Icon name="ExternalLink" class="h-3.5 w-3.5" /> ссылка
+        </span>
+      )}
+    </div>
+  </div>
+
+  {/* уголки-скобки при наведении */}
+  <span class="pointer-events-none absolute top-0 left-0 h-5 w-5 border-t-2 border-l-2 border-phos opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+  <span class="pointer-events-none absolute right-0 bottom-0 h-5 w-5 border-r-2 border-b-2 border-phos opacity-0 transition-opacity duration-300 group-hover:opacity-100"></span>
+</article>

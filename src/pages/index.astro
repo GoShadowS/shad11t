@@ -1,0 +1,303 @@
+---
+/**
+ * SHADVOID — главная: immersive hero, манифест, горизонтальная витрина,
+ * терминал, контент-тизер, соцсети.
+ */
+import Base from '../layouts/Base.astro';
+import Marquee from '../components/Marquee.astro';
+import Terminal from '../components/Terminal.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import VideoCard from '../components/VideoCard.astro';
+import Icon from '../components/Icon.astro';
+import site from '../data/site.json';
+import projectsData from '../data/projects.json';
+import videosData from '../data/videos.json';
+import { pg } from '../lib/paths';
+
+const projects = projectsData.filter((p) => p && (p as { id?: string }).id) as {
+  id: string; title: string; description: string; category: string;
+  image?: string; link?: string; tags?: string[]; date?: string; featured?: boolean;
+}[];
+const featured = [...projects].sort((a, b) => Number(b.featured || false) - Number(a.featured || false)).slice(0, 5);
+const videos = (videosData.filter((v) => v && (v as { id?: string }).id) as {
+  id: string; title: string; description?: string; date?: string; duration?: string; featured?: boolean;
+}[]).slice(0, 3);
+
+const jsonld = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: site.name,
+    url: Astro.site?.toString(),
+    author: { '@type': 'Person', name: site.author },
+    description: site.description,
+    inLanguage: 'ru',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: site.author,
+    alternateName: 'shad11t_the_shadow',
+    description: site.description,
+    sameAs: [site.socials.youtube, site.socials.telegram, site.socials.boosty, site.socials.github],
+  },
+];
+---
+
+<Base title={site.name} path={pg('')} jsonld={jsonld}>
+  {/* ================= HERO ================= */}
+  <section data-hero data-parallax-wrap class="relative flex min-h-svh flex-col overflow-hidden">
+    <canvas data-hero-3d class="absolute inset-0 h-full w-full" aria-hidden="true"></canvas>
+    <div class="bg-blueprint-fade pointer-events-none absolute inset-0 opacity-70"></div>
+    <div class="pointer-events-none absolute -top-32 -right-32 h-[480px] w-[480px] rounded-full bg-phos/10 blur-[140px]"></div>
+    <div class="pointer-events-none absolute bottom-0 -left-40 h-[420px] w-[420px] rounded-full bg-ember/10 blur-[140px]"></div>
+
+    {/* скрытый слой: проявляется только под «фонариком» курсора */}
+    <div class="spot-hidden pointer-events-none absolute inset-0 z-[5] flex items-center justify-center" aria-hidden="true">
+      <p class="font-display max-w-3xl -rotate-3 px-6 text-center text-2xl font-black text-phos drop-shadow-[0_0_24px_rgba(198,255,61,0.6)] md:text-4xl">
+        ты нашёл тень.<br />она уже нашла тебя.
+      </p>
+    </div>
+
+    {/* гигантское «11» — пасхалка ника */}
+    <div class="pointer-events-none absolute top-[8%] right-[2%] z-[1] select-none" aria-hidden="true">
+      <span data-parallax="0.25" class="font-display text-ghost block text-[34vw] leading-none font-black opacity-40 md:text-[24vw]">11</span>
+    </div>
+
+    <div class="relative z-10 mx-auto flex w-full max-w-[1400px] flex-1 flex-col justify-center px-5 pt-[120px] pb-10 md:px-8">
+      <p data-hero-fade class="font-mono mb-5 inline-flex w-fit items-center gap-3 border border-phos/30 bg-void/60 px-4 py-2 text-[11px] tracking-[0.25em] text-phos uppercase backdrop-blur">
+        <span class="pulse-dot inline-block h-2 w-2 rounded-full bg-phos"></span>
+        shad11t.exe — запущен
+      </p>
+
+      <h1 class="font-display font-black" aria-label="SHADVOID">
+        <span class="block overflow-hidden pb-1">
+          <span data-hero-line class="shadow-title block text-[17vw] leading-[0.92] tracking-tight text-bone md:text-[11vw]" data-text="SHAD">SHAD</span>
+        </span>
+        <span class="block overflow-hidden pb-2">
+          <span data-hero-line class="text-ghost-phos block text-[17vw] leading-[0.92] tracking-tight md:text-[11vw]" data-text="VOID">VOID<span class="text-ember" style="-webkit-text-stroke:0">_</span></span>
+        </span>
+      </h1>
+
+      <div class="mt-7 flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+        <p data-hero-fade class="max-w-xl text-[16px] leading-relaxed text-sage md:text-lg">
+          <span class="font-bold text-bone">Minecraft-блогер и программист.</span>
+          Моды, приложения, боты и видео о том, как всё это рождается в темноте.
+          Заходи — тут не страшно. Почти.
+        </p>
+        <div data-hero-fade class="flex flex-wrap gap-3">
+          <a href={pg('projects')} class="btn-void btn-solid magnetic clip-corners px-7 py-4 text-[13px]" data-cursor="hover">
+            Смотреть проекты
+            <Icon name="ArrowRight" class="h-4 w-4" />
+          </a>
+          <a href={site.socials.youtube} target="_blank" rel="noopener" class="btn-void btn-ghost magnetic clip-corners px-7 py-4 text-[13px]" data-cursor="hover">
+            <Icon name="brand:youtube" class="h-4 w-4" />
+            YouTube
+          </a>
+        </div>
+      </div>
+
+      <div data-hero-fade class="font-mono mt-12 grid grid-cols-2 gap-px border border-white/10 bg-white/10 text-[11px] tracking-[0.14em] uppercase md:grid-cols-4">
+        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">статус //</span> <span class="text-phos">online</span></div>
+        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">движок //</span> shadvoid_os v1.1</div>
+        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">локация //</span> где-то в тени</div>
+        <div class="bg-void/80 flex items-center justify-between px-4 py-3 backdrop-blur">
+          <span><span class="text-sage">скролл //</span> вниз</span>
+          <span class="inline-block animate-bounce text-phos">↓</span>
+        </div>
+      </div>
+    </div>
+
+    <p class="v-label font-mono absolute top-1/2 left-4 z-10 hidden -translate-y-1/2 text-[10px] text-sage/50 uppercase xl:block" aria-hidden="true">
+      scroll to enter the void
+    </p>
+  </section>
+
+  {/* ================= БЕГУЩАЯ СТРОКА ================= */}
+  <div class="border-y border-phos/25 bg-phos/[0.04]">
+    <Marquee
+      items={['MINECRAFT', 'МОДЫ', 'КОД', 'ТЕНЬ', 'YOUTUBE', 'ПЛАГИНЫ', 'ПРИЛОЖЕНИЯ', 'ТЕМНОТА']}
+      class="font-display py-4 text-lg font-bold tracking-wide text-bone md:text-xl"
+    />
+  </div>
+
+  {/* ================= МАНИФЕСТ ================= */}
+  <section class="relative mx-auto max-w-[1400px] px-5 py-24 md:px-8 md:py-36" data-parallax-wrap>
+    <div class="grid gap-14 lg:grid-cols-[1.5fr_1fr] lg:gap-10">
+      <div>
+        <p data-reveal="up" class="font-mono mb-6 text-[12px] tracking-[0.3em] text-ember uppercase">// манифест</p>
+        <p data-reveal="words" class="font-display max-w-3xl text-2xl leading-[1.35] font-bold text-bone md:text-4xl md:leading-[1.3]">
+          Я делаю игры темнее, код — чище, а контент — честнее. Тень — это не отсутствие света. Это место, где рождаются идеи.
+        </p>
+        <div data-reveal="up" class="mt-8">
+          <a href={pg('about')} class="link-line font-mono text-[13px] tracking-[0.18em] text-phos uppercase" data-cursor="hover">
+            → кто прячется в тени
+          </a>
+        </div>
+      </div>
+
+      <div class="grid content-start grid-cols-2 gap-px border border-white/10 bg-white/10 lg:mt-16">
+        <div data-reveal="up" class="bg-abyss p-6">
+          <p class="font-display text-4xl font-black text-phos md:text-5xl"><span data-count={projects.length}>0</span></p>
+          <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">проектов в витрине</p>
+        </div>
+        <div data-reveal="up" data-delay="0.1" class="bg-abyss p-6">
+          <p class="font-display text-4xl font-black text-bone md:text-5xl"><span data-count={videos.length} data-suffix="+">0</span></p>
+          <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">видео на канале</p>
+        </div>
+        <div data-reveal="up" data-delay="0.15" class="bg-abyss p-6">
+          <p class="font-display text-4xl font-black text-bone md:text-5xl"><span data-count="3" data-suffix="+">0</span></p>
+          <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">года в коде</p>
+        </div>
+        <div data-reveal="up" data-delay="0.2" class="bg-abyss p-6">
+          <p class="font-display text-4xl font-black text-ember md:text-5xl"><span data-count="11">0</span></p>
+          <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">уровень тени</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {/* ================= ГОРИЗОНТАЛЬНАЯ ВИТРИНА ================= */}
+  <section data-h class="relative flex min-h-svh flex-col justify-center overflow-hidden border-y border-white/10 bg-abyss py-20 md:h-svh md:py-0">
+    <div class="bg-dots pointer-events-none absolute inset-0 opacity-60"></div>
+    <div class="h-viewport relative">
+      <div data-h-track class="h-track items-stretch px-5 md:px-8">
+        {/* заголовочная панель */}
+        <div class="flex w-[86vw] shrink-0 flex-col justify-center pr-4 sm:w-[380px] md:w-[34vw] md:min-w-[380px]">
+          <p class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// избранное</p>
+          <h2 class="font-display text-4xl leading-[1.02] font-black text-bone md:text-6xl">
+            Тьма,<br />в которую<br /><span class="text-phos">вложен код</span>
+          </h2>
+          <p class="mt-5 max-w-sm text-[15px] leading-relaxed text-sage">
+            Пять проектов, которыми я горжусь больше всего. Листай вбок — там дальше ещё темнее.
+          </p>
+          <a href={pg('projects')} class="btn-void btn-ghost magnetic clip-corners-sm mt-7 w-fit px-6 py-3.5 text-[12px]" data-cursor="hover">
+            Вся витрина <Icon name="ArrowRight" class="h-4 w-4" />
+          </a>
+          <p class="font-mono mt-8 hidden items-center gap-2 text-[11px] tracking-[0.25em] text-sage/60 uppercase md:flex">
+            скролль → едет вбок <span class="text-phos">⟶</span>
+          </p>
+        </div>
+
+        {featured.map((p, i) => (
+          <div class="flex w-[82vw] shrink-0 sm:w-[430px] lg:w-[500px]">
+            <ProjectCard project={p} index={i} />
+          </div>
+        ))}
+
+        {/* финальная карточка-портал */}
+        <a
+          href={pg('projects')}
+          data-cursor="Вся витрина"
+          class="group flex w-[70vw] shrink-0 flex-col items-start justify-between overflow-hidden border border-phos/30 bg-phos/[0.05] p-8 transition-colors hover:bg-phos/[0.1] sm:w-[340px]"
+        >
+          <span class="font-display text-ghost-phos text-7xl font-black">+{Math.max(projects.length - featured.length, 1)}</span>
+          <span>
+            <span class="font-display block text-2xl font-bold text-bone group-hover:text-phos">и это не всё</span>
+            <span class="font-mono mt-2 inline-flex items-center gap-2 text-[12px] tracking-[0.2em] text-phos uppercase">
+              открыть витрину <Icon name="ArrowRight" class="h-4 w-4 transition-transform group-hover:translate-x-2" />
+            </span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {/* ================= ТЕРМИНАЛ ================= */}
+  <section class="mx-auto max-w-[1400px] px-5 py-24 md:px-8 md:py-36">
+    <div class="grid items-start gap-10 lg:grid-cols-[1fr_1.25fr]">
+      <div>
+        <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// прямой доступ</p>
+        <h2 data-reveal="chars" class="font-display text-4xl leading-[1.05] font-black text-bone md:text-5xl">
+          Живой терминал тени
+        </h2>
+        <p data-reveal="up" class="mt-5 max-w-md text-[15px] leading-relaxed text-sage">
+          Настоящий, кликабельный, с характером. Спроси его о проектах, навыках и секретах. Только не пиши <span class="font-mono text-ember">sudo</span>. Хотя… попробуй.
+        </p>
+        <div data-reveal="up" class="mt-6 flex flex-wrap gap-2">
+          {['help', 'projects', 'skills', 'socials', 'konami'].map((cmd) => (
+            <button
+              type="button"
+              data-cmd={cmd}
+              data-cursor="hover"
+              class="font-mono border border-white/15 px-3 py-1.5 text-[12px] text-bone/70 transition-all hover:-translate-y-0.5 hover:border-phos hover:text-phos"
+            >
+              $ {cmd}
+            </button>
+          ))}
+        </div>
+      </div>
+      <div data-reveal="right">
+        <Terminal id="term-main" />
+      </div>
+    </div>
+  </section>
+
+  {/* ================= КОНТЕНТ-ТИЗЕР ================= */}
+  <section class="border-y border-white/10 bg-abyss">
+    <div class="mx-auto max-w-[1400px] px-5 py-24 md:px-8 md:py-32">
+      <div class="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+        <div>
+          <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// с канала</p>
+          <h2 data-reveal="chars" class="font-display max-w-2xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
+            Свежее из темноты
+          </h2>
+        </div>
+        <a data-reveal="up" href={pg('content')} class="link-line font-mono w-fit text-[13px] tracking-[0.18em] text-phos uppercase" data-cursor="hover">
+          → весь контент
+        </a>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3">
+        {videos.map((v) => <VideoCard video={v} />)}
+      </div>
+      <div data-reveal="up" class="mt-12 flex flex-col items-center gap-4 text-center">
+        <a
+          href={site.socials.youtube}
+          target="_blank"
+          rel="noopener"
+          class="btn-void btn-solid magnetic clip-corners px-8 py-4 text-[13px]"
+          data-cursor="hover"
+        >
+          <Icon name="brand:youtube" class="h-5 w-5" />
+          Подписаться на канал
+        </a>
+        <p class="font-mono text-[11px] tracking-[0.2em] text-sage/70 uppercase">тени тоже жмут колокольчик</p>
+      </div>
+    </div>
+  </section>
+
+  {/* ================= СОЦСЕТИ ================= */}
+  <section class="relative overflow-hidden" data-parallax-wrap>
+    <div class="pointer-events-none absolute top-1/2 left-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-phos/[0.07] blur-[140px]"></div>
+    <div class="relative mx-auto max-w-[1400px] px-5 py-28 text-center md:px-8 md:py-40">
+      <p data-reveal="up" class="font-mono mb-6 text-[12px] tracking-[0.3em] text-ember uppercase">// связь с тенью</p>
+      <h2 data-reveal="chars" class="font-display mx-auto max-w-4xl text-[11vw] leading-[0.95] font-black text-bone md:text-7xl" data-glitch-auto data-text="ЗАЛЕТАЙ В ТЕНЬ">
+        ЗАЛЕТАЙ В ТЕНЬ
+      </h2>
+      <p data-reveal="up" class="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-sage md:text-base">
+        Видео — на YouTube. Жизнь и мемы — в Telegram. Эксклюзивы и поддержка — на Boosty. Выбирай портал.
+      </p>
+      <div data-reveal="up" class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <a href={site.socials.youtube} target="_blank" rel="noopener" class="btn-void btn-solid magnetic clip-corners w-full px-8 py-4 text-[13px] sm:w-auto" data-cursor="hover">
+          <Icon name="brand:youtube" class="h-5 w-5" /> YouTube
+        </a>
+        <a href={site.socials.telegram} target="_blank" rel="noopener" class="btn-void btn-ghost magnetic clip-corners w-full px-8 py-4 text-[13px] sm:w-auto" data-cursor="hover">
+          <Icon name="brand:telegram" class="h-5 w-5" /> Telegram
+        </a>
+        <a href={site.socials.boosty} target="_blank" rel="noopener" class="btn-void btn-ghost magnetic clip-corners w-full px-8 py-4 text-[13px] sm:w-auto" data-cursor="hover">
+          <Icon name="brand:boosty" class="h-5 w-5" /> Boosty
+        </a>
+      </div>
+    </div>
+
+    <div class="border-t border-white/10">
+      <Marquee
+        items={['НЕ БОЙСЯ ТЕМНОТЫ', 'БОЙСЯ СКУЧНЫХ САЙТОВ']}
+        speed="slow"
+        reverse
+        class="font-mono py-3 text-[12px] tracking-[0.3em] text-sage/70 uppercase"
+        separator="◆"
+      />
+    </div>
+  </section>
+</Base>

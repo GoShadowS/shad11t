@@ -1,0 +1,149 @@
+---
+/**
+ * SHADVOID — детальная страница проекта (статическая, генерируется из projects.json).
+ * Локальные правки админки подхватываются клиентом (data-static-project).
+ */
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import projectsData from '../../data/projects.json';
+import { pg, u } from '../../lib/paths';
+import { formatDateRu, categoryLabel } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const list = projectsData.filter((p) => p && (p as { id?: string }).id);
+  return list.map((p) => ({
+    params: { slug: (p as { id: string }).id },
+  }));
+}
+
+const { slug } = Astro.params;
+const list = projectsData.filter((p) => p && (p as { id?: string }).id) as {
+  id: string; title: string; description: string; category: string;
+  image?: string; link?: string; tags?: string[]; date?: string; featured?: boolean;
+}[];
+const project = list.find((p) => p.id === slug);
+
+if (!project) {
+  return Astro.redirect(pg('project') + `?id=${encodeURIComponent(slug || '')}`);
+}
+
+const idx = list.indexOf(project);
+const prev = list[(idx - 1 + list.length) % list.length];
+const next = list[(idx + 1) % list.length];
+const related = list.filter((p) => p.id !== project.id && p.category === project.category).slice(0, 2);
+const paras = project.description.split(/\n{2,}|\n/).map((s) => s.trim()).filter(Boolean);
+
+const jsonld = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: project.title,
+  description: paras[0] || project.title,
+  author: { '@type': 'Person', name: 'Shad11t' },
+  datePublished: project.date,
+  keywords: (project.tags || []).join(', '),
+};
+---
+
+<Base
+  title={project.title}
+  description={paras[0] || project.title}
+  path={pg(`projects/${project.id}`)}
+  image={project.image && /^https?:/.test(project.image) ? project.image : 'og-cover.jpg'}
+  type="article"
+  jsonld={jsonld}
+>
+  <article class="mx-auto max-w-[1200px] px-5 pt-[120px] pb-20 md:px-8" data-static-project={project.id}>
+    <div id="static-overlay-note"></div>
+
+    <nav data-reveal="up" aria-label="Хлебные крошки" class="font-mono mb-8 flex flex-wrap items-center gap-2 text-[12px] text-sage">
+      <a href={pg('')} class="link-line hover:text-phos" data-cursor="hover">~/</a>
+      <span class="text-sage/40">/</span>
+      <a href={pg('projects')} class="link-line hover:text-phos" data-cursor="hover">projects</a>
+      <span class="text-sage/40">/</span>
+      <span class="text-phos">{project.id}</span>
+    </nav>
+
+    <div data-reveal="scale" class="clip-corners scanlines relative aspect-[21/9] overflow-hidden border border-white/10">
+      {project.image ? (
+        <img src={project.image} alt={`Обложка проекта ${project.title}`} class="h-full w-full object-cover" />
+      ) : (
+        <img
+          data-cover={project.id}
+          data-cover-title={project.title}
+          data-cover-cat={project.category}
+          alt={`Обложка проекта ${project.title}`}
+          class="h-full w-full object-cover"
+        />
+      )}
+      <div class="absolute inset-0 bg-gradient-to-t from-void via-void/20 to-transparent"></div>
+      <span class="chip clip-tag absolute top-4 left-4 md:top-6 md:left-6">{categoryLabel(project.category)}</span>
+      {project.featured && (
+        <span class="chip clip-tag absolute top-4 right-4 md:top-6 md:right-6 !border-ember/60 !bg-ember/15 !text-ember">
+          ★ топ проект
+        </span>
+      )}
+    </div>
+
+    <div class="mt-10 grid gap-10 lg:grid-cols-[1.6fr_1fr]">
+      <div>
+        <h1 data-reveal="chars" data-static-title class="font-display text-4xl leading-[1.02] font-black text-bone md:text-6xl">
+          {project.title}
+        </h1>
+        <div data-reveal="up" data-static-desc class="prose-void mt-6 max-w-none text-[16px]">
+          {paras.map((t) => <p>{t}</p>)}
+        </div>
+        {project.tags && project.tags.length > 0 && (
+          <div data-reveal="up" class="mt-7 flex flex-wrap gap-2" data-static-tags>
+            {project.tags.map((t) => (
+              <span class="font-mono border border-white/15 px-3 py-1.5 text-[12px] text-bone/70 transition-colors hover:border-phos/50 hover:text-phos">#{t}</span>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <aside data-reveal="right" class="lg:pt-2">
+        <div class="term-window scanlines lg:sticky lg:top-24 p-5 md:p-6">
+          <p class="lbl">Досье проекта</p>
+          <dl class="font-mono space-y-3 text-[13px]">
+            <div class="flex justify-between gap-4"><dt class="text-sage">id</dt><dd class="text-right text-bone">{project.id}</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-sage">категория</dt><dd class="text-right text-phos">{categoryLabel(project.category)}</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-sage">дата</dt><dd class="text-right text-bone" data-static-date>{project.date ? formatDateRu(project.date) : '—'}</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-sage">статус</dt><dd class="text-right text-phos">● в витрине</dd></div>
+          </dl>
+          <div class="mt-5 flex flex-col gap-2.5" data-static-links>
+            {project.link && (
+              <a href={project.link} target="_blank" rel="noopener" class="btn-void btn-solid clip-corners-sm justify-center px-5 py-3 text-[12px]" data-cursor="hover">
+                Открыть проект <Icon name="ExternalLink" class="h-4 w-4" />
+              </a>
+            )}
+            <a href={pg('projects')} class="btn-void btn-ghost clip-corners-sm justify-center px-5 py-3 text-[12px]" data-cursor="hover">
+              ← все проекты
+            </a>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    {/* prev / next */}
+    <nav class="mt-16 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2" aria-label="Другие проекты">
+      <a href={pg(`projects/${prev.id}`)} data-cursor="hover" class="group bg-abyss p-6 transition-colors hover:bg-panel">
+        <span class="font-mono text-[11px] tracking-[0.25em] text-sage uppercase">← предыдущий</span>
+        <span class="font-display mt-2 block text-xl font-bold text-bone group-hover:text-phos">{prev.title}</span>
+      </a>
+      <a href={pg(`projects/${next.id}`)} data-cursor="hover" class="group bg-abyss p-6 text-right transition-colors hover:bg-panel">
+        <span class="font-mono text-[11px] tracking-[0.25em] text-sage uppercase">следующий →</span>
+        <span class="font-display mt-2 block text-xl font-bold text-bone group-hover:text-phos">{next.title}</span>
+      </a>
+    </nav>
+
+    {related.length > 0 && (
+      <section class="mt-16">
+        <h2 class="font-display text-2xl font-black text-bone md:text-3xl">Похожая темнота</h2>
+        <div class="mt-6 grid gap-6 md:grid-cols-2">
+          {related.map((p, i) => <ProjectCard project={p} index={i} />)}
+        </div>
+      </section>
+    )}
+  </article>
+</Base>

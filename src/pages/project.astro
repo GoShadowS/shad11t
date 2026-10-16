@@ -1,0 +1,25 @@
+---
+/**
+ * SHADVOID — /project?id=… : рендер локальных (админских) проектов без статической страницы.
+ */
+import Base from '../layouts/Base.astro';
+import { pg } from '../lib/paths';
+---
+
+<Base
+  title="Проект"
+  description="Карточка проекта из локального черновика."
+  path={pg('project')}
+  noindex
+>
+  <div class="mx-auto max-w-[1200px] px-5 pt-[110px] pb-20 md:px-8" data-project-fallback>
+    <div class="animate-pulse py-24" aria-hidden="true">
+      <div class="mx-auto aspect-[21/9] max-w-4xl bg-white/5"></div>
+      <div class="mx-auto mt-8 h-10 max-w-xl bg-white/10"></div>
+      <div class="mx-auto mt-4 h-4 max-w-2xl bg-white/5"></div>
+    </div>
+    <noscript>
+      <p class="font-mono py-24 text-center text-[13px] text-sage">Для просмотра черновика включи JavaScript.</p>
+    </noscript>
+  </div>
+</Base>
