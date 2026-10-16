@@ -15,7 +15,7 @@ export function refreshTriggers() {
   } catch { /* ignore */ }
 }
 
-/** Разбить текстовые узлы элемента на .char-спаны. */
+/** Разбить текстовые узлы элемента на .char-спаны, сохраняя слова неразрывными. */
 function splitChars(el) {
   const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
   const nodes = [];
@@ -24,17 +24,23 @@ function splitChars(el) {
   }
   nodes.forEach((node) => {
     const frag = document.createDocumentFragment();
-    for (const ch of node.textContent) {
-      const s = document.createElement('span');
-      if (ch === ' ' || ch === '\n' || ch === '\u00a0') {
-        s.className = 'char-space';
-        s.innerHTML = '&nbsp;';
+    const parts = node.textContent.split(/(\s+)/);
+    parts.forEach((part) => {
+      if (!part) return;
+      if (/^\s+$/.test(part)) {
+        frag.appendChild(document.createTextNode(part));
       } else {
-        s.className = 'char';
-        s.textContent = ch;
+        const wordWrap = document.createElement('span');
+        wordWrap.className = 'w-chars inline-block whitespace-nowrap';
+        for (const ch of part) {
+          const s = document.createElement('span');
+          s.className = 'char inline-block';
+          s.textContent = ch;
+          wordWrap.appendChild(s);
+        }
+        frag.appendChild(wordWrap);
       }
-      frag.appendChild(s);
-    }
+    });
     node.parentNode.replaceChild(frag, node);
   });
   return el.querySelectorAll('.char');

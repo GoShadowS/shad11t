@@ -23,7 +23,7 @@ const filters = [
 
 <Base
   title="Проекты"
-  description="Витрина проектов Shad11t: моды для Minecraft, десктопные и мобильные приложения, плагины, боты и скрипты."
+  description="Витрина проектов Shad11t: веб-сервисы, мобильные и десктопные приложения, боты, моды и скрипты."
   path={pg('projects')}
 >
   <section class="relative overflow-hidden pt-[130px] pb-10" data-parallax-wrap>
@@ -33,12 +33,12 @@ const filters = [
     </div>
 
     <div class="relative mx-auto max-w-[1400px] px-5 md:px-8">
-      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// витрина // {projects.length} экспонатов</p>
-      <h1 data-reveal="chars" class="font-display max-w-4xl text-5xl leading-[1.02] font-black text-bone md:text-7xl">
-        Мои проекты<span class="text-phos">.</span>
+      <p data-reveal="up" data-i18n="projects.tag" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// витрина // {projects.length} проектов</p>
+      <h1 data-reveal="chars" class="font-display max-w-4xl text-4xl sm:text-5xl md:text-6xl font-black text-bone">
+        <span data-i18n="projects.title">Витрина проектов</span><span class="text-phos">.</span>
       </h1>
-      <p data-reveal="up" class="mt-5 max-w-xl text-[15px] leading-relaxed text-sage">
-        Каждый проект — с историей, кодом и, чаще всего, парой бессонных ночей. Фильтруй, ищи, открывай кейсы.
+      <p data-reveal="up" data-i18n="projects.sub" class="mt-5 max-w-xl text-[15px] leading-relaxed text-sage">
+        Моды, десктопные и мобильные приложения, боты, плагины и скрипты. Выбирай фильтр или ищи по стеку.
       </p>
     </div>
   </section>
@@ -67,7 +67,8 @@ const filters = [
             <input
               type="search"
               data-projects-search
-              placeholder="поиск: forge, бот, лаунчер…"
+              data-i18n-ph="projects.searchPh"
+              placeholder="Поиск по названию или тегу…"
               class="field !pl-9"
               autocomplete="off"
             />
@@ -91,7 +92,7 @@ const filters = [
 
     <noscript>
       <div class="border border-gold/40 bg-gold/5 p-6 text-center font-mono text-[13px] text-gold">
-        Включи JavaScript, чтобы листать витрину с фильтрами.
+        Включите JavaScript для просмотра каталога проектов с фильтрацией.
       </div>
       <style>
         [data-projects-grid] { display: none; }
@@ -115,8 +116,8 @@ const filters = [
 
     {/* пустое состояние */}
     <div data-projects-empty class="hidden border border-dashed border-white/20 p-12 text-center">
-      <p class="font-display text-3xl font-black text-bone">Тут пусто<span class="text-phos">.</span> Пока.</p>
-      <p class="font-mono mt-3 text-[13px] text-sage">ничего не найдено — попробуй другой запрос или сбрось фильтр</p>
+      <p class="font-display text-3xl font-black text-bone">Ничего не найдено</p>
+      <p class="font-mono mt-3 text-[13px] text-sage">попробуйте изменить запрос или сбросить категорию</p>
       <button type="button" data-filter="all" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm mt-6 px-6 py-3 text-[12px]">
         Показать всё
       </button>
@@ -124,8 +125,8 @@ const filters = [
 
     <div class="mt-14 flex flex-col items-start justify-between gap-6 border border-white/10 bg-abyss p-6 md:flex-row md:items-center md:p-8">
       <div>
-        <p class="font-display text-2xl font-black text-bone">Есть идея для коллаба?</p>
-        <p class="mt-1 text-[14px] text-sage">Моды, сервера, приложения — пиши, обсудим в Telegram.</p>
+        <p class="font-display text-2xl font-black text-bone">Интересует разработка или проект?</p>
+        <p class="mt-1 text-[14px] text-sage">Приложения, сервисы, плагины — напиши в контакты.</p>
       </div>
       <a href={pg('contact')} class="btn-void btn-solid magnetic clip-corners-sm px-6 py-3.5 text-[12px]" data-cursor="hover">
         Связаться <Icon name="ArrowRight" class="h-4 w-4" />

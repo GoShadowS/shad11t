@@ -1,7 +1,6 @@
 /**
  * Shad11t — точка входа клиентских скриптов.
- * boot() выполняется при первой загрузке и при каждом переходе (astro:page-load),
- * перед переходом (astro:before-swap) все подписки аккуратно снимаются.
+ * boot() выполняется при первой загрузке и при каждом переходе (astro:page-load).
  */
 
 import { $, $$, scrollToTarget, toast } from './utils.js';
@@ -21,6 +20,47 @@ import { initProjectFallback, initStaticProject } from './project-fallback.js';
 import { initHomeSync } from './home-sync.js';
 import { initContact } from './contact.js';
 import { initAdmin } from './admin.js';
+import { initI18n } from './i18n.js';
+
+/* ---------- защита от открытия кода элемента / DevTools ---------- */
+function initInspectGuard() {
+  // 1. Отключение контекстного меню (ПКМ)
+  const onContext = (e) => {
+    // Разрешаем контекстное меню только внутри полей ввода
+    if (e.target.closest('input, textarea')) return;
+    e.preventDefault();
+    return false;
+  };
+
+  // 2. Блокировка клавиш DevTools (F12, Ctrl+Shift+I/J/C, Ctrl+U, Cmd+Option+I/J/C, Cmd+Option+U)
+  const onKeyDown = (e) => {
+    // F12
+    if (e.key === 'F12' || e.keyCode === 123) {
+      e.preventDefault();
+      e.stopPropagation();
+      toast('Исходный код защищён');
+      return false;
+    }
+    const ctrlOrCmd = e.ctrlKey || e.metaKey;
+    const shiftOrAlt = e.shiftKey || e.altKey;
+    const k = e.key?.toLowerCase();
+
+    if ((ctrlOrCmd && shiftOrAlt && (k === 'i' || k === 'j' || k === 'c')) || (ctrlOrCmd && (k === 'u' || k === 's'))) {
+      e.preventDefault();
+      e.stopPropagation();
+      toast('Просмотр кода заблокирован');
+      return false;
+    }
+  };
+
+  document.addEventListener('contextmenu', onContext);
+  document.addEventListener('keydown', onKeyDown, true);
+
+  return () => {
+    document.removeEventListener('contextmenu', onContext);
+    document.removeEventListener('keydown', onKeyDown, true);
+  };
+}
 
 /* ---------- шапка, прогресс, «наверх», бургер ---------- */
 function initNav() {
@@ -107,50 +147,6 @@ function initNav() {
   return () => cleanups.forEach((fn) => fn());
 }
 
-/* ---------- логотип ×5 = party mode ---------- */
-function initLogoEgg() {
-  const logo = $('#site-logo');
-  if (!logo || logo.dataset.eggBound) return () => {};
-  logo.dataset.eggBound = '1';
-  let clicks = 0;
-  let timer = 0;
-  const onClick = (e) => {
-    clicks += 1;
-    clearTimeout(timer);
-    timer = setTimeout(() => { clicks = 0; }, 900);
-    if (clicks === 5) {
-      e.preventDefault();
-      clicks = 0;
-      document.body.style.filter = 'hue-rotate(140deg) saturate(1.4)';
-      toast('PARTY MODE: аксолотль танцует 5 секунд', 'info');
-      try { sfx('success'); } catch { /* ignore */ }
-      setTimeout(() => { document.body.style.filter = ''; }, 5000);
-    }
-  };
-  logo.addEventListener('click', onClick);
-  return () => {
-    logo.removeEventListener('click', onClick);
-    delete logo.dataset.eggBound;
-  };
-}
-
-/* ---------- секрет в консоли ---------- */
-let consoleEggDone = false;
-function initConsoleEgg() {
-  if (consoleEggDone) return () => {};
-  consoleEggDone = true;
-  try {
-    console.log(
-      '%c SHAD11T %c аксолотль видит, что ты открыл консоль. уважаю. ',
-      'background:#c6ff3d;color:#060807;font-weight:bold;padding:4px 8px',
-      'background:#0a0d0b;color:#c6ff3d;padding:4px 8px',
-    );
-    console.log('%cподсказка: ↑ ↑ ↓ ↓ ← → ← → B A', 'color:#ff5a1f;font-family:monospace');
-    console.log('%cа ещё кликни по логотипу 5 раз. никому не рассказывай.', 'color:#93a092;font-family:monospace');
-  } catch { /* ignore */ }
-  return () => {};
-}
-
 /* ---------- случайный глитч заголовков ---------- */
 function initGlitch() {
   const els = $$('[data-glitch-auto]');
@@ -178,7 +174,6 @@ function cleanupAll() {
   });
 }
 
-/** Один упавший модуль не должен ронять весь boot (иначе контент останется невидимым). */
 function safe(fn, name) {
   try {
     return fn();
@@ -188,12 +183,7 @@ function safe(fn, name) {
   }
 }
 
-// При первой загрузке boot() может вызваться дважды на одном документе
-// (сразу + astro:page-load): второй вызов пропускаем, иначе задвоятся
-// Lenis, rAF-циклы и ScrollTrigger'ы, а прелоадер оборвётся на старте.
 let bootedDoc = false;
-// Токен от гонки при быстрых переходах: пока boot ждёт dynamic import,
-// может стартовать следующий — тогда текущий сворачивается сам.
 let bootToken = 0;
 
 async function boot() {
@@ -204,6 +194,8 @@ async function boot() {
   hydrateCovers(document);
 
   const c = [];
+  c.push(safe(initInspectGuard, 'inspect-guard'));
+  c.push(safe(initI18n, 'i18n'));
   c.push(safe(initAudio, 'audio'));
   c.push(safe(initPreloader, 'preloader'));
   c.push(safe(initCursor, 'cursor'));
@@ -215,8 +207,6 @@ async function boot() {
   c.push(safe(initNav, 'nav'));
   c.push(safe(initTerminal, 'terminal'));
   c.push(safe(initKonami, 'konami'));
-  c.push(safe(initLogoEgg, 'logo-egg'));
-  c.push(safe(initConsoleEgg, 'console-egg'));
   c.push(safe(initGlitch, 'glitch'));
   c.push(safe(initContact, 'contact'));
   c.push(safe(initProjectsPage, 'projects-page'));
@@ -232,7 +222,7 @@ async function boot() {
     });
   };
 
-  // тяжёлые штуки — лениво и только где нужно
+  // 3D / Orbit — лениво
   if (document.querySelector('[data-hero-3d]')) {
     try {
       const m = await import('./hero.js');

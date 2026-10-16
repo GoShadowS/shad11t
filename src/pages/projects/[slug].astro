@@ -7,7 +7,7 @@ import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import projectsData from '../../data/projects.json';
-import { pg, u } from '../../lib/paths';
+import { pg } from '../../lib/paths';
 import { formatDateRu, categoryLabel } from '../../lib/format';
 
 export async function getStaticPaths() {
@@ -80,14 +80,14 @@ const jsonld = {
       <span class="chip clip-tag absolute top-4 left-4 md:top-6 md:left-6">{categoryLabel(project.category)}</span>
       {project.featured && (
         <span class="chip clip-tag absolute top-4 right-4 md:top-6 md:right-6 !border-ember/60 !bg-ember/15 !text-ember">
-          ★ топ проект
+          ★ Рекомендуемый
         </span>
       )}
     </div>
 
     <div class="mt-10 grid gap-10 lg:grid-cols-[1.6fr_1fr]">
       <div>
-        <h1 data-reveal="chars" data-static-title class="font-display text-4xl leading-[1.02] font-black text-bone md:text-6xl">
+        <h1 data-reveal="chars" data-static-title class="font-display text-4xl sm:text-5xl md:text-6xl font-black text-bone">
           {project.title}
         </h1>
         <div data-reveal="up" data-static-desc class="prose-void mt-6 max-w-none text-[16px]">
@@ -104,12 +104,12 @@ const jsonld = {
 
       <aside data-reveal="right" class="lg:pt-2">
         <div class="term-window scanlines lg:sticky lg:top-24 p-5 md:p-6">
-          <p class="lbl">Досье проекта</p>
+          <p class="lbl">Информация о проекте</p>
           <dl class="font-mono space-y-3 text-[13px]">
-            <div class="flex justify-between gap-4"><dt class="text-sage">id</dt><dd class="text-right text-bone">{project.id}</dd></div>
-            <div class="flex justify-between gap-4"><dt class="text-sage">категория</dt><dd class="text-right text-phos">{categoryLabel(project.category)}</dd></div>
-            <div class="flex justify-between gap-4"><dt class="text-sage">дата</dt><dd class="text-right text-bone" data-static-date>{project.date ? formatDateRu(project.date) : '—'}</dd></div>
-            <div class="flex justify-between gap-4"><dt class="text-sage">статус</dt><dd class="text-right text-phos">● в витрине</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-sage">ID</dt><dd class="text-right text-bone">{project.id}</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-sage">Категория</dt><dd class="text-right text-phos">{categoryLabel(project.category)}</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-sage">Дата</dt><dd class="text-right text-bone" data-static-date>{project.date ? formatDateRu(project.date) : '—'}</dd></div>
+            <div class="flex justify-between gap-4"><dt class="text-sage">Статус</dt><dd class="text-right text-phos">● в витрине</dd></div>
           </dl>
           <div class="mt-5 flex flex-col gap-2.5" data-static-links>
             {project.link && (
@@ -118,7 +118,7 @@ const jsonld = {
               </a>
             )}
             <a href={pg('projects')} class="btn-void btn-ghost clip-corners-sm justify-center px-5 py-3 text-[12px]" data-cursor="hover">
-              ← все проекты
+              ← Все проекты
             </a>
           </div>
         </div>
@@ -129,11 +129,11 @@ const jsonld = {
     {list.length > 1 && (
     <nav class="mt-16 grid gap-px border border-white/10 bg-white/10 sm:grid-cols-2" aria-label="Другие проекты">
       <a href={pg(`projects/${prev.id}`)} data-cursor="hover" class="group bg-abyss p-6 transition-colors hover:bg-panel">
-        <span class="font-mono text-[11px] tracking-[0.25em] text-sage uppercase">← предыдущий</span>
+        <span class="font-mono text-[11px] tracking-[0.25em] text-sage uppercase">← Предыдущий</span>
         <span class="font-display mt-2 block text-xl font-bold text-bone group-hover:text-phos">{prev.title}</span>
       </a>
       <a href={pg(`projects/${next.id}`)} data-cursor="hover" class="group bg-abyss p-6 text-right transition-colors hover:bg-panel">
-        <span class="font-mono text-[11px] tracking-[0.25em] text-sage uppercase">следующий →</span>
+        <span class="font-mono text-[11px] tracking-[0.25em] text-sage uppercase">Следующий →</span>
         <span class="font-display mt-2 block text-xl font-bold text-bone group-hover:text-phos">{next.title}</span>
       </a>
     </nav>

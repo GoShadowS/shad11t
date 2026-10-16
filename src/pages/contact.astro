@@ -20,7 +20,7 @@ const socials = [
   {
     name: 'Telegram',
     handle: 't.me/SHAD11T',
-    desc: 'Новости, анонсы и самый быстрый способ до меня докричаться.',
+    desc: 'Новости, анонсы и прямая связь.',
     href: site.socials.telegram,
     icon: 'brand:telegram',
     copy: 'https://t.me/SHAD11T',
@@ -29,7 +29,7 @@ const socials = [
   {
     name: 'Boosty',
     handle: 'shad11ttheshadow',
-    desc: 'Эксклюзивы, ранний доступ и поддержка аксолотля рублём.',
+    desc: 'Эксклюзивы, ранний доступ и поддержка.',
     href: site.socials.boosty,
     icon: 'brand:boosty',
     copy: 'https://boosty.to/shad11ttheshadow',
@@ -38,7 +38,7 @@ const socials = [
   {
     name: 'GitHub',
     handle: 'GoShadowS',
-    desc: 'Исходники модов, приложений и скриптов. Звёзды приветствуются.',
+    desc: 'Исходники модов, приложений и скриптов.',
     href: site.socials.github,
     icon: 'brand:github',
     copy: 'https://github.com/GoShadowS',
@@ -49,7 +49,7 @@ const socials = [
 const faqs = [
   {
     q: 'Где быстрее всего ответят?',
-    a: 'В Telegram — обычно в течение дня. На YouTube-комментарии — под свежими видео. Аксолотль внимательно читает все сообщения.',
+    a: 'В Telegram — обычно в течение дня. На YouTube-комментарии — под свежими видео.',
   },
   {
     q: 'Берёшь ли заказы на плагины или моды?',
@@ -61,7 +61,7 @@ const faqs = [
   },
   {
     q: 'Как предложить идею для видео или мода?',
-    a: 'Оставь отзыв в гостевой книге ниже или заполни Яндекс Форму — крутые идеи часто становятся темами новых роликов.',
+    a: 'Оставь отзыв в гостевой книге ниже или заполни Яндекс Форму — интересные идеи часто становятся темами новых роликов.',
   },
 ];
 ---
@@ -75,11 +75,11 @@ const faqs = [
   <section class="relative overflow-hidden pt-[130px] pb-16 md:pb-24">
     <div class="bg-blueprint-fade pointer-events-none absolute inset-0"></div>
     <div class="relative mx-auto max-w-[1400px] px-5 md:px-8">
-      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// порталы связи</p>
-      <h1 data-reveal="chars" class="font-display max-w-4xl text-5xl leading-[1.02] font-black text-bone md:text-7xl">
-        Выходи на связь<span class="text-phos">_</span>
+      <p data-reveal="up" data-i18n="contact.tag" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// порталы связи</p>
+      <h1 data-reveal="chars" class="font-display max-w-4xl text-4xl sm:text-5xl md:text-6xl font-black text-bone">
+        <span data-i18n="contact.title">Выходи на связь</span><span class="text-phos">_</span>
       </h1>
-      <p data-reveal="up" class="mt-6 max-w-2xl text-[16px] leading-relaxed text-sage md:text-lg">
+      <p data-reveal="up" data-i18n="contact.sub" class="mt-6 max-w-2xl text-[16px] leading-relaxed text-sage md:text-lg">
         Четыре официальных портала, гостевая книга с отзывами и форма обратной связи. Выбирай удобный канал.
       </p>
     </div>
@@ -144,11 +144,11 @@ const faqs = [
     <div class="mx-auto max-w-[1400px] px-5 md:px-8">
       <div class="mb-12 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
         <div>
-          <p data-reveal="up" class="font-mono mb-4 text-[12px] tracking-[0.3em] text-ember uppercase">// сообщество // аквариум</p>
-          <h2 data-reveal="chars" class="font-display text-4xl leading-[1.05] font-black text-bone md:text-5xl">
+          <p data-reveal="up" data-i18n="contact.guestbookTag" class="font-mono mb-4 text-[12px] tracking-[0.3em] text-ember uppercase">// сообщество // аквариум</p>
+          <h2 data-reveal="chars" data-i18n="contact.guestbookTitle" class="font-display text-4xl leading-[1.05] font-black text-bone md:text-5xl">
             Книга отзывов и приветствий
           </h2>
-          <p data-reveal="up" class="mt-3 max-w-xl text-[15px] text-sage">
+          <p data-reveal="up" data-i18n="contact.guestbookSub" class="mt-3 max-w-xl text-[15px] text-sage">
             Оставь отзыв о проектах, пожелание или идею. Запись мгновенно сохранится в локальной книге аквариума!
           </p>
         </div>
@@ -162,7 +162,7 @@ const faqs = [
             class="btn-void btn-ghost clip-corners-sm px-5 py-3 text-[12px]"
           >
             <Icon name="Send" class="h-4 w-4 text-phos" />
-            Яндекс Форма ↗
+            <span data-i18n="contact.yandexForm">Яндекс Форма ↗</span>
           </a>
         </div>
       </div>
@@ -177,11 +177,11 @@ const faqs = [
 
           <div class="grid gap-5 sm:grid-cols-2">
             <div>
-              <label class="lbl" for="rf-name">Твой позывной / Имя</label>
+              <label class="lbl" for="rf-name" data-i18n="contact.form.name">Твой позывной / Имя</label>
               <input id="rf-name" type="text" maxlength="32" class="field" placeholder="Например: AxolotlMaster" required />
             </div>
             <div>
-              <label class="lbl" for="rf-role">Кто ты?</label>
+              <label class="lbl" for="rf-role" data-i18n="contact.form.role">Кто ты?</label>
               <select id="rf-role" class="field" data-cursor="hover">
                 <option value="Зритель">Зритель канала</option>
                 <option value="Разработчик">Разработчик / Кодер</option>
@@ -193,7 +193,7 @@ const faqs = [
           </div>
 
           <div class="mt-5">
-            <label class="lbl">Оценка / Настроение</label>
+            <label class="lbl" data-i18n="contact.form.rating">Оценка / Настроение</label>
             <div class="flex items-center gap-2" id="rf-rating-group">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -215,7 +215,7 @@ const faqs = [
 
           <div class="mt-5">
             <div class="flex items-center justify-between">
-              <label class="lbl" for="rf-message">Твой отзыв или сообщение</label>
+              <label class="lbl" for="rf-message" data-i18n="contact.form.message">Твой отзыв или сообщение</label>
               <span id="rf-counter" class="font-mono mb-[0.45rem] text-[11px] text-sage/60">0 / 400</span>
             </div>
             <textarea
@@ -223,7 +223,7 @@ const faqs = [
               rows="4"
               maxlength="400"
               class="field resize-y"
-              placeholder="Крутые моды и приложения! Жду новые девлоги..."
+              placeholder="Крутые проекты! Жду новые выпуски..."
               required
             ></textarea>
           </div>
@@ -231,7 +231,7 @@ const faqs = [
           <div class="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
             <button type="submit" id="rf-submit" data-cursor="hover" class="btn-void btn-solid clip-corners-sm flex-1 py-3.5 text-[12px]">
               <Icon name="Send" class="h-4 w-4" />
-              <span>Оставить отзыв в аквариуме</span>
+              <span data-i18n="contact.form.submit">Оставить отзыв в аквариуме</span>
             </button>
             <button type="button" id="rf-reset-demo" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-4 py-3.5 text-[11px]" title="Сбросить к исходным записям">
               <Icon name="RotateCcw" class="h-3.5 w-3.5" />
@@ -243,7 +243,7 @@ const faqs = [
         {/* Список отзывов */}
         <div class="flex flex-col gap-4">
           <div class="flex items-center justify-between border-b border-white/10 pb-3">
-            <span class="font-mono text-[12px] tracking-[0.2em] text-sage uppercase">Лента гостевой книги</span>
+            <span class="font-mono text-[12px] tracking-[0.2em] text-sage uppercase" data-i18n="contact.feed">Лента гостевой книги</span>
             <span id="reviews-count" class="font-mono text-[12px] text-phos font-bold">Загрузка...</span>
           </div>
 
@@ -257,8 +257,8 @@ const faqs = [
 
   {/* ================= FAQ ================= */}
   <section class="mx-auto max-w-[900px] px-5 py-20 md:px-8 md:py-28">
-    <p data-reveal="up" class="font-mono mb-5 text-center text-[12px] tracking-[0.3em] text-ember uppercase">// частые вопросы</p>
-    <h2 data-reveal="chars" class="font-display text-center text-4xl font-black text-bone md:text-5xl">
+    <p data-reveal="up" data-i18n="contact.faqTag" class="font-mono mb-5 text-center text-[12px] tracking-[0.3em] text-ember uppercase">// частые вопросы</p>
+    <h2 data-reveal="chars" data-i18n="contact.faqTitle" class="font-display text-center text-4xl font-black text-bone md:text-5xl">
       Отвечаю
     </h2>
     <div class="mt-10 space-y-3">

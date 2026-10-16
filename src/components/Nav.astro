@@ -1,6 +1,6 @@
 ---
 /**
- * Shad11t — шапка: логотип, навигация, статус, звук, бургер.
+ * Shad11t — шапка: логотип, навигация, переключатель языка (RU/EN), статус, звук, бургер.
  * Активная ссылка подсвечивается скриптом (data-nav).
  */
 import Logo from './Logo.astro';
@@ -9,11 +9,11 @@ import site from '../data/site.json';
 import { pg } from '../lib/paths';
 
 const links = [
-  { href: pg(''), label: 'Главная', id: 'home' },
-  { href: pg('projects'), label: 'Проекты', id: 'projects' },
-  { href: pg('about'), label: 'Обо мне', id: 'about' },
-  { href: pg('content'), label: 'Контент', id: 'content' },
-  { href: pg('contact'), label: 'Контакты', id: 'contact' },
+  { href: pg(''), label: 'Главная', key: 'nav.home', id: 'home' },
+  { href: pg('projects'), label: 'Проекты', key: 'nav.projects', id: 'projects' },
+  { href: pg('about'), label: 'Обо мне', key: 'nav.about', id: 'about' },
+  { href: pg('content'), label: 'Контент', key: 'nav.content', id: 'content' },
+  { href: pg('contact'), label: 'Контакты', key: 'nav.contact', id: 'contact' },
 ];
 ---
 
@@ -37,17 +37,32 @@ const links = [
               data-cursor="hover"
               class="link-line font-mono group text-[13px] font-medium tracking-[0.14em] text-bone/80 uppercase transition-colors hover:text-bone"
             >
-              <span class="mr-1 text-[10px] text-phos/70">0{i + 1}</span>{l.label}
+              <span class="mr-1 text-[10px] text-phos/70">0{i + 1}</span>
+              <span data-i18n={l.key}>{l.label}</span>
             </a>
           </li>
         ))}
       </ul>
 
       <div class="flex items-center gap-3 md:gap-4">
+        {/* Переключатель языка RU / EN */}
+        <button
+          id="lang-toggle"
+          type="button"
+          class="font-mono magnetic flex items-center rounded-full border border-white/15 bg-void/60 px-3 py-1.5 text-[11px] tracking-wider transition-all hover:border-phos/60"
+          aria-label="Сменить язык / Switch language"
+          title="Сменить язык (RU / EN)"
+          data-cursor="hover"
+        >
+          <span data-lang-ind="ru" class="text-phos font-bold">RU</span>
+          <span class="mx-1.5 text-white/20">/</span>
+          <span data-lang-ind="en" class="text-sage/60 font-normal">EN</span>
+        </button>
+
         {/* статус */}
-        <span class="font-mono hidden items-center gap-2 rounded-full border border-white/10 px-3 py-1.5 text-[11px] tracking-[0.16em] text-sage uppercase md:inline-flex" title="Shad11t сейчас на связи">
+        <span class="font-mono hidden items-center gap-2 rounded-full border border-white/10 px-3 py-1.5 text-[11px] tracking-[0.16em] text-sage uppercase md:inline-flex" title="Shad11t online">
           <span class="pulse-dot inline-block h-2 w-2 rounded-full bg-phos"></span>
-          {site.status}
+          <span data-i18n="nav.status">{site.status}</span>
         </span>
 
         {/* звук */}
@@ -72,7 +87,7 @@ const links = [
           class="btn-void btn-ghost magnetic clip-corners-sm hidden px-4 py-2 text-[12px] sm:inline-flex"
         >
           <Icon name="brand:youtube" class="h-4 w-4" />
-          <span>YouTube</span>
+          <span data-i18n="nav.youtube">YouTube</span>
         </a>
 
         {/* бургер */}
@@ -95,29 +110,39 @@ const links = [
   {/* мобильное меню */}
   <div id="mobile-menu" class="bg-void/95 fixed inset-0 top-0 -z-10 backdrop-blur-xl lg:hidden" aria-hidden="true">
     <div class="bg-blueprint-fade flex h-full flex-col justify-center gap-2 overflow-y-auto px-8 pt-[72px]">
+      <div class="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
+        <span class="font-mono text-[11px] tracking-[0.2em] text-sage uppercase">Language / Язык</span>
+        <button
+          id="lang-toggle-m"
+          type="button"
+          class="font-mono flex items-center rounded-full border border-white/15 bg-abyss px-3 py-1 text-[12px]"
+        >
+          <span data-lang-ind="ru" class="text-phos font-bold">RU</span>
+          <span class="mx-1.5 text-white/30">/</span>
+          <span data-lang-ind="en" class="text-sage/60 font-normal">EN</span>
+        </button>
+      </div>
+
       {links.map((l, i) => (
         <a
           href={l.href}
           data-nav={l.id}
-          class="m-link group flex items-baseline gap-4 border-b border-white/8 py-4"
+          class="m-link group flex items-baseline gap-4 border-b border-white/8 py-3.5"
         >
           <span class="font-mono text-[12px] text-phos">0{i + 1}</span>
-          <span class="font-display text-3xl font-extrabold text-bone transition-all duration-300 group-hover:translate-x-2 group-hover:text-phos">
+          <span data-i18n={l.key} class="font-display text-2xl font-extrabold text-bone transition-all duration-300 group-hover:translate-x-2 group-hover:text-phos">
             {l.label}
           </span>
         </a>
       ))}
-      <div class="mt-8 flex items-center gap-3">
+      <div class="mt-6 flex items-center gap-3">
         <a href={site.socials.youtube} target="_blank" rel="noopener" class="btn-void btn-solid clip-corners-sm px-5 py-3 text-[12px]">
           <Icon name="brand:youtube" class="h-4 w-4" /> YouTube
         </a>
         <a href={site.socials.telegram} target="_blank" rel="noopener" class="btn-void btn-ghost clip-corners-sm px-5 py-3 text-[12px]">
-          <Icon name="brand:telegram" class="h-4 w-4" /> TG
+          <Icon name="brand:telegram" class="h-4 w-4" /> Telegram
         </a>
       </div>
-      <p class="font-mono mt-6 text-[11px] tracking-[0.25em] text-sage/60 uppercase">
-        // выбери, куда провалиться
-      </p>
     </div>
   </div>
 </header>

@@ -12,16 +12,16 @@ const videosCount = videosData.filter((v) => v && (v as { id?: string }).id).len
 import { pg } from '../lib/paths';
 
 const facts = [
-  { icon: 'Fish', title: 'Вид', text: 'аксолотль. это я' },
-  { icon: 'Gamepad2', title: 'Класс', text: 'fullstack lotl' },
-  { icon: 'Braces', title: 'Стек', text: 'Java · Web · Python · Apps' },
-  { icon: 'brand:youtube', title: 'Канал', text: `${videosCount} видео` },
+  { icon: 'Fish', title: 'Вид', text: 'аксолотль', i18nTitle: 'about.facts.species', i18nText: 'about.facts.speciesVal' },
+  { icon: 'Gamepad2', title: 'Класс', text: 'fullstack lotl', i18nTitle: 'about.facts.class', i18nText: 'about.facts.classVal' },
+  { icon: 'Braces', title: 'Стек', text: 'Java · Web · Python · Apps', i18nTitle: 'about.facts.stack', i18nText: 'about.facts.stackVal' },
+  { icon: 'brand:youtube', title: 'Канал', text: `${videosCount} видео`, i18nTitle: 'about.facts.channel', i18nText: 'about.facts.channelVal' },
 ];
 ---
 
 <Base
   title="Обо мне"
-  description="Shad11t — программист и создатель контента. Досье, интересы и орбитальная карта."
+  description="Shad11t — программист и создатель контента. Досье, интересы и стек технологий."
   path={pg('about')}
 >
   {/* ================= HERO ДОСЬЕ ================= */}
@@ -32,9 +32,9 @@ const facts = [
     </div>
 
     <div class="relative mx-auto max-w-[1400px] px-5 md:px-8">
-      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// досье // уровень доступа: все</p>
-      <h1 data-reveal="chars" class="font-display max-w-5xl text-5xl leading-[1.02] font-black text-bone md:text-7xl">
-        Привет. Я — <span class="text-phos">аксолотль</span>, который пишет код<span class="text-ember">.</span>
+      <p data-reveal="up" data-i18n="about.dossierTag" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// досье // уровень доступа: все</p>
+      <h1 data-reveal="chars" class="font-display max-w-5xl text-4xl sm:text-5xl md:text-6xl font-black text-bone">
+        <span data-i18n="about.title">Привет. Я — аксолотль, который пишет код.</span>
       </h1>
 
       <div class="mt-12 grid gap-6 lg:grid-cols-[1.15fr_1fr]">
@@ -67,8 +67,8 @@ const facts = [
               </p>
             </div>
           </div>
-          <p class="mt-6 max-w-xl text-[15px] leading-relaxed text-sage">
-            Меня зовут Shad11t. По паспорту — человек, по состоянию души — аксолотль: спокойный, розовый и беспощадный к багам. Разрабатываю софт в самых разных направлениях — от приложений, ботов и веб-сервисов до модов и инструментов, и снимаю процесс на YouTube. Этот сайт — мой аквариум: проекты, интересы, видосы и контакты.
+          <p data-i18n="about.bio" class="mt-6 max-w-xl text-[15px] leading-relaxed text-sage">
+            Меня зовут Shad11t. Разрабатываю софт в самых разных направлениях — от приложений, ботов и веб-сервисов до модов и инструментов, и снимаю процесс на YouTube. Этот сайт — мой аквариум: проекты, стек, видео и контакты.
           </p>
         </div>
 
@@ -77,8 +77,8 @@ const facts = [
           {facts.map((f, i) => (
             <div data-reveal="up" data-delay={(i * 0.06).toFixed(2)} class="group bg-abyss p-5 transition-colors hover:bg-panel">
               <Icon name={f.icon} class="h-6 w-6 text-phos transition-transform duration-300 group-hover:-rotate-12 group-hover:scale-110" />
-              <p class="font-mono mt-3 text-[10px] tracking-[0.22em] text-sage uppercase">{f.title}</p>
-              <p class="mt-1 text-[14px] font-bold text-bone">{f.text}</p>
+              <p data-i18n={f.i18nTitle} class="font-mono mt-3 text-[10px] tracking-[0.22em] text-sage uppercase">{f.title}</p>
+              <p data-i18n={f.i18nText} class="mt-1 text-[14px] font-bold text-bone">{f.text}</p>
             </div>
           ))}
         </div>
@@ -88,12 +88,12 @@ const facts = [
 
   {/* ================= ОРБИТА ИНТЕРЕСОВ ================= */}
   <section class="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
-    <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// карта интересов</p>
-    <h2 data-reveal="chars" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
+    <p data-reveal="up" data-i18n="about.orbitTag" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// карта интересов</p>
+    <h2 data-reveal="chars" data-i18n="about.orbitTitle" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
       Орбита интересов
     </h2>
-    <p data-reveal="up" class="mt-4 max-w-xl text-[15px] text-sage">
-      Кликни по узлу — расскажу, за что люблю каждую штуку. Размер — сила втянутости, а не диплом.
+    <p data-reveal="up" data-i18n="about.orbitSub" class="mt-4 max-w-xl text-[15px] text-sage">
+      Интерактивная карта направлений и навыков. Нажмите на любой узел для подробной информации.
     </p>
 
     <div class="mt-10 grid items-start gap-6 lg:grid-cols-[1.5fr_1fr]">
@@ -128,8 +128,8 @@ const facts = [
   {/* ================= НАВЫКИ ================= */}
   <section class="border-t border-white/10 bg-abyss">
     <div class="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
-      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// стек</p>
-      <h2 data-reveal="chars" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
+      <p data-reveal="up" data-i18n="about.stackTag" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// стек</p>
+      <h2 data-reveal="chars" data-i18n="about.stackTitle" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
         Чем я занимаюсь
       </h2>
       <div class="mt-10 flex flex-wrap gap-3">
@@ -143,8 +143,8 @@ const facts = [
 
       <div data-reveal="up" class="mt-14 flex flex-col items-start justify-between gap-6 border border-phos/25 bg-phos/[0.04] p-6 md:flex-row md:items-center md:p-8">
         <div>
-          <p class="font-display text-2xl font-black text-bone md:text-3xl">Хочешь так же? <span class="text-phos">Смотри, как я это делаю.</span></p>
-          <p class="mt-2 max-w-xl text-[14px] text-sage">Разбираю софт, код и проекты на канале — с реальными фичами и фиксами, как есть.</p>
+          <p class="font-display text-2xl font-black text-bone md:text-3xl">Смотри проекты и разработку на канале</p>
+          <p class="mt-2 max-w-xl text-[14px] text-sage">Разбор приложений, модов и архитектуры софта в видеоформате.</p>
         </div>
         <div class="flex flex-wrap gap-3">
           <a href={site.socials.youtube} target="_blank" rel="noopener" class="btn-void btn-solid magnetic clip-corners-sm px-6 py-3.5 text-[12px]" data-cursor="hover">
