@@ -1,5 +1,5 @@
 /**
- * SHADVOID — прелоадер «загрузка теневой ОС».
+ * Shad11t — прелоадер «загрузка аквариумной ОС».
  * Работает один раз за полную загрузку документа (элемент persist'ится между переходами).
  */
 
@@ -7,11 +7,11 @@ import { $, $$, isReducedMotion } from './utils.js';
 import { sfx } from './audio.js';
 
 const LINES = [
-  ['> shadvoid_os v1.1 — init…', 't-bone'],
-  ['> монтирую /dev/shadow … <span class="t-phos">OK</span>', 't-dim'],
+  ['> shad11t_os v2.0 — init…', 't-bone'],
+  ['> наполняю аквариум … <span class="t-phos">OK</span>', 't-dim'],
   ['> подгружаю чанки … <span class="t-phos">16/16</span>', 't-dim'],
   ['> калибрую фосфор … <span class="t-phos">100%</span>', 't-dim'],
-  ['> тени пробуждены. добро пожаловать.', 't-ember'],
+  ['> аксолотль проснулся. добро пожаловать.', 't-ember'],
 ];
 
 export function initPreloader() {

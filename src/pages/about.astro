@@ -1,59 +1,27 @@
 ---
 /**
- * SHADVOID — /about: досье игрока, таймлайн, орбита навыков, RPG-бары.
+ * Shad11t — /about: досье, орбита интересов, стек.
  */
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import site from '../data/site.json';
 import skills from '../data/skills.json';
+import videosData from '../data/videos.json';
+
+const videosCount = videosData.filter((v) => v && (v as { id?: string }).id).length;
 import { pg } from '../lib/paths';
 
-const timeline = [
-  {
-    year: '2019',
-    title: 'Первый чанк',
-    text: 'Установил Minecraft и пропал на полгода. Начал снимать первые летсплеи «на коленке» — с лагами, но с душой.',
-    tag: 'начало',
-  },
-  {
-    year: '2021',
-    title: 'Hello, Java',
-    text: 'Надоело играть по чужим правилам — полез в код. Первый мод: меч, который светится в темноте. Символично, да?',
-    tag: 'код',
-  },
-  {
-    year: '2023',
-    title: 'Плагины и сервера',
-    text: 'Пишу плагины для Spigot, помогаю серверам, учу Python и JavaScript. Канал перерастает «просто летсплеи».',
-    tag: 'рост',
-  },
-  {
-    year: '2025',
-    title: 'ShadowCraft',
-    text: 'Старт флагманского мода про измерение Теней. Параллельно — лаунчер, бот и мобильный компаньон.',
-    tag: 'флагман',
-  },
-  {
-    year: 'сейчас',
-    title: 'SHADVOID',
-    text: 'Этот сайт — новая база. Дальше: релиз ShadowCraft, сезон хардкор-летсплеев и ещё больше темноты.',
-    tag: 'now',
-  },
-];
-
 const facts = [
-  { icon: 'Gamepad2', title: 'Класс', text: 'Shadow Developer' },
-  { icon: 'MapPin', title: 'Спавн', text: 'где-то в тени' },
-  { icon: 'Coffee', title: 'Топливо', text: 'кофе + lo-fi' },
-  { icon: 'Moon', title: 'Режим', text: 'сова (естественно)' },
   { icon: 'Fish', title: 'Вид', text: 'аксолотль. это я' },
-  { icon: 'Heart', title: 'Миссия', text: 'делать темноту уютной' },
+  { icon: 'Gamepad2', title: 'Класс', text: 'lotl developer' },
+  { icon: 'Braces', title: 'Крафт', text: 'Java · Minecraft · YouTube' },
+  { icon: 'brand:youtube', title: 'Канал', text: `${videosCount} видео` },
 ];
 ---
 
 <Base
   title="Обо мне"
-  description="Shad11t — Minecraft-блогер и программист. Досье, путь, стек технологий и орбитальная карта навыков."
+  description="Shad11t — Minecraft-блогер и программист. Досье, интересы и орбитальная карта."
   path={pg('about')}
 >
   {/* ================= HERO ДОСЬЕ ================= */}
@@ -66,7 +34,7 @@ const facts = [
     <div class="relative mx-auto max-w-[1400px] px-5 md:px-8">
       <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// досье // уровень доступа: все</p>
       <h1 data-reveal="chars" class="font-display max-w-5xl text-5xl leading-[1.02] font-black text-bone md:text-7xl">
-        Привет. Я — <span class="text-phos">тень</span>, которая пишет код<span class="text-ember">.</span>
+        Привет. Я — <span class="text-phos">аксолотль</span>, который пишет код<span class="text-ember">.</span>
       </h1>
 
       <div class="mt-12 grid gap-6 lg:grid-cols-[1.15fr_1fr]">
@@ -93,23 +61,15 @@ const facts = [
             </div>
             <div>
               <p class="font-display text-2xl font-black text-bone md:text-3xl">Shad11t<span class="text-phos">_</span></p>
-              <p class="font-mono mt-1 text-[12px] text-sage">aka shad11t_the_shadow</p>
+              <p class="font-mono mt-1 text-[12px] text-sage">aka @shadd11t</p>
               <p class="mt-2 inline-flex items-center gap-2 border border-phos/30 bg-phos/5 px-3 py-1 font-mono text-[11px] tracking-[0.2em] text-phos uppercase">
                 <span class="pulse-dot inline-block h-1.5 w-1.5 rounded-full bg-phos"></span> {site.status}
               </p>
             </div>
           </div>
           <p class="mt-6 max-w-xl text-[15px] leading-relaxed text-sage">
-            Начинающий YouTube-блогер, который слишком много играет в Minecraft, и программист, который слишком много пишет код.
-            Соединяю эти миры: снимаю, как создаю моды, приложения и ботов — от первой строчки до релиза.
+            Меня зовут Shad11t. По паспорту — человек, по состоянию души — аксолотль: спокойный, розовый и беспощадный к багам. Пишу на Java моды и плагины для Minecraft, делаю приложения и снимаю всё это на YouTube. Этот сайт — мой аквариум: проекты, интересы, видосы и контакты.
           </p>
-          <div class="mt-6">
-            <div class="mb-2 flex items-center justify-between font-mono text-[11px] tracking-[0.2em] uppercase">
-              <span class="text-sage">мощность тени</span>
-              <span class="text-phos">87 / 100</span>
-            </div>
-            <div class="xp-track"><div class="xp-fill" data-xp="87"></div></div>
-          </div>
         </div>
 
         {/* факты */}
@@ -126,56 +86,24 @@ const facts = [
     </div>
   </section>
 
-  {/* ================= ТАЙМЛАЙН ================= */}
-  <section class="border-y border-white/10 bg-abyss">
-    <div class="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
-      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// архив</p>
-      <h2 data-reveal="chars" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
-        Путь из света во тьму
-      </h2>
-
-      <div class="relative mt-14">
-        <div class="absolute top-0 bottom-0 left-[7px] w-px bg-gradient-to-b from-phos/60 via-phos/20 to-transparent md:left-[9px]"></div>
-        <div class="space-y-10">
-          {timeline.map((t, i) => (
-            <div data-reveal={i % 2 ? 'right' : 'left'} class="relative pl-10 md:pl-14">
-              <span class="absolute top-1.5 left-0 flex h-4 w-4 items-center justify-center md:h-5 md:w-5">
-                <span class={`absolute inline-flex h-full w-full rounded-full ${i === timeline.length - 1 ? 'animate-ping bg-phos/40' : 'bg-phos/20'}`}></span>
-                <span class={`relative inline-flex h-2 w-2 rounded-full ${i === timeline.length - 1 ? 'bg-ember' : 'bg-phos'}`}></span>
-              </span>
-              <div class="group grid gap-3 border border-white/10 bg-void/60 p-5 transition-colors hover:border-phos/40 md:grid-cols-[130px_1fr_auto] md:items-start md:gap-6 md:p-6">
-                <span class={`font-display text-xl font-black md:text-2xl ${i === timeline.length - 1 ? 'text-ember' : 'text-phos'}`}>{t.year}</span>
-                <span>
-                  <span class="font-display block text-lg font-bold text-bone md:text-xl">{t.title}</span>
-                  <span class="mt-1.5 block max-w-2xl text-[14px] leading-relaxed text-sage">{t.text}</span>
-                </span>
-                <span class="chip clip-tag h-fit">{t.tag}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-
-  {/* ================= ОРБИТА НАВЫКОВ ================= */}
+  {/* ================= ОРБИТА ИНТЕРЕСОВ ================= */}
   <section class="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
-    <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// карта прокачки</p>
+    <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// карта интересов</p>
     <h2 data-reveal="chars" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
-      Орбита навыков
+      Орбита интересов
     </h2>
     <p data-reveal="up" class="mt-4 max-w-xl text-[15px] text-sage">
-      Наведи на планету, чтобы узнать уровень. Клик — открыть досье навыка. Всё честно, без «Photoshop 146%».
+      Кликни по узлу — расскажу, за что люблю каждую штуку. Размер — сила втянутости, а не диплом.
     </p>
 
     <div class="mt-10 grid items-start gap-6 lg:grid-cols-[1.5fr_1fr]">
       <div data-reveal="scale" data-orbit class="term-window scanlines relative overflow-hidden">
         <div class="flex items-center justify-between border-b border-white/10 px-5 py-3">
-          <span class="font-mono text-[11px] tracking-[0.25em] text-sage uppercase">shad11t.system — skills.exe</span>
+          <span class="font-mono text-[11px] tracking-[0.25em] text-sage uppercase">shad11t.system — interests.exe</span>
           <span class="font-mono hidden text-[11px] text-sage/60 sm:block">{skills.length} узлов на орбите</span>
         </div>
         <div class="relative">
-          <canvas id="orbit-canvas" class="block w-full" role="img" aria-label="Интерактивная карта навыков"></canvas>
+          <canvas id="orbit-canvas" class="block w-full" role="img" aria-label="Интерактивная карта интересов"></canvas>
           <div id="orbit-tip"></div>
         </div>
         <script type="application/json" id="skills-data" set:html={JSON.stringify(skills)} />
@@ -200,19 +128,15 @@ const facts = [
   {/* ================= RPG-БАРЫ ================= */}
   <section class="border-t border-white/10 bg-abyss">
     <div class="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
-      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// характеристики</p>
+      <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// стек</p>
       <h2 data-reveal="chars" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
-        Прокачка в цифрах
+        Чём я занимаюсь
       </h2>
-      <div class="mt-10 grid gap-x-10 gap-y-7 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="mt-10 flex flex-wrap gap-3">
         {skills.map((s, i) => (
-          <div data-reveal="up" data-delay={((i % 3) * 0.07).toFixed(2)}>
-            <div class="mb-2 flex items-baseline justify-between">
-              <span class="text-[15px] font-bold text-bone">{s.name}</span>
-              <span class="font-display text-lg font-black text-phos">{s.level}</span>
-            </div>
-            <div class="xp-track"><div class="xp-fill" data-xp={s.level}></div></div>
-            <p class="mt-1.5 text-[13px] text-sage">{s.desc}</p>
+          <div data-reveal="up" data-delay={((i % 6) * 0.05).toFixed(2)} class="group border border-white/10 bg-void/60 px-5 py-4 transition-colors hover:border-phos/40">
+            <p class="text-[15px] font-bold text-bone group-hover:text-phos">{s.name}</p>
+            <p class="mt-1 text-[13px] text-sage">{s.desc}</p>
           </div>
         ))}
       </div>
@@ -220,7 +144,7 @@ const facts = [
       <div data-reveal="up" class="mt-14 flex flex-col items-start justify-between gap-6 border border-phos/25 bg-phos/[0.04] p-6 md:flex-row md:items-center md:p-8">
         <div>
           <p class="font-display text-2xl font-black text-bone md:text-3xl">Хочешь так же? <span class="text-phos">Смотри, как я это делаю.</span></p>
-          <p class="mt-2 max-w-xl text-[14px] text-sage">Разбираю свой код и моды на канале — без воды, с фейлами и фиксами в прямом эфире.</p>
+          <p class="mt-2 max-w-xl text-[14px] text-sage">Разбираю свой код и моды на канале — с фейлами и фиксами, как есть.</p>
         </div>
         <div class="flex flex-wrap gap-3">
           <a href={site.socials.youtube} target="_blank" rel="noopener" class="btn-void btn-solid magnetic clip-corners-sm px-6 py-3.5 text-[12px]" data-cursor="hover">

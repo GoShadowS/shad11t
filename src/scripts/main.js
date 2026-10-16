@@ -1,5 +1,5 @@
 /**
- * SHADVOID — точка входа клиентских скриптов.
+ * Shad11t — точка входа клиентских скриптов.
  * boot() выполняется при первой загрузке и при каждом переходе (astro:page-load),
  * перед переходом (astro:before-swap) все подписки аккуратно снимаются.
  */
@@ -122,7 +122,7 @@ function initLogoEgg() {
       e.preventDefault();
       clicks = 0;
       document.body.style.filter = 'hue-rotate(140deg) saturate(1.4)';
-      toast('PARTY MODE: тени танцуют 5 секунд', 'info');
+      toast('PARTY MODE: аксолотль танцует 5 секунд', 'info');
       try { sfx('success'); } catch { /* ignore */ }
       setTimeout(() => { document.body.style.filter = ''; }, 5000);
     }
@@ -141,7 +141,7 @@ function initConsoleEgg() {
   consoleEggDone = true;
   try {
     console.log(
-      '%c SHADVOID %c тень видит, что ты открыл консоль. уважаю. ',
+      '%c SHAD11T %c аксолотль видит, что ты открыл консоль. уважаю. ',
       'background:#c6ff3d;color:#060807;font-weight:bold;padding:4px 8px',
       'background:#0a0d0b;color:#c6ff3d;padding:4px 8px',
     );
@@ -174,7 +174,7 @@ function cleanupAll() {
   const fns = cleanups;
   cleanups = [];
   fns.forEach((fn) => {
-    try { fn(); } catch (err) { console.warn('[shadvoid] cleanup:', err); }
+    try { fn(); } catch (err) { console.warn('[shad11t] cleanup:', err); }
   });
 }
 
@@ -183,7 +183,7 @@ function safe(fn, name) {
   try {
     return fn();
   } catch (err) {
-    console.error(`[shadvoid] ${name} failed:`, err);
+    console.error(`[shad11t] ${name} failed:`, err);
     return () => {};
   }
 }
@@ -239,7 +239,7 @@ async function boot() {
       if (stale()) { rollback(); return; }
       c.push(safe(m.initHero, 'hero'));
     } catch (err) {
-      console.warn('[shadvoid] hero 3d off:', err);
+      console.warn('[shad11t] hero 3d off:', err);
     }
   }
   if (document.querySelector('[data-orbit]')) {
@@ -248,7 +248,7 @@ async function boot() {
       if (stale()) { rollback(); return; }
       c.push(safe(m.initOrbit, 'orbit'));
     } catch (err) {
-      console.warn('[shadvoid] orbit off:', err);
+      console.warn('[shad11t] orbit off:', err);
     }
   }
 

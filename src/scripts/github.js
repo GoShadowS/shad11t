@@ -1,5 +1,5 @@
 /**
- * SHADVOID — публикация проектов в репозиторий через GitHub Contents API.
+ * Shad11t — публикация проектов в репозиторий через GitHub Contents API.
  * Админка коммитит объединённый JSON прямо в main → GitHub Actions пересобирает сайт.
  * Токен (PAT) хранится ТОЛЬКО в sessionStorage и никуда кроме api.github.com не отправляется.
  */
@@ -107,7 +107,7 @@ export async function writeRepoFile({ owner, repo, branch = 'main', path, token,
 }
 
 /** Создать публичный Gist-хранилище данных. @returns {{id, user, html_url}} */
-export async function createGist({ token, description = 'SHADVOID runtime data (projects)' }) {
+export async function createGist({ token, description = 'Shad11t runtime data (projects)' }) {
   if (!token) throw new Error('Вставьте Personal Access Token.');
   const projects = await mergedForPublish();
   const data = await ghFetch('https://api.github.com/gists', token, {

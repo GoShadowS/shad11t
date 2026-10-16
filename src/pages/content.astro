@@ -1,6 +1,6 @@
 ---
 /**
- * SHADVOID — /content: видео с канала, рубрики, подписка.
+ * Shad11t — /content: видео с канала, рубрики, подписка.
  */
 import Base from '../layouts/Base.astro';
 import VideoCard from '../components/VideoCard.astro';
@@ -26,8 +26,8 @@ const formats = [
   {
     icon: 'Code2',
     title: 'Девлоги',
-    text: 'Пишу моды и приложения в прямом эфире: с багами, гуглом и честными фейлами.',
-    tag: 'по настроению тени',
+    text: 'Пишу моды и приложения на камеру: с багами, гуглом и честными фейлами.',
+    tag: 'по настроению лотла',
   },
   {
     icon: 'GraduationCap',
@@ -52,7 +52,7 @@ const formats = [
     <div class="relative mx-auto max-w-[1400px] px-5 md:px-8">
       <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// эфир // rec ●</p>
       <h1 data-reveal="chars" class="font-display max-w-4xl text-5xl leading-[1.02] font-black text-bone md:text-7xl">
-        Смотри, как рождается тень<span class="text-phos">.</span>
+        Эфир из аквариума<span class="text-phos">.</span>
       </h1>
       <p data-reveal="up" class="mt-5 max-w-xl text-[15px] leading-relaxed text-sage">
         Канал — это закулисье всех проектов с витрины: летсплеи, девлоги и туториалы без воды и занудства.
@@ -161,7 +161,7 @@ const formats = [
     <div class="mx-auto max-w-[1400px] px-5 py-20 md:px-8 md:py-28">
       <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// рубрики</p>
       <h2 data-reveal="chars" class="font-display max-w-3xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
-        Три портала в контент
+        Три иллюминатора
       </h2>
       <div class="mt-10 grid gap-6 md:grid-cols-3">
         {formats.map((f, i) => (
@@ -184,7 +184,7 @@ const formats = [
 
       <div data-reveal="up" class="mt-12 flex flex-col items-center gap-5 border border-phos/25 bg-phos/[0.04] p-8 text-center md:p-12">
         <p class="font-display max-w-2xl text-2xl leading-tight font-black text-bone md:text-4xl">
-          Подпишись — и тень будет приходить к тебе сама<span class="text-phos">.</span>
+          Подпишись — новые видео приплывут сами<span class="text-phos">.</span>
         </p>
         <a
           href={site.socials.youtube}

@@ -1,22 +1,18 @@
 {
-  "name": "SHADVOID",
+  "name": "Shad11t",
   "author": "Shad11t",
-  "tagline": "теневая лаборатория",
-  "description": "SHADVOID — личное портфолио Shad11t: моды для Minecraft, десктопные и мобильные приложения, плагины, скрипты и YouTube-контент. Код, крафт и тень.",
-  "status": "online",
+  "tagline": "аксолотль, который пишет код",
+  "description": "Shad11t — моды и плагины для Minecraft, приложения и видео на YouTube. Портфолио, блог и немного беспорядка в одном аквариуме.",
+  "status": "аксолотль",
   "socials": {
-    "youtube": "https://www.youtube.com/@shad11t_the_shadow",
+    "youtube": "https://www.youtube.com/@shadd11t",
     "telegram": "https://t.me/SHAD11T",
     "boosty": "https://boosty.to/shad11ttheshadow",
     "github": "https://github.com/GoShadowS"
   },
   "runtimeData": {
-    "_note": "Мгновенная публикация: user/id публичного Gist с файлом shadvoid-projects.json. Пусто = сайт читает только projects.json из сборки. Заполняется автоматически кнопкой «Завершить настройку» в админке.",
+    "_note": "Мгновенная публикация: user/id публичного Gist с файлом shad11t-projects.json. Пусто = сайт читает только projects.json из сборки. Заполняется автоматически кнопкой «Завершить настройку» в админке.",
     "gistUser": "",
     "gistId": ""
-  },
-  "now": {
-    "title": "Сейчас в работе",
-    "text": "Пилим измерение теней для ShadowCraft и новый сезон летсплеев на канале."
   }
 }

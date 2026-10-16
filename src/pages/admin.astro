@@ -1,6 +1,6 @@
 ---
 /**
- * SHADVOID — /admin: скрытая панель управления проектами.
+ * Shad11t — /admin: скрытая панель управления проектами.
  * noindex, вход для единственного администратора.
  */
 import Base from '../layouts/Base.astro';
@@ -13,7 +13,7 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
 
 <Base
   title="Админка"
-  description="Пульт управления SHADVOID. Только для тени."
+  description="Пульт управления Shad11t. Только для своих."
   path={pg('admin')}
   noindex
 >
@@ -23,7 +23,7 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
     {/* ================= ВХОД ================= */}
     <div id="admin-login" class="mx-auto max-w-md">
       <p class="font-mono mb-4 text-center text-[12px] tracking-[0.3em] text-ember uppercase">// restricted zone</p>
-      <h1 class="font-display text-center text-4xl font-black text-bone md:text-5xl">Вход для тени<span class="text-phos">.</span></h1>
+      <h1 class="font-display text-center text-4xl font-black text-bone md:text-5xl">Привет, аксолотль<span class="text-phos">.</span></h1>
       <p class="font-mono mt-3 text-center text-[12px] text-sage">посторонним тут делать нечего. серьёзно.</p>
 
       <form id="login-form" class="term-window scanlines clip-corners mt-8 p-6 md:p-8" autocomplete="off">
@@ -37,7 +37,7 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
         </div>
         <p id="login-error" class="font-mono mt-3 min-h-[20px] text-[13px] text-blood" role="alert"></p>
         <button type="submit" class="btn-void btn-solid clip-corners-sm mt-2 w-full justify-center px-6 py-3.5 text-[13px]" data-cursor="hover">
-          <Icon name="KeyRound" class="h-4 w-4" /> Разбудить тень
+          <Icon name="KeyRound" class="h-4 w-4" /> Открыть пульт
         </button>
         <p class="font-mono mt-4 text-center text-[11px] leading-relaxed text-sage/60">
           забыл пароль? он записан в README репозитория.<br />а если и его потерял — правь src/data/admin.json :)
@@ -50,7 +50,7 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
       <div class="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p class="font-mono mb-4 text-[12px] tracking-[0.3em] text-phos uppercase">// control room // доступ разрешён</p>
-          <h1 class="font-display text-4xl font-black text-bone md:text-5xl">Пульт тени<span class="text-ember">.</span></h1>
+          <h1 class="font-display text-4xl font-black text-bone md:text-5xl">Пульт аксолотля<span class="text-ember">.</span></h1>
         </div>
         <button type="button" id="btn-logout" data-cursor="hover" class="btn-void btn-ghost clip-corners-sm px-5 py-2.5 text-[12px]">
           <Icon name="LogOut" class="h-4 w-4" /> Выйти
@@ -84,7 +84,7 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
           <div class="grid gap-5 md:grid-cols-2">
             <div class="md:col-span-2">
               <label class="lbl" for="f-title">Название *</label>
-              <input id="f-title" type="text" maxlength="80" class="field" placeholder="ShadowCraft 2.0" />
+              <input id="f-title" type="text" maxlength="80" class="field" placeholder="Мой крутой мод" />
             </div>
             <div>
               <label class="lbl" for="f-id">ID (латиница, для ссылки)</label>
@@ -171,7 +171,7 @@ const authData = { user: admin.user, salt: admin.salt, iterations: admin.iterati
             </div>
             <div>
               <label class="lbl" for="gh-repo">Репозиторий</label>
-              <input id="gh-repo" type="text" class="field" value="shad11t_the_shadow" placeholder="shad11t_the_shadow" autocomplete="off" />
+              <input id="gh-repo" type="text" class="field" value="shad11t" placeholder="shad11t" autocomplete="off" />
             </div>
             <div>
               <label class="lbl" for="gh-branch">Ветка</label>

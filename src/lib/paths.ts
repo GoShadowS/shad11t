@@ -1,5 +1,5 @@
 /**
- * SHADVOID — хелперы путей с учётом base (GitHub Pages: / или /<repo>/).
+ * Shad11t — хелперы путей с учётом base (GitHub Pages: / или /<repo>/).
  * Использовать ВЕЗДЕ вместо хардкода "/about" и т.п.
  */
 

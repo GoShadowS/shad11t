@@ -1,4 +1,4 @@
-# SHADVOID — автоматический деплой на GitHub Pages.
+# Shad11t — автоматический деплой на GitHub Pages.
 #
 # Как это работает:
 #   1. Ты пушишь в ветку main (git push origin main).
@@ -11,7 +11,7 @@
 #
 # Первичная настройка (один раз): Settings → Pages → Source: "GitHub Actions".
 
-name: Deploy SHADVOID to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:

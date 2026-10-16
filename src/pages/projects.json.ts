@@ -1,5 +1,5 @@
 /**
- * SHADVOID — GET /projects.json: канонические данные витрины.
+ * Shad11t — GET /projects.json: канонические данные витрины.
  * Генерируется при сборке из src/data/projects.json.
  * Клиент объединяет это с локальным оверлеем админки (см. src/scripts/store.js).
  */

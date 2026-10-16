@@ -1,5 +1,5 @@
 /**
- * SHADVOID — интерактивный терминал: boot-лог, команды, история.
+ * Shad11t — интерактивный терминал: boot-лог, команды, история.
  * Несколько экземпляров на странице поддерживаются (data-terminal).
  */
 
@@ -9,7 +9,7 @@ import { sfx } from './audio.js';
 import site from '../data/site.json';
 
 const BOOT = [
-  ['shadvoid shell v1.1 — каждая тень начинается со света', 't-dim'],
+  ['shad11t shell v2.0 — добро пожаловать в аквариум', 't-dim'],
   ['печатай <span class="t-phos font-bold">help</span>, чтобы увидеть команды', 't-dim'],
 ];
 
@@ -23,8 +23,8 @@ function helpHTML() {
     ['skills', 'стек технологий'],
     ['socials', 'где меня найти'],
     ['open &lt;name&gt;', 'открыть: youtube / telegram / boosty / github'],
-    ['ls / cd / cat', 'осмотреться в теневой ФС'],
-    ['date', 'который час в тени'],
+    ['ls / cd / cat', 'осмотреться в аквариуме'],
+    ['date', 'который час у аксолотля'],
     ['konami', 'подсказка про пасхалку'],
     ['sudo', 'попробуй. рискни'],
     ['clear', 'очистить экран'],
@@ -44,6 +44,7 @@ function aboutHTML() {
 function skillsHTML() {
   const bars = (n) => '▰'.repeat(n) + '<span class="t-dim">' + '▱'.repeat(10 - n) + '</span>';
   return [
+    '<span class="t-dim">насколько я в это втянут (честно, субъективно):</span>',
     `Java/Forge   ${bars(9)} <span class="t-phos">дом родной</span>`,
     `JavaScript   ${bars(8)}`,
     `Python       ${bars(8)}`,
@@ -63,7 +64,7 @@ async function projectsHTML() {
   try {
     const { projects, baseIds } = await loadProjects();
     const top = projects.slice(0, 6);
-    if (!top.length) return '<span class="t-ember">проектов пока нет. тени пусты…</span>';
+    if (!top.length) return '<span class="t-ember">проектов пока нет. аквариум пуст…</span>';
     return top.map((p, i) => {
       const num = String(i + 1).padStart(2, '0');
       // у черновиков из оверлея нет статической страницы — ведём на клиентский рендер
@@ -116,7 +117,7 @@ export function initTerminal() {
 
       switch (low) {
         case 'help': print(helpHTML()); break;
-        case 'whoami': print('<span class="t-phos font-bold">shad11t_the_shadow</span> <span class="t-dim">(uid=11, gid=shadow, вид=аксолотль)</span>'); break;
+        case 'whoami': print('<span class="t-phos font-bold">shad11t</span> <span class="t-dim">(uid=11, gid=lotl, вид=аксолотль)</span>'); break;
         case 'about': print(aboutHTML()); break;
         case 'projects': print('<span class="t-dim">читаю projects.json…</span>'); print(await projectsHTML()); break;
         case 'skills': print(skillsHTML()); break;
@@ -134,17 +135,17 @@ export function initTerminal() {
         }
         case 'date': print(new Date().toLocaleString('ru-RU', { dateStyle: 'full', timeStyle: 'short' })); break;
         case 'echo': print(esc(arg) || '<span class="t-dim">…</span>'); break;
-        case 'pwd': print('/home/shad11t/shadow'); break;
-        case 'uname': print('SHADVOID_OS void-1.1 x86_64 Shadow_Kernel'); break;
+        case 'pwd': print('/home/shad11t/aquarium'); break;
+        case 'uname': print('SHAD11T_OS bloop-2.0 x86_64 Lotl_Kernel'); break;
         case 'ls':
           print('drwxr-xr-x <span class="t-phos font-bold">projects</span>   drwxr-xr-x <span class="t-phos font-bold">videos</span>   drwx------ <span class="t-ember font-bold">secrets</span>   -rw-r--r-- readme.txt');
           break;
         case 'cd':
-          if (!arg || arg === '~' || arg === '/home/shad11t/shadow') print('<span class="t-dim">ты уже дома. в тени.</span>');
-          else if (arg === 'secrets' || arg.startsWith('secrets')) print('<span class="t-ember">cd: secrets: Отказано в доступе. Тень всё видит.</span>');
+          if (!arg || arg === '~' || arg === '/home/shad11t/aquarium') print('<span class="t-dim">ты уже дома. в аквариуме.</span>');
+          else if (arg === 'secrets' || arg.startsWith('secrets')) print('<span class="t-ember">cd: secrets: Отказано в доступе. Аксолотль всё видит.</span>');
           else if (arg === 'projects' || arg === 'videos') print(`<span class="t-dim">ты в ${esc(arg)}. но смотреть лучше тут:</span> <a class="t-phos underline" href="${pg(arg === 'videos' ? 'content' : 'projects')}">/${arg === 'videos' ? 'content' : 'projects'}</a>`);
-          else if (arg === '..') print('<span class="t-dim">наверх нельзя. свет слепит.</span>');
-          else print(`<span class="t-ember">cd: ${esc(arg)}: Нет такой тени</span>`);
+          else if (arg === '..') print('<span class="t-dim">наверх нельзя. там воздух.</span>');
+          else print(`<span class="t-ember">cd: ${esc(arg)}: Нет такой директории</span>`);
           break;
         case 'cat':
           if (/secret/i.test(arg)) print('<span class="t-ember">cat: Доступ запрещён. Хорошая попытка.</span>');
@@ -152,11 +153,11 @@ export function initTerminal() {
           else print(`<span class="t-ember">cat: ${esc(arg)}: Нет такого файла. Попробуй «ls».</span>`);
           break;
         case 'sudo':
-          print('<span class="t-ember font-bold">shad11t отсутствует в файле sudoers. Данный инцидент будет доложен тени.</span>');
+          print('<span class="t-ember font-bold">shad11t отсутствует в файле sudoers. Данный инцидент будет доложен аксолотлю.</span>');
           try { sfx('error'); } catch { /* ignore */ }
           break;
         case 'rm':
-          print('<span class="t-ember">rm: невозможно удалить «/dev/shadow»: Тень вечна.</span>');
+          print('<span class="t-ember">rm: невозможно удалить «/dev/ocean»: Бульк вечен.</span>');
           break;
         case 'konami':
           print('набери на клавиатуре: <span class="t-phos font-bold">↑ ↑ ↓ ↓ ← → ← → B A</span>');
@@ -167,10 +168,10 @@ export function initTerminal() {
         case 'exit':
         case 'quit':
         case 'logout':
-          print('<span class="t-ember">отсюда не выходят. тени держат крепко :)</span>');
+          print('<span class="t-ember">отсюда не выходят. аквариум держит крепко :)</span>');
           break;
         case 'matrix':
-          print('<span class="t-dim">тут нет матрицы. тут только тени. и они круче.</span>');
+          print('<span class="t-dim">тут нет матрицы. тут только вода. и она круче.</span>');
           break;
         default:
           print(`<span class="t-ember">команда не найдена: ${esc(name)}</span> <span class="t-dim">— напиши «help»</span>`);

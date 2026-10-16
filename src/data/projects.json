@@ -2,34 +2,48 @@
   {
     "_note": "СТАРТОВЫЕ ДАННЫЕ-ПРИМЕР. Замените своими проектами через админ-панель (/admin) или отредактируйте этот файл напрямую. Поле image можно оставить пустым — тогда обложка сгенерируется автоматически в стиле сайта.",
     "id": "shadowcraft",
-    "title": "ShadowCraft",
-    "description": "Флагманский мод для Minecraft: целое измерение Теней с новыми биомами, мобами, рудой и боссом Пожирателем Света. Работает на Forge и Fabric, есть русская локализация.\n\nЧто внутри: 40+ новых блоков, система теневой энергии, данжи с ловушками и кастомное небо с двумя лунами.",
+    "title": "AquaCraft",
+    "description": "Флагманский мод для Minecraft: целое измерение Глубин с коралловыми биомами, светящимися мобами, рудой и боссом Глубинным Ужасом. Работает на Forge и Fabric, есть русская локализация.\n\nЧто внутри: 40+ новых блоков, система приливной энергии, данжи с ловушками и кастомное небо с двумя лунами.",
     "category": "mod",
     "image": "",
     "link": "https://github.com/GoShadowS",
-    "tags": ["Minecraft", "Java", "Forge", "Fabric"],
+    "tags": [
+      "Minecraft",
+      "Java",
+      "Forge",
+      "Fabric"
+    ],
     "date": "2026-06-14",
     "featured": true
   },
   {
     "id": "shadow-launcher",
-    "title": "Shadow Launcher",
+    "title": "Lotl Launcher",
     "description": "Лёгкий и быстрый лаунчер Minecraft: установка версий в один клик, менеджер модпаков, скины и поддержка Microsoft-аккаунтов. Весит меньше 15 МБ и запускается за секунду.\n\nНаписан на Tauri + Rust: нативная скорость без тяжёлого Electron.",
     "category": "app",
     "image": "",
     "link": "https://github.com/GoShadowS",
-    "tags": ["Tauri", "Rust", "Desktop"],
+    "tags": [
+      "Tauri",
+      "Rust",
+      "Desktop"
+    ],
     "date": "2026-03-02",
     "featured": true
   },
   {
     "id": "shadow-economy",
-    "title": "Shadow Economy",
+    "title": "Lotl Economy",
     "description": "Плагин экономики для Spigot/Paper-серверов: банки, аукционы, магазины игроков и защита от дюпов из коробки. Гибкая настройка через YAML и PlaceholderAPI.\n\nДержит онлайн 500+ игроков без просадок TPS — проверено на живых серверах.",
     "category": "mod",
     "image": "",
     "link": "https://github.com/GoShadowS",
-    "tags": ["Minecraft", "Spigot", "Java", "Plugin"],
+    "tags": [
+      "Minecraft",
+      "Spigot",
+      "Java",
+      "Plugin"
+    ],
     "date": "2025-11-20",
     "featured": true
   },
@@ -40,18 +54,26 @@
     "category": "mobile-app",
     "image": "",
     "link": "https://github.com/GoShadowS",
-    "tags": ["Flutter", "Dart", "Android"],
+    "tags": [
+      "Flutter",
+      "Dart",
+      "Android"
+    ],
     "date": "2025-08-09",
     "featured": false
   },
   {
     "id": "shadow-bot",
-    "title": "Shadow Bot",
-    "description": "Telegram-бот сообщества: уведомления о новых видео и стримах, розыгрыши, система уровней за активность и модерация чата.\n\nЖивёт в Telegram-канале и обслуживает всё комьюнити Shad11t.",
+    "title": "Lotl Bot",
+    "description": "Telegram-бот сообщества: уведомления о новых видео, розыгрыши, система уровней за активность и модерация чата.\n\nЖивёт в Telegram-канале и обслуживает всё комьюнити Shad11t.",
     "category": "other",
     "image": "",
     "link": "https://t.me/SHAD11T",
-    "tags": ["Python", "Telegram", "Bot"],
+    "tags": [
+      "Python",
+      "Telegram",
+      "Bot"
+    ],
     "date": "2025-05-30",
     "featured": false
   },
@@ -62,7 +84,11 @@
     "category": "other",
     "image": "",
     "link": "https://github.com/GoShadowS",
-    "tags": ["JavaScript", "Canvas", "Game"],
+    "tags": [
+      "JavaScript",
+      "Canvas",
+      "Game"
+    ],
     "date": "2025-02-14",
     "featured": false
   }

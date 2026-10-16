@@ -1,6 +1,6 @@
 ---
 /**
- * SHADVOID — главная: immersive hero, манифест, горизонтальная витрина,
+ * Shad11t — главная: immersive hero, манифест, горизонтальная витрина,
  * терминал, контент-тизер, соцсети.
  */
 import Base from '../layouts/Base.astro';
@@ -22,6 +22,7 @@ const featured = [...projects].sort((a, b) => Number(b.featured || false) - Numb
 const videos = (videosData.filter((v) => v && (v as { id?: string }).id) as {
   id: string; title: string; description?: string; date?: string; duration?: string; featured?: boolean;
 }[]).slice(0, 3);
+const videosTotal = videosData.filter((v) => v && (v as { id?: string }).id).length;
 
 const jsonld = [
   {
@@ -37,7 +38,7 @@ const jsonld = [
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: site.author,
-    alternateName: 'shad11t_the_shadow',
+    alternateName: 'shadd11t',
     description: site.description,
     sameAs: [site.socials.youtube, site.socials.telegram, site.socials.boosty, site.socials.github],
   },
@@ -55,7 +56,7 @@ const jsonld = [
     {/* скрытый слой: проявляется только под «фонариком» курсора */}
     <div class="spot-hidden pointer-events-none absolute inset-0 z-[5] flex items-center justify-center" aria-hidden="true">
       <p class="font-display max-w-3xl -rotate-3 px-6 text-center text-2xl font-black text-phos drop-shadow-[0_0_24px_rgba(198,255,61,0.6)] md:text-4xl">
-        ты нашёл тень.<br />она уже нашла тебя.
+        ты нашёл аксолотля.<br />он уже нашёл тебя.
       </p>
     </div>
 
@@ -70,20 +71,20 @@ const jsonld = [
         shad11t.exe — запущен
       </p>
 
-      <h1 class="font-display font-black" aria-label="SHADVOID">
+      <h1 class="font-display font-black" aria-label="SHAD11T">
         <span class="block overflow-hidden pb-1">
-          <span data-hero-line class="shadow-title block text-[17vw] leading-[0.92] tracking-tight text-bone md:text-[11vw]" data-text="SHAD">SHAD</span>
+          <span data-hero-line class="glitch-title block text-[17vw] leading-[0.92] tracking-tight text-bone md:text-[11vw]" data-text="SHAD">SHAD</span>
         </span>
         <span class="block overflow-hidden pb-2">
-          <span data-hero-line class="text-ghost-phos block text-[17vw] leading-[0.92] tracking-tight md:text-[11vw]" data-text="VOID">VOID<span class="text-ember" style="-webkit-text-stroke:0">_</span></span>
+          <span data-hero-line class="text-ghost-phos block text-[17vw] leading-[0.92] tracking-tight md:text-[11vw]" data-text="11T">11T<span class="text-ember" style="-webkit-text-stroke:0">_</span></span>
         </span>
       </h1>
 
       <div class="mt-7 flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
         <p data-hero-fade class="max-w-xl text-[16px] leading-relaxed text-sage md:text-lg">
           <span class="font-bold text-bone">Minecraft-блогер и программист.</span>
-          Моды, приложения, боты и видео о том, как всё это рождается в темноте.
-          Заходи — тут не страшно. Почти.
+          Моды и плагины для Minecraft, приложения и видео на YouTube.
+          Осмотрись — тут всё моё.
         </p>
         <div data-hero-fade class="flex flex-wrap gap-3">
           <a href={pg('projects')} class="btn-void btn-solid magnetic clip-corners px-7 py-4 text-[13px]" data-cursor="hover">
@@ -98,9 +99,9 @@ const jsonld = [
       </div>
 
       <div data-hero-fade class="font-mono mt-12 grid grid-cols-2 gap-px border border-white/10 bg-white/10 text-[11px] tracking-[0.14em] uppercase md:grid-cols-4">
-        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">статус //</span> <span class="text-phos">online</span></div>
-        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">движок //</span> shadvoid_os v1.1</div>
-        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">локация //</span> где-то в тени</div>
+        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">статус //</span> <span class="text-phos">аксолотль</span></div>
+        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">движок //</span> shad11t_os v2.0</div>
+        <div class="bg-void/80 px-4 py-3 backdrop-blur"><span class="text-sage">локация //</span> под водой</div>
         <div class="bg-void/80 flex items-center justify-between px-4 py-3 backdrop-blur">
           <span><span class="text-sage">скролл //</span> вниз</span>
           <span class="inline-block animate-bounce text-phos">↓</span>
@@ -109,14 +110,14 @@ const jsonld = [
     </div>
 
     <p class="v-label font-mono absolute top-1/2 left-4 z-10 hidden -translate-y-1/2 text-[10px] text-sage/50 uppercase xl:block" aria-hidden="true">
-      scroll to enter the void
+      scroll to enter the aquarium
     </p>
   </section>
 
   {/* ================= БЕГУЩАЯ СТРОКА ================= */}
   <div class="border-y border-phos/25 bg-phos/[0.04]">
     <Marquee
-      items={['MINECRAFT', 'МОДЫ', 'КОД', 'ТЕНЬ', 'YOUTUBE', 'ПЛАГИНЫ', 'ПРИЛОЖЕНИЯ', 'ТЕМНОТА']}
+      items={['MINECRAFT', 'МОДЫ', 'КОД', 'АКСОЛОТЛЬ', 'YOUTUBE', 'ПЛАГИНЫ', 'ПРИЛОЖЕНИЯ', 'БУЛЬК']}
       class="font-display py-4 text-lg font-bold tracking-wide text-bone md:text-xl"
     />
   </div>
@@ -127,31 +128,27 @@ const jsonld = [
       <div>
         <p data-reveal="up" class="font-mono mb-6 text-[12px] tracking-[0.3em] text-ember uppercase">// манифест</p>
         <p data-reveal="words" class="font-display max-w-3xl text-2xl leading-[1.35] font-bold text-bone md:text-4xl md:leading-[1.3]">
-          Я делаю игры темнее, код — чище, а контент — честнее. Тень — это не отсутствие света. Это место, где рождаются идеи.
+          Меня зовут Shad11t. Я пишу моды для Minecraft, делаю приложения и снимаю это на YouTube. Этот сайт — мой аквариум: заглядывай, вода тёплая.
         </p>
         <div data-reveal="up" class="mt-8">
           <a href={pg('about')} class="link-line font-mono text-[13px] tracking-[0.18em] text-phos uppercase" data-cursor="hover">
-            → кто прячется в тени
+            → кто этот аксолотль
           </a>
         </div>
       </div>
 
-      <div class="grid content-start grid-cols-2 gap-px border border-white/10 bg-white/10 lg:mt-16">
-        <div data-reveal="up" class="bg-abyss p-6">
+      <div class="grid content-start grid-cols-3 gap-px border border-white/10 bg-white/10 lg:mt-16">
+        <div data-reveal="up" class="bg-abyss p-4 sm:p-6">
           <p class="font-display text-4xl font-black text-phos md:text-5xl"><span data-count={projects.length}>0</span></p>
           <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">проектов в витрине</p>
         </div>
-        <div data-reveal="up" data-delay="0.1" class="bg-abyss p-6">
-          <p class="font-display text-4xl font-black text-bone md:text-5xl"><span data-count={videos.length} data-suffix="+">0</span></p>
+        <div data-reveal="up" data-delay="0.1" class="bg-abyss p-4 sm:p-6">
+          <p class="font-display text-4xl font-black text-bone md:text-5xl"><span data-count={videosTotal}>0</span></p>
           <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">видео на канале</p>
         </div>
-        <div data-reveal="up" data-delay="0.15" class="bg-abyss p-6">
-          <p class="font-display text-4xl font-black text-bone md:text-5xl"><span data-count="3" data-suffix="+">0</span></p>
-          <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">года в коде</p>
-        </div>
-        <div data-reveal="up" data-delay="0.2" class="bg-abyss p-6">
+        <div data-reveal="up" data-delay="0.2" class="bg-abyss p-4 sm:p-6">
           <p class="font-display text-4xl font-black text-ember md:text-5xl"><span data-count="11">0</span></p>
-          <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">уровень тени</p>
+          <p class="font-mono mt-2 text-[11px] tracking-[0.18em] text-sage uppercase">уровень лотла</p>
         </div>
       </div>
     </div>
@@ -166,10 +163,10 @@ const jsonld = [
         <div class="flex w-[86vw] shrink-0 flex-col justify-center pr-4 sm:w-[380px] md:w-[34vw] md:min-w-[380px]">
           <p class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// избранное</p>
           <h2 class="font-display text-4xl leading-[1.02] font-black text-bone md:text-6xl">
-            Тьма,<br />в которую<br /><span class="text-phos">вложен код</span>
+            Собрано<br />в одном<br /><span class="text-phos">аквариуме</span>
           </h2>
           <p class="mt-5 max-w-sm text-[15px] leading-relaxed text-sage">
-            Пять проектов, которыми я горжусь больше всего. Листай вбок — там дальше ещё темнее.
+            Избранное с витрины. Листай вбок — там дальше ещё интереснее.
           </p>
           <a href={pg('projects')} class="btn-void btn-ghost magnetic clip-corners-sm mt-7 w-fit px-6 py-3.5 text-[12px]" data-cursor="hover">
             Вся витрина <Icon name="ArrowRight" class="h-4 w-4" />
@@ -209,7 +206,7 @@ const jsonld = [
       <div>
         <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// прямой доступ</p>
         <h2 data-reveal="chars" class="font-display text-4xl leading-[1.05] font-black text-bone md:text-5xl">
-          Живой терминал тени
+          Живой терминал
         </h2>
         <p data-reveal="up" class="mt-5 max-w-md text-[15px] leading-relaxed text-sage">
           Настоящий, кликабельный, с характером. Спроси его о проектах, навыках и секретах. Только не пиши <span class="font-mono text-ember">sudo</span>. Хотя… попробуй.
@@ -240,7 +237,7 @@ const jsonld = [
         <div>
           <p data-reveal="up" class="font-mono mb-5 text-[12px] tracking-[0.3em] text-ember uppercase">// с канала</p>
           <h2 data-reveal="chars" class="font-display max-w-2xl text-4xl leading-[1.05] font-black text-bone md:text-5xl">
-            Свежее из темноты
+            Свежее с канала
           </h2>
         </div>
         <a data-reveal="up" href={pg('content')} class="link-line font-mono w-fit text-[13px] tracking-[0.18em] text-phos uppercase" data-cursor="hover">
@@ -261,7 +258,7 @@ const jsonld = [
           <Icon name="brand:youtube" class="h-5 w-5" />
           Подписаться на канал
         </a>
-        <p class="font-mono text-[11px] tracking-[0.2em] text-sage/70 uppercase">тени тоже жмут колокольчик</p>
+        <p class="font-mono text-[11px] tracking-[0.2em] text-sage/70 uppercase">аксолотли тоже жмут колокольчик</p>
       </div>
     </div>
   </section>
@@ -270,12 +267,12 @@ const jsonld = [
   <section class="relative overflow-hidden" data-parallax-wrap>
     <div class="pointer-events-none absolute top-1/2 left-1/2 h-[500px] w-[700px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-phos/[0.07] blur-[140px]"></div>
     <div class="relative mx-auto max-w-[1400px] px-5 py-28 text-center md:px-8 md:py-40">
-      <p data-reveal="up" class="font-mono mb-6 text-[12px] tracking-[0.3em] text-ember uppercase">// связь с тенью</p>
-      <h2 data-reveal="chars" class="font-display mx-auto max-w-4xl text-[11vw] leading-[0.95] font-black text-bone md:text-7xl" data-glitch-auto data-text="ЗАЛЕТАЙ В ТЕНЬ">
-        ЗАЛЕТАЙ В ТЕНЬ
+      <p data-reveal="up" class="font-mono mb-6 text-[12px] tracking-[0.3em] text-ember uppercase">// связь</p>
+      <h2 data-reveal="chars" class="font-display mx-auto max-w-4xl text-[11vw] leading-[0.95] font-black text-bone md:text-7xl" data-glitch-auto data-text="ЗАЛЕТАЙ В АКВАРИУМ">
+        ЗАЛЕТАЙ В АКВАРИУМ
       </h2>
       <p data-reveal="up" class="mx-auto mt-6 max-w-xl text-[15px] leading-relaxed text-sage md:text-base">
-        Видео — на YouTube. Жизнь и мемы — в Telegram. Эксклюзивы и поддержка — на Boosty. Выбирай портал.
+        Видео — на YouTube. Код — на GitHub. Всё остальное — тоже где-то рядом. Выбирай портал.
       </p>
       <div data-reveal="up" class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
         <a href={site.socials.youtube} target="_blank" rel="noopener" class="btn-void btn-solid magnetic clip-corners w-full px-8 py-4 text-[13px] sm:w-auto" data-cursor="hover">
@@ -292,7 +289,7 @@ const jsonld = [
 
     <div class="border-t border-white/10">
       <Marquee
-        items={['НЕ БОЙСЯ ТЕМНОТЫ', 'БОЙСЯ СКУЧНЫХ САЙТОВ']}
+        items={['НЕ БОЙСЯ ГЛУБИНЫ', 'БОЙСЯ СКУЧНЫХ САЙТОВ']}
         speed="slow"
         reverse
         class="font-mono py-3 text-[12px] tracking-[0.3em] text-sage/70 uppercase"

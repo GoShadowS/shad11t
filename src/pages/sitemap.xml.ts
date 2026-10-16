@@ -1,5 +1,5 @@
 /**
- * SHADVOID — GET /sitemap.xml: статичные страницы + страницы проектов.
+ * Shad11t — GET /sitemap.xml: статичные страницы + страницы проектов.
  * Хост подставляется из SITE_URL при сборке (см. astro.config.mjs).
  */
 import projectsData from '../data/projects.json';

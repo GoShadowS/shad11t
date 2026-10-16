@@ -1,5 +1,5 @@
 /**
- * SHADVOID — орбитальная карта навыков (canvas 2D).
+ * Shad11t — орбитальная карта интересов (canvas 2D).
  * Узлы кружат вокруг ядра, hover показывает подсказку, клик — детали.
  */
 
@@ -188,7 +188,7 @@ export function initOrbit() {
           <p class="font-mono text-[11px] uppercase tracking-[0.25em]" style="color:${n.color}">${esc((CAT_STYLE[n.cat] || {}).label || n.cat)}</p>
           <h3 class="font-display mt-1 text-2xl font-bold text-bone">${esc(n.name)}</h3>
         </div>
-        <span class="font-display text-3xl font-black" style="color:${n.color}">${Number(n.level) || 0}</span>
+        <span class="text-right"><span class="font-display block text-3xl font-black" style="color:${n.color}">${Number(n.level) || 0}</span><span class="font-mono text-[10px] uppercase tracking-[0.2em] text-sage">интерес</span></span>
       </div>
       <div class="xp-track mt-3"><div class="xp-fill" style="width:${Number(n.level) || 0}%; transition: width .6s cubic-bezier(.22,1,.36,1)"></div></div>
       <p class="mt-3 text-[14px] leading-relaxed text-sage">${esc(n.desc || '')}</p>`;
