@@ -169,7 +169,7 @@ npm run preview  # проверка билда локально
 
 **Shad11t** — Minecraft-блогер и программист.
 
-- YouTube: https://www.youtube.com/@shadd11t
+- YouTube: https://www.youtube.com/@shad11t_the_shadow
 - Telegram: https://t.me/SHAD11T
 - Boosty: https://boosty.to/shad11ttheshadow
 - GitHub: https://github.com/GoShadowS
