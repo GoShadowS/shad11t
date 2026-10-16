@@ -5,16 +5,19 @@
  */
 
 import { $, $$, esc, toast, copyText } from './utils.js';
-import { loadProjects, getOverlay, saveOverlay, clearOverlay, mergedForPublish } from './store.js';
+import { loadProjects, getOverlay, saveOverlay, clearOverlay, mergedForPublish, gistURL } from './store.js';
 import { coverURL } from './covers.js';
 import { hashPassword, safeEqual, randomSalt } from './hash-client.js';
-import { publishToGitHub } from './github.js';
+import { publishToGitHub, createGist, updateGist, readRepoFile, writeRepoFile } from './github.js';
+import site from '../data/site.json';
 import { sfx } from './audio.js';
 
 const SESSION_KEY = 'shadvoid_admin_session';
 const LOCAL_AUTH_KEY = 'shadvoid_admin_local';
 const GH_KEY = 'shadvoid_gh';
 const GH_TOKEN_KEY = 'shadvoid_gh_token';
+const GH_TOKEN_LOCAL = 'shadvoid_gh_token_local';
+const GIST_PENDING_KEY = 'shadvoid_gist_pending';
 const SESSION_TTL = 12 * 3600 * 1000;
 
 function slugify(s) {
@@ -391,9 +394,96 @@ export function initAdmin() {
       if ($('#gh-repo') && saved.repo) $('#gh-repo').value = saved.repo;
       if ($('#gh-branch') && saved.branch) $('#gh-branch').value = saved.branch;
       if ($('#gh-path') && saved.path) $('#gh-path').value = saved.path;
-      const tok = sessionStorage.getItem(GH_TOKEN_KEY);
+      let tok = null;
+      let remembered = false;
+      try {
+        tok = localStorage.getItem(GH_TOKEN_LOCAL);
+        remembered = Boolean(tok);
+        if (!tok) tok = sessionStorage.getItem(GH_TOKEN_KEY);
+      } catch { /* ignore */ }
       if ($('#gh-token') && tok) $('#gh-token').value = tok;
+      if ($('#gh-remember')) $('#gh-remember').checked = remembered;
     } catch { /* ignore */ }
+  }
+
+  /* ----- токен: вкладка или «запомнить» ----- */
+  function getToken() {
+    const field = $('#gh-token')?.value.trim() || '';
+    if (field) return field;
+    try {
+      return localStorage.getItem(GH_TOKEN_LOCAL) || sessionStorage.getItem(GH_TOKEN_KEY) || '';
+    } catch {
+      return '';
+    }
+  }
+
+  function stashToken(token) {
+    const remember = $('#gh-remember')?.checked;
+    try {
+      if (remember) {
+        localStorage.setItem(GH_TOKEN_LOCAL, token);
+        sessionStorage.removeItem(GH_TOKEN_KEY);
+      } else {
+        sessionStorage.setItem(GH_TOKEN_KEY, token);
+      }
+    } catch { /* ignore */ }
+  }
+
+  function forgetLocalToken() {
+    try {
+      localStorage.removeItem(GH_TOKEN_LOCAL);
+    } catch { /* ignore */ }
+  }
+
+  /** Человекочитаемые ошибки GitHub API. */
+  function ghErr(err) {
+    const m = String(err?.message || '');
+    if (/bad credentials/i.test(m)) return 'Неверный токен. Проверь PAT (нужны scope repo + gist).';
+    if (/not found/i.test(m)) return 'Не найдено: проверь owner/repo и доступ токена.';
+    if (/rate limit exceeded/i.test(m)) return 'Лимит GitHub API исчерпан — подожди немного.';
+    if (/422|validation failed/i.test(m)) return 'GitHub отклонил запрос (защита ветки или конфликт?).';
+    if (/failed to fetch|networkerror|load failed/i.test(m)) return 'Нет связи с api.github.com. Проверь интернет.';
+    return m || 'Неизвестная ошибка';
+  }
+
+  /* ----- gist: мгновенная публикация ----- */
+  function buildGist() {
+    const g = site?.runtimeData || {};
+    return g.gistUser && g.gistId ? { user: g.gistUser, id: g.gistId } : null;
+  }
+
+  function pendingGist() {
+    try {
+      const p = JSON.parse(localStorage.getItem(GIST_PENDING_KEY) || 'null');
+      return p?.user && p?.id ? p : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function setGistStatus(html) {
+    const el = $('#gist-status');
+    if (el) el.innerHTML = html;
+  }
+
+  function renderGist() {
+    const g = buildGist();
+    const pend = !g && pendingGist();
+    const btnPub = $('#btn-gist-publish');
+    const btnCreate = $('#btn-gist-create');
+    const finishBox = $('#gist-finish-box');
+    btnPub?.classList.toggle('hidden', !g);
+    btnCreate?.classList.toggle('hidden', Boolean(g || pend));
+    finishBox?.classList.toggle('hidden', !pend);
+    if (g) {
+      setGistStatus(`<span class="text-phos">✓ подключено:</span> <a class="underline" href="https://gist.github.com/${esc(g.user)}/${esc(g.id)}" target="_blank" rel="noopener">${esc(g.user)}/${esc(String(g.id).slice(0, 8))}… ↗</a>`);
+    } else if (pend) {
+      setGistStatus(`<span class="text-gold">◈ gist создан (${esc(pend.user)}/${esc(String(pend.id).slice(0, 8))}…), но сайт о нём ещё не знает.</span>`);
+      const idEl = $('#gist-new-id');
+      if (idEl) idEl.textContent = `${pend.user} / ${pend.id}`;
+    } else {
+      setGistStatus('<span class="text-sage">не настроено. Создай хранилище одной кнопкой — данные полетят на сайт мгновенно, без сборки.</span>');
+    }
   }
 
   function setPublishStatus(html) {
@@ -404,7 +494,7 @@ export function initAdmin() {
   on($('#btn-publish'), 'click', async () => {
     const btn = $('#btn-publish');
     const s = ghSettings();
-    const token = $('#gh-token')?.value.trim() || '';
+    const token = getToken();
     if (!s.owner || !s.repo) {
       toast('Укажи owner и repo', 'err');
       return;
@@ -414,7 +504,8 @@ export function initAdmin() {
       return;
     }
     localStorage.setItem(GH_KEY, JSON.stringify({ owner: s.owner, repo: s.repo, branch: s.branch, path: s.path }));
-    sessionStorage.setItem(GH_TOKEN_KEY, token);
+    stashToken(token);
+    if ($('#gh-token')) $('#gh-token').value = token;
     btn.disabled = true;
     const old = btn.innerHTML;
     btn.innerHTML = 'публикую…';
@@ -422,17 +513,129 @@ export function initAdmin() {
     try {
       const res = await publishToGitHub({ ...s, token });
       const url = res?.commit?.html_url || res?.content?.html_url || '';
-      setPublishStatus(`<span class="text-phos">✓ опубликовано!</span> ${url ? `<a class="underline" href="${esc(url)}" target="_blank" rel="noopener">смотреть коммит ↗</a>` : ''}<br><span class="text-sage">GitHub Actions пересоберёт сайт за ~1–2 минуты.</span>`);
+      const actions = `https://github.com/${encodeURIComponent(s.owner)}/${encodeURIComponent(s.repo)}/actions`;
+      setPublishStatus(`<span class="text-phos">✓ опубликовано!</span> ${url ? `<a class="underline" href="${esc(url)}" target="_blank" rel="noopener">коммит ↗</a>` : ''} <a class="underline" href="${esc(actions)}" target="_blank" rel="noopener">сборка ↗</a><br><span class="text-sage">Actions пересоберёт сайт за ~1–2 минуты.</span>`);
       toast('Опубликовано в GitHub!');
       try { sfx('success'); } catch { /* ignore */ }
     } catch (err) {
-      setPublishStatus(`<span class="text-blood">✕ ${esc(err.message || 'ошибка публикации')}</span>`);
-      toast(`Ошибка: ${err.message}`, 'err');
+      const msg = ghErr(err);
+      setPublishStatus(`<span class="text-blood">✕ ${esc(msg)}</span>`);
+      toast(`Ошибка: ${msg}`, 'err');
       try { sfx('error'); } catch { /* ignore */ }
     } finally {
       btn.disabled = false;
       btn.innerHTML = old;
     }
+  });
+
+  on($('#gh-remember'), 'change', (e) => {
+    if (!e.target.checked) forgetLocalToken();
+  });
+
+  /* ----- gist: кнопки ----- */
+  function needToken() {
+    const token = getToken();
+    if (!token) toast('Вставь Personal Access Token выше', 'err');
+    else {
+      stashToken(token);
+      if ($('#gh-token')) $('#gh-token').value = token;
+    }
+    return token;
+  }
+
+  async function withBusy(btn, label, fn) {
+    if (!btn) return fn();
+    btn.disabled = true;
+    const old = btn.innerHTML;
+    btn.innerHTML = label;
+    try {
+      await fn();
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = old;
+    }
+  }
+
+  on($('#btn-gist-publish'), 'click', () => {
+    const btn = $('#btn-gist-publish');
+    const g = buildGist();
+    if (!g) return;
+    const token = needToken();
+    if (!token) return;
+    withBusy(btn, 'публикую…', async () => {
+      try {
+        const n = await updateGist({ token, gistId: g.id });
+        setGistStatus(`<span class="text-phos">✓ опубликовано мгновенно! (${n} проектов)</span> <span class="text-sage">Обнови сайт — данные уже там.</span>`);
+        toast('Сайт обновлён мгновенно!');
+        try { sfx('success'); } catch { /* ignore */ }
+      } catch (err) {
+        const msg = ghErr(err);
+        setGistStatus(`<span class="text-blood">✕ ${esc(msg)}</span>`);
+        toast(`Ошибка: ${msg}`, 'err');
+        try { sfx('error'); } catch { /* ignore */ }
+      }
+    });
+  });
+
+  on($('#btn-gist-create'), 'click', () => {
+    const btn = $('#btn-gist-create');
+    const token = needToken();
+    if (!token) return;
+    withBusy(btn, 'создаю…', async () => {
+      try {
+        const g = await createGist({ token });
+        if (!g.id || !g.user) throw new Error('GitHub не вернул gist.');
+        localStorage.setItem(GIST_PENDING_KEY, JSON.stringify({ user: g.user, id: g.id }));
+        renderGist();
+        toast('Gist создан! Остался последний шаг ниже.');
+      } catch (err) {
+        const msg = ghErr(err);
+        setGistStatus(`<span class="text-blood">✕ ${esc(msg)}</span>`);
+        toast(`Ошибка: ${msg}`, 'err');
+      }
+    });
+  });
+
+  async function attachGist(user, id) {
+    const s = ghSettings();
+    const token = needToken();
+    if (!token) return;
+    if (!s.owner || !s.repo) {
+      toast('Укажи owner и repo выше', 'err');
+      return;
+    }
+    setGistStatus('<span class="text-sage">⌛ записываю gist в site.json и коммичу…</span>');
+    try {
+      const { sha, text } = await readRepoFile({ ...s, path: 'src/data/site.json', token });
+      const data = JSON.parse(text);
+      data.runtimeData = { ...(data.runtimeData || {}), gistUser: user, gistId: id };
+      await writeRepoFile({ ...s, path: 'src/data/site.json', token, sha, text: `${JSON.stringify(data, null, 2)}\n`, message: 'content(admin): подключение gist-хранилища' });
+      localStorage.removeItem(GIST_PENDING_KEY);
+      renderGist();
+      setGistStatus('<span class="text-phos">✓ готово!</span> <span class="text-sage">Actions соберёт сайт за ~1–2 минуты — потом обнови эту страницу и жми «Опубликовать сейчас».</span>');
+      toast('Настройка завершена!');
+      try { sfx('success'); } catch { /* ignore */ }
+    } catch (err) {
+      const msg = ghErr(err);
+      setGistStatus(`<span class="text-blood">✕ ${esc(msg)}</span>`);
+      toast(`Ошибка: ${msg}`, 'err');
+    }
+  }
+
+  on($('#btn-gist-finish'), 'click', () => {
+    const pend = pendingGist();
+    if (!pend) return;
+    withBusy($('#btn-gist-finish'), 'коммичу…', () => attachGist(pend.user, pend.id));
+  });
+
+  on($('#btn-gist-attach'), 'click', () => {
+    const user = $('#gist-user')?.value.trim() || '';
+    const id = $('#gist-id')?.value.trim() || '';
+    if (!user || !id) {
+      toast('Введи user и id gist', 'err');
+      return;
+    }
+    withBusy($('#btn-gist-attach'), 'подключаю…', () => attachGist(user, id));
   });
 
   on($('#btn-download'), 'click', async () => {
@@ -575,6 +778,7 @@ export function initAdmin() {
     if (booted) return;
     booted = true;
     fillGh();
+    renderGist();
     refresh();
   }
 
